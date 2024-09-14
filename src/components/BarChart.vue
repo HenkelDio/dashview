@@ -84,7 +84,7 @@
 <script setup lang="ts">
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { Indicator } from 'src/types';
 import { useQuasar } from 'quasar';
 
@@ -98,6 +98,8 @@ interface IProps{
 
 const props = defineProps<IProps>()
 const indicator = props.indicator;
+
+const isMobile = computed(() => $q.platform.is.mobile)
 
 const chartData = ref({
     labels: [ 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Agosto', 'Outubro', 'Novembro', 'Dezembro' ],
@@ -113,8 +115,9 @@ const chartData = ref({
     ]
   })
 
+
 const chartOptions = ref({
   responsive: true,
-  maintainAspectRatio:  $q.platform.is.mobile ? true : false
+  maintainAspectRatio: isMobile.value ? true : false
 })
 </script>

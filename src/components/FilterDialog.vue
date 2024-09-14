@@ -1,6 +1,6 @@
 <template>
 <q-dialog v-model="show" persistent>
-  <q-card style="min-width: 500px;">
+  <q-card :style="{width: isMobile ? '100%' : '500px'}">
     <q-card-section>
       <div class="text-h6">Filtros</div>
     </q-card-section>
@@ -56,9 +56,14 @@
 import { indicators } from 'src/content/mock';
 import { useFilterStore } from 'src/stores/filters';
 import { computed, ref } from 'vue';
+import { useQuasar } from 'quasar';
 
 const emit = defineEmits(['close']);
 const show = ref(true);
+
+const $q = useQuasar()
+
+const isMobile = computed(() => $q.platform.is.mobile)
 
 const store = useFilterStore()
 

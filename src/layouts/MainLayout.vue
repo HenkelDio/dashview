@@ -55,7 +55,7 @@ const linksList: EssentialLinkProps[] = [
     title: 'Dashboard',
     caption: 'Visualizar gráficos',
     icon: 'insert_chart',
-    link: 'https://quasar.dev'
+    link: '/'
   }
 ];
 
