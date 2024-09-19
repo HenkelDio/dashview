@@ -1,1 +1,48 @@
 // app global css in SCSS form
+
+@font-face {
+  font-family: InterMedium;
+  src: url(./fonts/inter/Inter_18pt-Medium.ttf);
+}
+
+@font-face {
+  font-family: InterLight;
+  src: url(./fonts/inter/Inter_18pt-Light.ttf);
+}
+
+@font-face {
+  font-family: InterBold;
+  src: url(./fonts/inter/Inter_18pt-Bold.ttf);
+}
+
+@font-face {
+  font-family: InterRegular;
+  src: url(./fonts/inter/Inter_18pt-Regular.ttf);
+}
+
+@font-face {
+  font-family: Inter;
+  src: url(./fonts/inter/Inter_18pt-Regular.ttf);
+}
+
+.inter-medium {
+  font-family: 'InterMedium';
+}
+
+.inter-bold {
+  font-family: 'InterBold';
+}
+
+.inter-light {
+  font-family: 'InterLight';
+}
+
+.inter {
+  font-family: 'Inter';
+}
+
+.page-title {
+  font-size: 48px;
+  color: #262824;
+  font-weight: 600;
+}

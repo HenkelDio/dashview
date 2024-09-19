@@ -1,6 +1,6 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated class="bg-white">
+  <q-layout view="lHh Lpr lFf" class="inter">
+    <q-header class="bg-white">
       <q-toolbar>
         <q-btn
           flat
@@ -12,8 +12,7 @@
           class="text-black"
         />
 
-        <q-toolbar-title>
-        </q-toolbar-title>
+        <q-toolbar-title> </q-toolbar-title>
 
         <div>
           <q-avatar color="primary" text-color="white">W</q-avatar>
@@ -21,33 +20,36 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <div class="text-h5 text-center q-my-md">Dash View</div>
-      <q-list>
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
+      <div class="flex column justify-between" style="height: 85%">
+        <q-list>
+          <EssentialLink
+            v-for="link in linksList"
+            :key="link.title"
+            v-bind="link"
+          />
+        </q-list>
+        <div class="text-center text-caption inter-medium">Versão 1.0.0</div>
+      </div>
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <div style="background-color: #f4f6f8">
+        <router-view />
+      </div>
     </q-page-container>
   </q-layout>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
+import EssentialLink, {
+  EssentialLinkProps,
+} from 'components/EssentialLink.vue';
 
 defineOptions({
-  name: 'MainLayout'
+  name: 'MainLayout',
 });
 
 const linksList: EssentialLinkProps[] = [
@@ -55,13 +57,31 @@ const linksList: EssentialLinkProps[] = [
     title: 'Dashboard',
     caption: 'Visualizar gráficos',
     icon: 'insert_chart',
-    link: '/'
-  }
+    link: '/dashboard',
+  },
+  {
+    title: 'Novo gráfico',
+    caption: 'Criar novo gráfico',
+    icon: 'add_chart',
+    link: '/create',
+  },
+  {
+    title: 'Usuários',
+    caption: 'Editar usuários',
+    icon: 'group',
+    link: '/users',
+  },
+  {
+    title: 'Preferências',
+    caption: 'Edite seu perfil',
+    icon: 'manage_accounts',
+    link: '/preferences',
+  },
 ];
 
 const leftDrawerOpen = ref(false);
 
-function toggleLeftDrawer () {
+function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 </script>
