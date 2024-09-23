@@ -14,7 +14,9 @@
     </div>
 
     <div class="flex q-gutter-x-md">
-      <div style="width: 280px; margin-bottom: 20px">
+      <div
+        :style="{ width: isMobile ? '280px' : '100%', marginBottom: '20px' }"
+      >
         <CardInfo
           value="15"
           description="Indicadores em andamento"
@@ -22,7 +24,9 @@
           colorIcon="blue"
         />
       </div>
-      <div style="width: 280px; margin-bottom: 20px">
+      <div
+        :style="{ width: isMobile ? '280px' : '100%', marginBottom: '20px' }"
+      >
         <CardInfo
           value="20"
           description="Usuários cadastrados"
@@ -45,6 +49,7 @@
 </template>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar';
 import BarChart from 'src/components/BarChart.vue';
 import CardInfo from 'src/components/CardInfo.vue';
 import FilterDialog from 'src/components/FilterDialog.vue';
@@ -59,6 +64,9 @@ const showDialogFilter = ref(false);
 function closeFilterDialog() {
   showDialogFilter.value = false;
 }
+
+const $q = useQuasar();
+const isMobile = computed(() => $q.platform.is.mobile);
 
 const filteredIndicators = computed(() => {
   return indicators.filter((indicator) => {

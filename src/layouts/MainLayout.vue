@@ -15,7 +15,24 @@
         <q-toolbar-title> </q-toolbar-title>
 
         <div>
-          <q-avatar color="primary" text-color="white">W</q-avatar>
+          <q-btn flat>
+            <q-avatar color="primary" text-color="white">W</q-avatar>
+            <q-menu transition-show="jump-down" transition-hide="jump-up">
+              <q-list style="min-width: 100px">
+                <q-item clickable>
+                  <q-item-section>Willian José Henkel de Deus</q-item-section>
+                </q-item>
+                <q-separator />
+                <q-item clickable>
+                  <q-item-section>
+                    <q-btn flat @click="$router.push({ path: '/' })"
+                      >Sair</q-btn
+                    >
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
         </div>
       </q-toolbar>
     </q-header>
