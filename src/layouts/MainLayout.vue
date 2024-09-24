@@ -21,8 +21,13 @@
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <div class="text-h5 text-center q-my-md">Dash View</div>
-      <div class="flex column justify-between" style="height: 85%">
+      <div class="text-h5 text-center q-my-md q-mb-lg">
+        <q-img
+          src="../assets/logo.svg"
+          width="30%"
+        />
+      </div>
+      <div class="flex column justify-between" style="height: 80%">
         <q-list>
           <EssentialLink
             v-for="link in linksList"

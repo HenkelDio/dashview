@@ -52,30 +52,37 @@
             <q-separator />
           </template>
 
-          <template v-slot:body-cell-actions="props">
+          <template v-slot:body-cell-actions="">
             <div>
-              <q-btn flat round dense icon="edit" color="primary" />
+              <q-btn flat round dense icon="edit" color="primary" @click="showEditUser = true" />
               <q-btn
                 flat
                 round
                 dense
                 icon="delete"
                 color="negative"
-                @click="() => console.log('props', props)"
+                @click="showEditUser = true"
               />
             </div>
           </template>
         </q-table>
       </q-card-section>
     </q-card>
+
+    <EditUserDialog
+      v-if="showEditUser"
+      @close="() => showEditUser = false"
+    />
   </q-page>
 </template>
 
 <script lang="ts" setup>
+import EditUserDialog from 'src/components/Dialogs/EditUserDialog.vue';
 import { ref } from 'vue';
 
 const usersFilter = ref('active');
 const searchUser = ref('');
+const showEditUser = ref(false)
 
 const columns = ref([
   {
