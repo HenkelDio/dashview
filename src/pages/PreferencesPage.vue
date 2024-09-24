@@ -4,7 +4,7 @@
 
     <q-card flat class="q-mt-xl">
       <q-card-section>
-        <div class="flex items-center q-gutter-x-md">
+        <div class="flex items-center q-gutter-md">
           <q-avatar color="primary" text-color="white">W</q-avatar>
           <div>
             <div class="inter-bold text-h5 text-dark">
@@ -15,7 +15,7 @@
         </div>
       </q-card-section>
       <q-card-section>
-        <q-list separator>
+        <q-list separator style="overflow: auto">
           <q-item clickable v-ripple>
             <q-item-section>
               <div class="inter-medium">Nome</div>

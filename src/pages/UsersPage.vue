@@ -4,8 +4,8 @@
 
     <q-card flat class="q-mt-xl">
       <q-card-section>
-        <div class="flex justify-between">
-          <div class="flex q-gutter-x-md">
+        <div class="flex justify-between q-gutter-y-md">
+          <div class="flex q-gutter-md">
             <q-btn-toggle
               v-model="usersFilter"
               color="grey-4"
