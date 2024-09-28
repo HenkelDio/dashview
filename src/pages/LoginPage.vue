@@ -23,6 +23,7 @@
                   outlined
                   v-model="email"
                   placeholder="E-mail"
+                  type="email"
                 ></q-input>
                 <q-input
                   outlined
@@ -40,7 +41,9 @@
                   no-caps
                   class="full-width inter-bold"
                   style="height: 50px; font-size: 1.1rem"
-                  @click="$router.push({ path: '/dashboard' })"
+                  @click="doLogin()"
+                  :disable="!isFormValid"
+                  :loading="loading"
                 ></q-btn>
               </q-card-section>
             </q-card>
@@ -52,8 +55,39 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { Notify } from 'quasar';
+import { login } from 'src/services/AuthService';
+import { useUserStore } from 'src/stores/userStore';
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const email = ref('');
 const password = ref('');
+const loading = ref(false);
+
+const isFormValid = computed(() => {
+  return password.value !== '' && email.value !== '';
+});
+
+async function doLogin() {
+  loading.value = true;
+  const { data, error } = await login(email.value, password.value);
+  loading.value = false;
+
+  if (error) {
+    Notify.create({
+      caption: 'Erro ao fazer login',
+      group: true,
+      color: 'red',
+    });
+    return;
+  }
+
+  const state = useUserStore();
+  state.setUser(data);
+
+  router.push({ path: '/dashboard' });
+}
 </script>

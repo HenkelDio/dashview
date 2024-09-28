@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-md q-pt-xl">
-    <div class="flex justify-between items-top q-mb-xl">
+    <div class="flex justify-between items-top q-mb-xl q-mt-md">
       <div class="text-h5 page-title">Dashboard</div>
       <div>
         <q-btn
@@ -15,7 +15,7 @@
 
     <div class="flex q-gutter-x-md">
       <div
-        :style="{ width: isMobile ? '280px' : '100%', marginBottom: '20px' }"
+        :style="{ width: isMobile ? '100%' : '280px', marginBottom: '20px' }"
       >
         <CardInfo
           value="15"
@@ -25,7 +25,7 @@
         />
       </div>
       <div
-        :style="{ width: isMobile ? '280px' : '100%', marginBottom: '20px' }"
+        :style="{ width: isMobile ? '100%' : '280px', marginBottom: '20px' }"
       >
         <CardInfo
           value="20"

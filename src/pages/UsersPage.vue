@@ -41,11 +41,15 @@
           row-key="name"
           table-header-class="inter-bold text-dark"
           rows-per-page-label="Resultados por página"
+          :loading="loading"
         >
           <template v-slot:body-cell-name="props">
             <div class="flex items-center q-py-sm">
-              <q-avatar size="32px" class="q-mr-sm text-white" color="primary"
-                >W</q-avatar
+              <q-avatar
+                size="32px"
+                class="q-mr-sm text-white"
+                color="primary"
+                >{{ props.row.name.charAt(0) }}</q-avatar
               >
               {{ props.row.name }}
             </div>
@@ -72,10 +76,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { listUsers } from 'src/services/UserService';
+import { IUserTable, User } from 'src/types';
+import { onMounted, ref } from 'vue';
 
 const usersFilter = ref('active');
 const searchUser = ref('');
+const errorOnLoadUsers = ref(false);
+const loading = ref(false);
 
 const columns = ref([
   {
@@ -94,38 +102,66 @@ const columns = ref([
     align: 'left',
   },
   {
-    name: 'username',
-    label: 'USERNAME',
-    field: 'username',
+    name: 'document',
+    label: 'DOCUMENTO',
+    field: 'document',
     sortable: true,
     align: 'left',
   },
   { name: 'role', label: 'FUNÇÃO', field: 'role', align: 'left' },
-  { name: 'projects', label: 'PROJETOS', field: 'projects', align: 'left' },
+  {
+    name: 'departments',
+    label: 'DEPARTAMENTOS',
+    field: 'departments',
+    align: 'left',
+  },
   { name: 'actions', align: 'center', field: 'actions' },
 ]);
 
-const rows = ref([
-  {
-    name: 'Willian José Henkel de Deus',
-    email: 'willianhenkel@gmail.com',
-    username: 'henkel',
-    role: 'admin',
-    projects: 'sei la, 333',
-  },
-  {
-    name: 'Willian José Henkel de Deus',
-    email: 'willianhenkel@gmail.com',
-    username: 'henkel',
-    role: 'admin',
-    projects: 'sei la, 333',
-  },
-  {
-    name: 'Willian José Henkel de Deus',
-    email: 'willianhenkel@gmail.com',
-    username: 'henkel',
-    role: 'admin',
-    projects: 'sei la, 333',
-  },
-]);
+const rows = ref([] as IUserTable[]);
+
+interface ApiResponse {
+  data: User[] | null;
+  error: unknown | null;
+}
+
+async function listAllUsers() {
+  loading.value = true;
+  const { data, error }: ApiResponse = await listUsers();
+  loading.value = false;
+
+  if (error) {
+    errorOnLoadUsers.value = true;
+    return;
+  }
+
+  if (data) {
+    const currentRows: IUserTable[] = data.map((user) => {
+      const departments =
+        user.departments?.map((item) => item.label).join(', ') || '';
+
+      return {
+        name: user.name,
+        email: user.email,
+        document: user.document,
+        role: getRole(user.role),
+        departments: departments,
+      };
+    });
+
+    rows.value = currentRows;
+  }
+}
+
+function getRole(role: string) {
+  if (role === 'admin') {
+    return 'ADMINISTRADOR';
+  }
+
+  return '';
+}
+
+onMounted(() => {
+  listAllUsers();
+});
 </script>

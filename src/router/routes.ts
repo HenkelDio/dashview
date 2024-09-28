@@ -26,6 +26,14 @@ const routes: RouteRecordRaw[] = [
     children: [{ path: '', component: () => import('pages/LoginPage.vue') }],
   },
 
+  {
+    path: '/define-password',
+    props: (route) => ({ token: route.query.token }),
+    children: [
+      { path: '', component: () => import('pages/DefinePasswordPage.vue') },
+    ],
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {

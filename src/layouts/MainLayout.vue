@@ -16,11 +16,17 @@
 
         <div>
           <q-btn flat>
-            <q-avatar color="primary" text-color="white">W</q-avatar>
-            <q-menu transition-show="jump-down" transition-hide="jump-up">
+            <q-avatar color="primary" text-color="white">{{
+              name.charAt(0).toUpperCase()
+            }}</q-avatar>
+            <q-menu
+              transition-show="jump-down"
+              transition-hide="jump-up"
+              style="width: 200px"
+            >
               <q-list style="min-width: 100px">
                 <q-item clickable>
-                  <q-item-section>Willian José Henkel de Deus</q-item-section>
+                  <q-item-section>{{ name }}</q-item-section>
                 </q-item>
                 <q-separator />
                 <q-item clickable>
@@ -64,6 +70,7 @@ import { ref } from 'vue';
 import EssentialLink, {
   EssentialLinkProps,
 } from 'components/EssentialLink.vue';
+import { useUserStore } from 'src/stores/userStore';
 
 defineOptions({
   name: 'MainLayout',
@@ -95,6 +102,9 @@ const linksList: EssentialLinkProps[] = [
     link: '/preferences',
   },
 ];
+
+const userStore = useUserStore();
+const name = ref(userStore.$state.user.name);
 
 const leftDrawerOpen = ref(false);
 
