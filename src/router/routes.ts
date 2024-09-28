@@ -20,6 +20,13 @@ const routes: RouteRecordRaw[] = [
       { path: '', component: () => import('pages/PreferencesPage.vue') },
     ],
   },
+  {
+    path: '/create',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/CreateDashboardPage.vue') },
+    ],
+  },
 
   {
     path: '/',
