@@ -20,6 +20,7 @@ export interface User {
   departments: IDepartment[];
   role: string;
   token?: string;
+  status?: string;
 }
 
 export interface IUserTable {
@@ -28,6 +29,7 @@ export interface IUserTable {
   document: string;
   departments: string;
   role: string;
+  status?: string;
 }
 
 export interface IDepartment {

@@ -31,9 +31,7 @@
                 <q-separator />
                 <q-item clickable>
                   <q-item-section>
-                    <q-btn flat @click="$router.push({ path: '/' })"
-                      >Sair</q-btn
-                    >
+                    <q-btn flat @click="logout()">Sair</q-btn>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -45,18 +43,17 @@
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <div class="text-h5 text-center q-my-md q-mb-lg">
-        <q-img
-          src="../assets/logo.svg"
-          width="30%"
-        />
+        <q-img src="../assets/logo.svg" width="30%" />
       </div>
       <div class="flex column justify-between" style="height: 80%">
         <q-list>
-          <EssentialLink
-            v-for="link in linksList"
-            :key="link.title"
-            v-bind="link"
-          />
+          <div v-for="link in linksList" :key="link.title">
+            <!-- Mostrar todas as abas para 'admin' ou abas sem 'security' -->
+            <EssentialLink
+              v-bind="link"
+              v-if="!link.security || role === 'admin'"
+            />
+          </div>
         </q-list>
         <div class="text-center text-caption inter-medium">Versão 1.0.0</div>
       </div>
@@ -76,10 +73,13 @@ import EssentialLink, {
   EssentialLinkProps,
 } from 'components/EssentialLink.vue';
 import { useUserStore } from 'src/stores/userStore';
+import { useRouter } from 'vue-router';
 
 defineOptions({
   name: 'MainLayout',
 });
+
+const router = useRouter();
 
 const linksList: EssentialLinkProps[] = [
   {
@@ -99,6 +99,14 @@ const linksList: EssentialLinkProps[] = [
     caption: 'Editar usuários',
     icon: 'group',
     link: '/users',
+    security: 'admin',
+  },
+  {
+    title: 'Departamentos',
+    caption: 'Gerenciar departamentos',
+    icon: 'apartment',
+    link: '/departments',
+    security: 'admin',
   },
   {
     title: 'Preferências',
@@ -110,10 +118,17 @@ const linksList: EssentialLinkProps[] = [
 
 const userStore = useUserStore();
 const name = ref(userStore.$state.user.name);
+const role = ref(userStore.$state.user.role);
 
 const leftDrawerOpen = ref(false);
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
+}
+
+function logout() {
+  const state = useUserStore();
+  state.clearUser();
+  router.push({ path: '/' });
 }
 </script>

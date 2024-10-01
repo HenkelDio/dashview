@@ -4,7 +4,9 @@ import { User } from 'src/types';
 export const useUserStore = defineStore('user', {
   state: () => {
     const storedUser = localStorage.getItem('user');
+    const isAuthenticated = localStorage.getItem('isAuthenticated');
     return {
+      isAuthenticated: isAuthenticated ? true : false,
       user: storedUser ? JSON.parse(storedUser) : ({} as User),
     };
   },
@@ -12,11 +14,14 @@ export const useUserStore = defineStore('user', {
   actions: {
     setUser(user: User) {
       this.user = user;
-      localStorage.setItem('user', JSON.stringify(user)); // Armazena o usuário no localStorage
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('isAuthenticated', JSON.stringify('true'));
     },
     clearUser() {
       this.user = {} as User;
-      localStorage.removeItem('user'); // Remove o usuário do localStorage
+      localStorage.removeItem('user');
+      localStorage.removeItem('isAuthenticated');
+      this.isAuthenticated = false;
     },
   },
 });

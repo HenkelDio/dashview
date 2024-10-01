@@ -1,6 +1,6 @@
 // boot file
 import { boot } from 'quasar/wrappers';
-import axios, { AxiosInstance, AxiosStatic } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 
 declare module 'vue' {
@@ -12,8 +12,14 @@ declare module 'vue' {
 }
 
 // Criação das instâncias do Axios
-const api = axios.create({ baseURL: 'http://localhost:8087' });
-const publicApi = axios.create({ baseURL: 'http://localhost:8087' });
+const api = axios.create({
+  baseURL:
+    'http://dashview-server-env.eba-m52e5mug.sa-east-1.elasticbeanstalk.com',
+});
+const publicApi = axios.create({
+  baseURL:
+    'http://dashview-server-env.eba-m52e5mug.sa-east-1.elasticbeanstalk.com',
+});
 
 // Interceptores de requisição
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,7 +28,7 @@ function RequestInterceptors(instance: AxiosInstance, store: any) {
     const token = store.state._value.user.user.token; // Ajuste conforme necessário
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token} a`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
@@ -30,7 +36,8 @@ function RequestInterceptors(instance: AxiosInstance, store: any) {
 }
 
 function ResponseInterceptors(
-  instance: AxiosStatic,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  instance: any,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   store: any,
   router: Router | { path: string }[]
@@ -40,11 +47,11 @@ function ResponseInterceptors(
     function (res: any) {
       return res;
     },
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async function (err: { toString: () => any }) {
-      const error = err.toString();
-      if (error.includes('400') || error.includes('401')) {
-        store.dispatch('logout');
+    async function (err: any) {
+      if (err.response && err.response.status === 401) {
+        localStorage.removeItem('user');
         router.push({ path: '/' });
       }
 
@@ -57,7 +64,7 @@ function ResponseInterceptors(
 export default boot(({ app, store, router }) => {
   // Configura os interceptores
   RequestInterceptors(api, store);
-  ResponseInterceptors(axios, store, router);
+  ResponseInterceptors(api, store, router);
 
   // Injeta as instâncias do Axios no Vue
   app.config.globalProperties.$api = api;

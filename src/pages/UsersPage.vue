@@ -15,12 +15,18 @@
               unelevated
               text-color="grey-9"
               class="inter-bold"
+              emit-value
               :options="[
-                { label: 'Ativos', value: 'active' },
-                { label: 'Inativos', value: 'disable' },
+                { label: 'Ativos', value: 'ACTIVE' },
+                { label: 'Inativos', value: 'INACTIVE' },
               ]"
             />
-            <q-input v-model="searchUser" outlined dense placeholder="Buscar" />
+            <q-input
+              v-model="searchParam"
+              outlined
+              dense
+              placeholder="Buscar pelo nome"
+            />
           </div>
           <q-btn
             no-caps
@@ -29,6 +35,7 @@
             class="inter-bold"
             size="1rem"
             unelevated
+            @click="showDialog('create', {} as User)"
           />
         </div>
       </q-card-section>
@@ -36,19 +43,20 @@
       <q-card-section>
         <q-table
           flat
-          :rows="rows"
+          :rows="filteredRows"
           :columns="columns"
           row-key="name"
           table-header-class="inter-bold text-dark"
           rows-per-page-label="Resultados por página"
           :loading="loading"
+          no-data-label="Sem dados disponíveis"
         >
           <template v-slot:body-cell-name="props">
             <div class="flex items-center q-py-sm">
               <q-avatar
                 size="32px"
                 class="q-mr-sm text-white"
-                color="primary"
+                :color="props.row.status === 'ACTIVE' ? 'primary' : 'dark'"
                 >{{ props.row.name.charAt(0) }}</q-avatar
               >
               {{ props.row.name }}
@@ -56,15 +64,24 @@
             <q-separator />
           </template>
 
-          <template v-slot:body-cell-actions="">
+          <template v-slot:body-cell-actions="props">
             <div>
               <q-btn
                 flat
                 round
                 dense
-                icon="edit"
+                :icon="
+                  props.row.status === 'ACTIVE'
+                    ? 'edit'
+                    : 'published_with_changes'
+                "
                 color="primary"
-                @click="showEditUser = true"
+                @click="
+                  showDialog(
+                    props.row.status === 'ACTIVE' ? 'edit' : 'reactivate',
+                    props.row
+                  )
+                "
               />
               <q-btn
                 flat
@@ -72,29 +89,75 @@
                 dense
                 icon="delete"
                 color="negative"
-                @click="showEditUser = true"
+                v-if="props.row.status === 'ACTIVE'"
+                @click="showDeleteUserDialog = true"
               />
             </div>
+
+            <GenericDialog
+              v-if="showDeleteUserDialog"
+              @close="() => (showDeleteUserDialog = false)"
+              @confirm="disableOneUser(props.row)"
+              title="Desativar usuário?"
+              description="O usuário não terá mais acesso a plataforma"
+              confirm-label-button="Desativar"
+              color-label-button="red"
+              :loading="loadingButtonDeleteUser"
+            />
+
+            <GenericDialog
+              v-if="showReactivateDialog"
+              @close="() => (showReactivateDialog = false)"
+              @confirm="reactivateOneUser(props.row)"
+              title="Reativar usuário?"
+              description="O usuário terá acesso novamente a plataforma"
+              confirm-label-button="Reativar"
+              color-label-button="primary"
+              :loading="loadingButtonReactivateUser"
+            />
           </template>
         </q-table>
       </q-card-section>
     </q-card>
 
-    <EditUserDialog v-if="showEditUser" @close="() => (showEditUser = false)" />
+    <UserDialog
+      v-if="showDialogUser"
+      @close="
+        () => {
+          (showDialogUser = false), listAllUsers();
+        }
+      "
+      :isEdit="isEditDialog"
+      :userDocumentEditing="userDocumentEditing"
+    />
   </q-page>
 </template>
 
 <script lang="ts" setup>
-import EditUserDialog from 'src/components/Dialogs/EditUserDialog.vue';
-import { listUsers } from 'src/services/UserService';
+import { Notify } from 'quasar';
+import GenericDialog from 'src/components/Dialogs/GenericDialog.vue';
+import UserDialog from 'src/components/Dialogs/UserDialog.vue';
+import {
+  disableUser,
+  listUsers,
+  reactivateUser,
+} from 'src/services/UserService';
 import { IUserTable, User } from 'src/types';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
-const usersFilter = ref('active');
-const searchUser = ref('');
+const usersFilter = ref('ACTIVE');
 const errorOnLoadUsers = ref(false);
 const loading = ref(false);
-const showEditUser = ref(false);
+const rows = ref([] as IUserTable[]);
+const showDialogUser = ref(false);
+const isEditDialog = ref(false);
+const showDeleteUserDialog = ref(false);
+const loadingButtonDeleteUser = ref(false);
+const showReactivateDialog = ref(false);
+const loadingButtonReactivateUser = ref(false);
+const searchParam = ref('');
+const filteredRows = ref([] as IUserTable[]);
+const userDocumentEditing = ref('');
 
 const columns = ref([
   {
@@ -129,7 +192,20 @@ const columns = ref([
   { name: 'actions', align: 'center', field: 'actions' },
 ]);
 
-const rows = ref([] as IUserTable[]);
+function showDialog(type: string, row: User) {
+  userDocumentEditing.value = '';
+  if (type === 'reactivate') {
+    showReactivateDialog.value = true;
+    return;
+  }
+
+  if (type === 'edit') {
+    isEditDialog.value = true;
+    userDocumentEditing.value = row.document;
+  }
+
+  showDialogUser.value = true;
+}
 
 interface ApiResponse {
   data: User[] | null;
@@ -138,7 +214,7 @@ interface ApiResponse {
 
 async function listAllUsers() {
   loading.value = true;
-  const { data, error }: ApiResponse = await listUsers();
+  const { data, error }: ApiResponse = await listUsers(usersFilter.value);
   loading.value = false;
 
   if (error) {
@@ -157,10 +233,12 @@ async function listAllUsers() {
         document: user.document,
         role: getRole(user.role),
         departments: departments,
+        status: user.status,
       };
     });
 
     rows.value = currentRows;
+    filteredRows.value = currentRows;
   }
 }
 
@@ -169,8 +247,70 @@ function getRole(role: string) {
     return 'ADMINISTRADOR';
   }
 
+  if (role === 'user') {
+    return 'USUÁRIO';
+  }
+
   return '';
 }
+
+async function disableOneUser(row: User) {
+  loadingButtonDeleteUser.value = true;
+  const { error } = await disableUser(row.document);
+  loadingButtonDeleteUser.value = false;
+
+  if (error) {
+    Notify.create({
+      message: 'Erro ao desabilitar usuário',
+      group: true,
+      color: 'red',
+    });
+    return;
+  }
+
+  Notify.create({
+    message: 'Usuário desabilitado com usuário!',
+    group: true,
+    color: 'green',
+  });
+
+  showDeleteUserDialog.value = false;
+  listAllUsers();
+}
+
+async function reactivateOneUser(row: User) {
+  loadingButtonReactivateUser.value = true;
+  const { error } = await reactivateUser(row.document);
+  loadingButtonReactivateUser.value = false;
+
+  if (error) {
+    Notify.create({
+      caption: 'Erro ao reativar usuário',
+      group: true,
+      color: 'red',
+    });
+    return;
+  }
+
+  Notify.create({
+    caption: 'Usuário reativado com usuário!',
+    group: true,
+    color: 'green',
+  });
+
+  showReactivateDialog.value = false;
+  listAllUsers();
+}
+
+watch(usersFilter, () => {
+  listAllUsers();
+});
+
+watch(searchParam, (value: string) => {
+  filteredRows.value = rows.value.filter((item) =>
+    item.name.toLowerCase().includes(value.toLowerCase())
+  );
+});
 
 onMounted(() => {
   listAllUsers();
