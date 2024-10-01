@@ -159,7 +159,15 @@ const searchParam = ref('');
 const filteredRows = ref([] as IUserTable[]);
 const userDocumentEditing = ref('');
 
-const columns = ref([
+interface Column {
+  name: string;
+  required?: boolean;
+  label: string;
+  align?: 'left' | 'center' | 'right';
+  field: string;
+  sortable?: boolean;
+}
+const columns = ref<Column[]>([
   {
     name: 'name',
     required: true,
@@ -189,7 +197,7 @@ const columns = ref([
     field: 'departments',
     align: 'left',
   },
-  { name: 'actions', align: 'center', field: 'actions' },
+  { name: 'actions', align: 'center', field: 'actions', label: '' },
 ]);
 
 function showDialog(type: string, row: User) {
