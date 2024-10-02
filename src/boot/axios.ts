@@ -13,12 +13,10 @@ declare module 'vue' {
 
 // Criação das instâncias do Axios
 const api = axios.create({
-  baseURL:
-    'http://dashview-server-env.eba-m52e5mug.sa-east-1.elasticbeanstalk.com',
+  baseURL: 'https://www.mydashview.xyz',
 });
 const publicApi = axios.create({
-  baseURL:
-    'http://dashview-server-env.eba-m52e5mug.sa-east-1.elasticbeanstalk.com',
+  baseURL: 'https://www.mydashview.xyz',
 });
 
 // Interceptores de requisição
