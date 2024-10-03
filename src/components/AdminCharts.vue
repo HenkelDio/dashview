@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex row q-gutter-x-md q-mb-md">
-      <q-card style="width: 55%" flat>
+      <q-card style="width: 48%" flat>
         <q-card-section>
           <div class="text-caption inter-medium text-grey-9 q-mb-lg">
             QUANTIDADE DE INDICADORES POR PERSPECTIVA
@@ -15,13 +15,13 @@
           </div>
         </q-card-section>
       </q-card>
-      <div style="width: 40%">
+      <div style="width: 48%">
         <q-card style="height: 100%" flat>
           <q-card-section>
-            <div class="text-caption inter-medium text-grey-9 q-mb-xl">
+            <div class="text-caption inter-medium text-grey-9 q-mb-lg">
               QUANTIDADE DE INDICADORES POR CLASSIFICAÇÃO
             </div>
-            <div style="height: 200px">
+            <div style="height: 300px">
               <Doughnut
                 id="my-chart-id"
                 :options="chartOptionsClassification"
@@ -78,6 +78,7 @@ import {
   BarElement,
   PointElement,
 } from 'chart.js';
+import { Platform } from 'quasar';
 
 // Registrar os componentes necessários do Chart.js
 ChartJS.register(
@@ -91,6 +92,8 @@ ChartJS.register(
   ChartDataLabels,
   PointElement
 );
+
+console.log('Platform.is.mobile', Platform.is.mobile);
 
 // Opções específicas para o gráfico de barras horizontais
 const chartOptionsResponsible = {

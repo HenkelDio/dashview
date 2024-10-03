@@ -1,7 +1,9 @@
 <template>
   <q-page class="q-pa-md q-pt-xl">
     <div class="flex justify-between items-top q-mb-xl q-mt-md">
-      <div class="text-h5 page-title">Dashboard</div>
+      <div class="text-h5 page-title" style="margin-bottom: 10px">
+        Dashboard
+      </div>
       <div v-if="userStore.$state.user.role === 'admin'">
         <q-toggle
           v-model="adminMode"
@@ -20,7 +22,7 @@
     </div>
 
     <div class="flex q-gutter-x-md">
-      <div
+      <!-- <div
         :style="{ width: isMobile ? '100%' : '280px', marginBottom: '20px' }"
       >
         <CardInfo
@@ -29,12 +31,12 @@
           icon="insert_chart"
           colorIcon="blue"
         />
-      </div>
+      </div> -->
       <div
         :style="{ width: isMobile ? '100%' : '280px', marginBottom: '20px' }"
       >
         <CardInfo
-          value="20"
+          :value="usersQuantity"
           description="Usuários cadastrados"
           icon="account_circle"
           colorIcon="green"
@@ -67,15 +69,17 @@ import BarChart from 'src/components/BarChart.vue';
 import CardInfo from 'src/components/CardInfo.vue';
 import FilterDialog from 'src/components/FilterDialog.vue';
 import { indicators } from 'src/content/mock';
+import { countUsers } from 'src/services/UserService';
 import { useFilterStore } from 'src/stores/filters';
 import { useUserStore } from 'src/stores/userStore';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 const store = useFilterStore();
 const userStore = useUserStore();
 
 const showDialogFilter = ref(false);
 const adminMode = ref(userStore.$state.user.role === 'admin');
+const usersQuantity = ref('0');
 
 function closeFilterDialog() {
   showDialogFilter.value = false;
@@ -99,5 +103,19 @@ const filteredIndicators = computed(() => {
     // Retorna apenas os indicadores que atendem a todos os critérios
     return matchType && matchProcess && matchDepartment && matchResponsible;
   });
+});
+
+async function getUsersQuantity() {
+  const { data, error } = await countUsers();
+
+  if (error) {
+    console.log(error);
+  }
+
+  usersQuantity.value = data.toString();
+}
+
+onMounted(() => {
+  getUsersQuantity();
 });
 </script>

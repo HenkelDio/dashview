@@ -92,7 +92,7 @@ const linksList: EssentialLinkProps[] = [
     title: 'Novo gráfico',
     caption: 'Criar novo gráfico',
     icon: 'add_chart',
-    link: '/create',
+    link: '/list-charts',
   },
   {
     title: 'Usuários',

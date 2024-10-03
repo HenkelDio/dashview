@@ -96,3 +96,12 @@ export const resetUserPassword = async (document: string) => {
     return { data: null, error: e };
   }
 };
+
+export const countUsers = async () => {
+  try {
+    const response = await api.get('/users/count-users');
+    return { data: response.data, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
+};
