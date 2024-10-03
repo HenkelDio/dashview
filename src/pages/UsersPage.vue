@@ -202,6 +202,8 @@ const columns = ref<Column[]>([
 
 function showDialog(type: string, row: User) {
   userDocumentEditing.value = '';
+  isEditDialog.value = false;
+
   if (type === 'reactivate') {
     showReactivateDialog.value = true;
     return;

@@ -36,6 +36,10 @@
       </div>
     </div>
 
+    <div style="margin-bottom: 10px">
+      <AdminCharts />
+    </div>
+
     <div
       class="flex q-gutter-y-md"
       v-for="(indicator, index) in filteredIndicators"
@@ -50,6 +54,7 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
+import AdminCharts from 'src/components/AdminCharts.vue';
 import BarChart from 'src/components/BarChart.vue';
 import CardInfo from 'src/components/CardInfo.vue';
 import FilterDialog from 'src/components/FilterDialog.vue';

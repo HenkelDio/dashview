@@ -85,9 +85,12 @@ async function doLogin() {
     return;
   }
 
+
   const state = useUserStore();
   state.setUser(data);
 
+  // window.open('http://localhost:9000/dashboard', '_self')
   router.push({ path: '/dashboard' });
+
 }
 </script>

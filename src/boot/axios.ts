@@ -13,11 +13,19 @@ declare module 'vue' {
 
 // Criação das instâncias do Axios
 const api = axios.create({
-  baseURL: 'https://www.mydashview.xyz',
+  baseURL: 'http://localhost:8087',
 });
 const publicApi = axios.create({
-  baseURL: 'https://www.mydashview.xyz',
+  baseURL: 'http://localhost:8087',
 });
+
+// const api = axios.create({
+//   baseURL: 'https://www.mydashview.xyz',
+// })
+
+// const publicApi = axios.create({
+//   baseURL: 'https://www.mydashview.xyz',
+// });
 
 // Interceptores de requisição
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
