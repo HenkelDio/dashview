@@ -137,5 +137,11 @@ const chartData = ref({
 const chartOptions = ref({
   responsive: true,
   maintainAspectRatio: isMobile.value ? true : false,
+  plugins: {
+    datalabels: {
+      display: true,
+      color: 'white',
+    },
+  },
 });
 </script>
