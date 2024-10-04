@@ -5,14 +5,14 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/dashboard',
     component: () => import('layouts/MainLayout.vue'),
-    beforeEnter: (_to, _from, next) => {
-      const store = useUserStore();
-      if (store.$state.isAuthenticated) {
-        next();
-      } else {
-        next({ path: '/' });
-      }
-    },
+    // beforeEnter: (_to, _from, next) => {
+    //   const store = useUserStore();
+    //   if (store.$state.isAuthenticated) {
+    //     next();
+    //   } else {
+    //     next({ path: '/' });
+    //   }
+    // },
     children: [
       { path: '', component: () => import('pages/DashboardPage.vue') },
     ],
