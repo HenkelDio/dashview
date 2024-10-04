@@ -3,7 +3,7 @@
     <q-page-container class="inter">
       <q-page class="flex flex-center bg-grey-2">
         <div class="flex justify-between" style="width: 1100px">
-          <div>
+          <div class="q-pa-md">
             <div class="text-h6 inter">DASH VIEW</div>
             <div class="text-h3 text-grey-10">
               Vamos transformar dados <br />
@@ -62,6 +62,7 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+
 
 const email = ref('');
 const password = ref('');
