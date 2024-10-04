@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="flex row q-gutter-x-md q-mb-md">
-      <q-card style="width: 48%" flat>
+    <div class="flex row q-gutter-md q-mb-md">
+      <q-card class="card-dash" flat>
         <q-card-section>
           <div class="text-caption inter-medium text-grey-9 q-mb-lg">
             QUANTIDADE DE INDICADORES POR PERSPECTIVA
@@ -15,7 +15,7 @@
           </div>
         </q-card-section>
       </q-card>
-      <div style="width: 48%">
+      <div class="card-dash">
         <q-card style="height: 100%" flat>
           <q-card-section>
             <div class="text-caption inter-medium text-grey-9 q-mb-lg">
@@ -118,23 +118,23 @@ const chartOptionsResponsible = {
 // Dados para o gráfico de barras horizontais
 const chartDataResponsible = {
   labels: [
-    'GRACIELI FERREIRA COELHO',
-    'ALISAN TORRES MORAES',
-    'JACKELLINE DAYANNE LEAL',
     'VALDIRENE DOS SANTOS',
-    'FERNANDA FANHANI',
-    'ERICO VINICIUS RODRIGUES',
-    'JOSIANE PATRICIA DE SOUZA',
+    'ALISAN TORRES MORAES',
     'ANA RITA HUGEN',
-    'KELI PATRICIA TABORDA RIBAS',
+    'JACKELLINE DAYANNE LEAL',
     'ELLEN JULIANE KAMINSKI',
     'DAVILYN BRILHANTE PANTOJA',
+    'FERNANDA FANHANI',
+    'KELI PATRICIA TABORDA RIBAS',
+    'ERICO VINICIUS RODRIGUES',
+    'GRACIELI FERREIRA COELHO',
     'FRANCIELLE MACIEL DE SOUZA',
+    'JOSIANE PATRICIA DE SOUZA',
   ],
   datasets: [
     {
       label: 'Quantidade de Indicadores',
-      data: [2, 9, 8, 25, 6, 6, 4, 9, 7, 8, 6, 8], // Quantidades correspondentes aos nomes
+      data: [17, 13, 12, 9, 7, 7, 7, 7, 7, 6, 5, 1], // Quantidades correspondentes aos nomes
       backgroundColor: '#1565C0',
       hoverBackgroundColor: '#0D47A1',
     },
@@ -166,34 +166,36 @@ const chartOptionsDepartament = {
 // Dados para o gráfico de barras horizontais
 const chartDataDepartament = {
   labels: [
-    'ADMINISTRAÇÃO',
-    'CADASTRO',
-    'CENTRO CIRURGICO',
     'ENFERMAGEM',
     'FARMÁCIA',
-    'FATURAMENTO',
-    'FINANCEIRO',
-    'GESTÃO DE PESSOAS',
     'HIGIENIZAÇÃO',
-    'MANUTENÇÃO',
-    'NÚCLEO DE SEG. DO PACIENTE',
-    'NUTRIÇÃO',
-    'QUALIDADE',
-    'RECEPÇÃO',
-    'ROUPARIA',
-    'SUPRIMENTOS',
-    'TESOURARIA',
-    'UNIDADE DE INTERNAÇÃO',
+    'RECEPÇÃO',                               // 8
+    'NUTRIÇÃO',                               // 7
+    'FINANCEIRO',                             // 7
+    'GESTÃO DE PESSOAS',                      // 6
+    'CENTRO CIRURGICO',                       // 5
+    'FATURAMENTO',                            // 5
+    'QUALIDADE',                               // 4
+    'SUPRIMENTOS',                            // 4
+    'CADASTRO',                               // 3
+    'NÚCLEO DE SEGURANÇA DO PACIENTE',       // 3
+    'ADMINISTRAÇÃO',                          // 2
+    'MANUTENÇÃO',                             // 2
+    'ROUPARIA',                               // 2
+    'SAME', // 2
+    'UNIDADE DE INTERNAÇÃO', // 1
+    'TESOURARIA',                             // 1
   ],
   datasets: [
     {
       label: 'Quantidade de Indicadores',
-      data: [3, 2, 5, 13, 21, 6, 9, 8, 3, 2, 2, 7, 4, 3, 2, 3, 1, 1], // Quantidades para cada setor
+      data: [15, 13, 8, 8, 7, 7, 6, 5, 5, 4, 4, 3, 3, 2, 2, 2, 2, 1, 1], // Quantidades para cada setor
       backgroundColor: '#1565C0', // Cor das barras
       hoverBackgroundColor: '#0D47A1', // Cor ao passar o mouse
     },
   ],
 };
+
 
 const chartOptions = {
   responsive: true,
@@ -217,16 +219,17 @@ const chartOptions = {
 };
 
 const chartData = {
-  labels: ['Financeiro', 'Crescimento', 'Clientes', 'Processos Internos'],
+  labels: ['Financeira', 'Processos Internos', 'Clientes e Mercado', 'Pessoas/Infraestrutura', 'Res. Social e Ambiental'],
   datasets: [
     {
       label: 'Indicadores por Perspectiva',
-      data: [30, 20, 15, 35],
-      backgroundColor: ['#0D47A1', '#1565C0', '#1E88E5', '#2196F3'],
-      hoverBackgroundColor: ['#0B3D91', '#0D47A1', '#1565C0', '#1E88E5'],
+      data: [19, 3, 9, 8, 8],
+      backgroundColor: ['#0D47A1', '#1976D2', '#42A5F5', '#64B5F6', '#90CAF9'], // Tonalidades de azul
+      hoverBackgroundColor: ['#0B3D91', '#1565C0', '#1E88E5', '#2196F3', '#BBDEFB'], // Tonalidades de azul mais escuras
     },
   ],
 };
+
 
 const chartOptionsClassification = {
   responsive: true,
@@ -261,3 +264,15 @@ const chartDataClassification = {
   ],
 };
 </script>
+
+<style lang="scss">
+.card-dash {
+  width: 48%
+}
+
+@media (max-width: 700px) {
+  .card-dash {
+    width: 100%
+  }
+}
+</style>
