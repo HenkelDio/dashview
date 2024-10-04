@@ -95,12 +95,12 @@ const linksList: EssentialLinkProps[] = [
     icon: 'insert_chart',
     link: '/dashboard',
   },
-  // {
-  //   title: 'Novo gráfico',
-  //   caption: 'Criar novo gráfico',
-  //   icon: 'add_chart',
-  //   link: '/list-charts',
-  // },
+  {
+    title: 'Novo gráfico',
+    caption: 'Criar novo gráfico',
+    icon: 'add_chart',
+    link: '/list-charts',
+  },
   {
     title: 'Usuários',
     caption: 'Editar usuários',

@@ -169,22 +169,22 @@ const chartDataDepartament = {
     'ENFERMAGEM',
     'FARMÁCIA',
     'HIGIENIZAÇÃO',
-    'RECEPÇÃO',                               // 8
-    'NUTRIÇÃO',                               // 7
-    'FINANCEIRO',                             // 7
-    'GESTÃO DE PESSOAS',                      // 6
-    'CENTRO CIRURGICO',                       // 5
-    'FATURAMENTO',                            // 5
-    'QUALIDADE',                               // 4
-    'SUPRIMENTOS',                            // 4
-    'CADASTRO',                               // 3
-    'NÚCLEO DE SEGURANÇA DO PACIENTE',       // 3
-    'ADMINISTRAÇÃO',                          // 2
-    'MANUTENÇÃO',                             // 2
-    'ROUPARIA',                               // 2
+    'RECEPÇÃO', // 8
+    'NUTRIÇÃO', // 7
+    'FINANCEIRO', // 7
+    'GESTÃO DE PESSOAS', // 6
+    'CENTRO CIRURGICO', // 5
+    'FATURAMENTO', // 5
+    'QUALIDADE', // 4
+    'SUPRIMENTOS', // 4
+    'CADASTRO', // 3
+    'NÚCLEO DE SEGURANÇA DO PACIENTE', // 3
+    'ADMINISTRAÇÃO', // 2
+    'MANUTENÇÃO', // 2
+    'ROUPARIA', // 2
     'SAME', // 2
     'UNIDADE DE INTERNAÇÃO', // 1
-    'TESOURARIA',                             // 1
+    'TESOURARIA', // 1
   ],
   datasets: [
     {
@@ -195,7 +195,6 @@ const chartDataDepartament = {
     },
   ],
 };
-
 
 const chartOptions = {
   responsive: true,
@@ -219,17 +218,28 @@ const chartOptions = {
 };
 
 const chartData = {
-  labels: ['Financeira', 'Processos Internos', 'Clientes e Mercado', 'Pessoas/Infraestrutura', 'Res. Social e Ambiental'],
+  labels: [
+    'Financeira',
+    'Processos Internos',
+    'Clientes e Mercado',
+    'Pessoas/Infraestrutura',
+    'Res. Social e Ambiental',
+  ],
   datasets: [
     {
       label: 'Indicadores por Perspectiva',
       data: [19, 3, 9, 8, 8],
-      backgroundColor: ['#0D47A1', '#1976D2', '#42A5F5', '#64B5F6', '#90CAF9'], // Tonalidades de azul
-      hoverBackgroundColor: ['#0B3D91', '#1565C0', '#1E88E5', '#2196F3', '#BBDEFB'], // Tonalidades de azul mais escuras
+      backgroundColor: ['#0D47A1', '#6731c4', '#4CAF50', '#42A5F5', '#81C784'], // Azul, Lilás e Verde
+      hoverBackgroundColor: [
+        '#0B3D91',
+        '#6A1B9A',
+        '#388E3C',
+        '#1E88E5',
+        '#66BB6A',
+      ], // Tonalidades mais escuras
     },
   ],
 };
-
 
 const chartOptionsClassification = {
   responsive: true,
@@ -258,8 +268,8 @@ const chartDataClassification = {
     {
       label: 'Indicadores por Perspectiva',
       data: [53, 45],
-      backgroundColor: ['#0D47A1', '#1565C0'],
-      hoverBackgroundColor: ['#0B3D91', '#0D47A1'],
+      backgroundColor: ['#0D47A1', '#6731c4'],
+      hoverBackgroundColor: ['#0B3D91', '#6A1B9A'],
     },
   ],
 };
@@ -267,12 +277,12 @@ const chartDataClassification = {
 
 <style lang="scss">
 .card-dash {
-  width: 48%
+  width: 48%;
 }
 
 @media (max-width: 700px) {
   .card-dash {
-    width: 100%
+    width: 100%;
   }
 }
 </style>

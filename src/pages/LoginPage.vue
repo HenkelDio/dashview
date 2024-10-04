@@ -63,7 +63,6 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-
 const email = ref('');
 const password = ref('');
 const loading = ref(false);
@@ -86,12 +85,14 @@ async function doLogin() {
     return;
   }
 
-
   const state = useUserStore();
   state.setUser(data);
 
   // window.open('http://localhost:9000/dashboard', '_self')
-  router.push({ path: '/dashboard' });
-
+  if (state.$state.user.role === 'admin') {
+    router.push({ path: '/dashboard-admin' });
+  } else {
+    router.push({ path: '/dashboard' });
+  }
 }
 </script>

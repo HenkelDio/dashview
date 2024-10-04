@@ -15,6 +15,12 @@
         <q-input v-model="title" outlined label="Título do gráfico" />
       </q-card-section>
     </q-card>
+
+    <q-card flat class="q-mt-xl">
+      <q-card-section>
+        <q-input v-model="title" outlined label="Título do gráfico" />
+      </q-card-section>
+    </q-card>
   </q-page>
 </template>
 
