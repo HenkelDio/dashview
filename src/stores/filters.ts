@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
 export const useFilterStore = defineStore('filters', {
   state: () => ({
@@ -6,19 +6,23 @@ export const useFilterStore = defineStore('filters', {
     processModel: '',
     departmentModel: '',
     responsibleModel: '',
+    yearModel: '',
   }),
   actions: {
     setTypeModel(value: string) {
-      this.typeModel = value
+      this.typeModel = value;
     },
     setProcessModel(value: string) {
-      this.processModel = value
+      this.processModel = value;
     },
     setDepartmentModel(value: string) {
-      this.departmentModel = value
+      this.departmentModel = value;
     },
     setResponsibleModel(value: string) {
-      this.responsibleModel = value
-    }
-  }
-})
+      this.responsibleModel = value;
+    },
+    setYearModel(value: string) {
+      this.yearModel = value;
+    },
+  },
+});

@@ -18,6 +18,21 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/dashboard-admin',
+    component: () => import('layouts/MainLayout.vue'),
+    // beforeEnter: (_to, _from, next) => {
+    //   const store = useUserStore();
+    //   if (store.$state.isAuthenticated) {
+    //     next();
+    //   } else {
+    //     next({ path: '/' });
+    //   }
+    // },
+    children: [
+      { path: '', component: () => import('pages/AdminDashboardPage.vue') },
+    ],
+  },
+  {
     path: '/users',
     beforeEnter: (_to, _from, next) => {
       const store = useUserStore();
@@ -45,6 +60,21 @@ const routes: RouteRecordRaw[] = [
       { path: '', component: () => import('pages/DepartmentsPage.vue') },
     ],
   },
+
+  {
+    path: '/modules',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/ModulesPage.vue') }],
+  },
+
   {
     path: '/preferences',
     beforeEnter: (_to, _from, next) => {

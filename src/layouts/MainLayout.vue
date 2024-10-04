@@ -83,6 +83,13 @@ const router = useRouter();
 
 const linksList: EssentialLinkProps[] = [
   {
+    title: 'Dashboard Admin',
+    caption: 'Visualizar gráficos administrativo',
+    icon: 'analytics',
+    link: '/dashboard-admin',
+    security: 'admin',
+  },
+  {
     title: 'Dashboard',
     caption: 'Visualizar gráficos',
     icon: 'insert_chart',
@@ -102,10 +109,10 @@ const linksList: EssentialLinkProps[] = [
     security: 'admin',
   },
   {
-    title: 'Departamentos',
-    caption: 'Gerenciar departamentos',
-    icon: 'apartment',
-    link: '/departments',
+    title: 'Módulos',
+    caption: 'Configurações de módulos',
+    icon: 'view_module',
+    link: '/modules',
     security: 'admin',
   },
   {
