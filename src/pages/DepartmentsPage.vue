@@ -45,7 +45,7 @@
         <div class="flex q-gutter-md">
           <div v-for="(item, index) in departments" v-bind:key="index">
             <div style="width: 300px">
-              <CardDepartment :label="item.label" />
+              <CardDepartment :label="item.label" :name="item.name" />
             </div>
           </div>
         </div>

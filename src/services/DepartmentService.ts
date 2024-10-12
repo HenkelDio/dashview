@@ -17,4 +17,13 @@ export const createDepartment = async (payload: IDepartment) => {
   } catch (e) {
     return { data: null, error: e };
   }
+}
+
+  export const changeStatusDepartment = async (status: string, name: string) => {
+    try {
+      const response = await api.put(`/departments/change-status?status=${status}&name=${name}`);
+      return { data: response.data, error: null };
+    } catch (e) {
+      return { data: null, error: e };
+  }
 };
