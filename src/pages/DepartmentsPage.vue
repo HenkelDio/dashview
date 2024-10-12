@@ -5,14 +5,30 @@
     <q-card flat class="q-mt-xl">
       <q-card-section>
         <div class="flex justify-between">
-          <div class="flex justify-between q-gutter-y-md">
+          <div class="flex q-gutter-md">
+            <q-btn-toggle
+              v-model="departmentStatus"
+              color="grey-4"
+              toggle-color="grey-5"
+              no-caps
+              toggle-text-color="grey-10"
+              unelevated
+              text-color="grey-9"
+              class="inter-bold"
+              emit-value
+              :options="[
+                { label: 'Ativos', value: 'ACTIVE' },
+                { label: 'Inativos', value: 'INACTIVE' },
+              ]"
+            />
             <q-input
               v-model="searchDepartment"
               outlined
               dense
-              placeholder="Buscar"
+              placeholder="Buscar pelo nome"
             />
           </div>
+
           <q-btn
             no-caps
             label="Adicionar departamento"
@@ -51,6 +67,7 @@ import { onMounted, ref } from 'vue';
 const searchDepartment = ref('');
 const departments = ref([] as IDepartment[]);
 const showDialog = ref(false);
+const departmentStatus = ref('ACTIVE');
 
 interface IResponse {
   data: IDepartment[] | null;
