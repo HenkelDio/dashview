@@ -60,6 +60,21 @@ const routes: RouteRecordRaw[] = [
       { path: '', component: () => import('pages/DepartmentsPage.vue') },
     ],
   },
+  {
+    path: '/perspectives',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/PerspectivesPage.vue') },
+    ],
+  },
 
   {
     path: '/modules',
@@ -88,6 +103,22 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/PreferencesPage.vue') },
+    ],
+  },
+  {
+    path: '/preferences-details',
+    props: (route) => ({ id: route.query.id }),
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/PerspectiveDetailsPage.vue') },
     ],
   },
   {

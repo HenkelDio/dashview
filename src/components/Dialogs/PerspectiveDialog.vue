@@ -3,12 +3,16 @@
     <q-card style="width: 500px">
       <q-card-section>
         <div class="inter-medium" style="font-size: 1.5rem">
-          Adicionar novo departamento
+          Adicionar nova perspectiva
         </div>
       </q-card-section>
       <q-card-section>
         <div class="flex column q-gutter-y-md">
-          <q-input label="Nome do departamento" v-model="name" outlined />
+          <q-input label="Nome da perspectiva" v-model="name" outlined />
+          <q-input label="Primeira descrição" v-model="descriptions[0]" outlined />
+          <q-input label="Segunda descrição" v-model="descriptions[1]" outlined />
+          <q-input label="Terceira descrição" v-model="descriptions[2]" outlined />
+          <q-input label="Quarta descrição" v-model="descriptions[3]" outlined />
         </div>
       </q-card-section>
       <q-card-actions align="right">
@@ -17,7 +21,8 @@
           unelevated
           label="Salvar"
           :disable="!name"
-          @click="addDepartment()"
+          @click="addPerspective()"
+          :loading="loading"
         />
         <q-btn flat label="Fechar" @click="emit('close')" />
       </q-card-actions>
@@ -27,23 +32,28 @@
 
 <script lang="ts" setup>
 import { Notify } from 'quasar';
-import { createDepartment } from 'src/services/DepartmentService';
-import { IDepartmentCreate } from 'src/types';
+import { createPerspective } from 'src/services/ModuleService';
+import { IPerspectiveCreate } from 'src/types';
 import { ref } from 'vue';
 
 const show = ref(true);
 const name = ref('');
+const descriptions = ref([])
+const loading = ref(false);
 
-async function addDepartment() {
-  const payload: IDepartmentCreate = {
+async function addPerspective() {
+  const payload: IPerspectiveCreate = {
     name: name.value,
-    label: name.value,
+    descriptions: descriptions.value,
   };
-  const { error } = await createDepartment(payload);
+
+  loading.value = true;
+  const { error } = await createPerspective(payload);
+  loading.value = false;
 
   if (error) {
     Notify.create({
-      caption: 'Erro ao criar departamento',
+      caption: 'Erro ao criar perspectiva',
       color: 'red',
       group: true,
     });
@@ -51,7 +61,7 @@ async function addDepartment() {
   }
 
   Notify.create({
-    caption: 'Departamento criado com sucesso!',
+    caption: 'Perspectiva criada com sucesso!',
     color: 'green',
     group: true,
   });

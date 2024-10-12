@@ -42,15 +42,25 @@
       </q-card-section>
 
       <q-card-section>
-        <div class="flex q-gutter-md">
-          <div v-for="(item, index) in departments" v-bind:key="index">
+
+
+        <q-inner-loading
+          :showing="loading"
+          style="height: 100px;"
+          color="primary"
+        />
+
+        <div class="flex q-gutter-md" v-if="!loading">
+          <div v-for="(item) in departmentsFiltered" v-bind:key="item.name">
             <div style="width: 300px">
-              <CardDepartment :label="item.label" :name="item.name" />
+              <CardDepartment :department="item" @changedStatus="getDepartments()"/>
             </div>
           </div>
         </div>
       </q-card-section>
     </q-card>
+
+
 
     <DepartmentDialog v-if="showDialog" @close="close" />
   </q-page>
@@ -62,12 +72,14 @@ import CardDepartment from 'src/components/CardDepartment.vue';
 import DepartmentDialog from 'src/components/Dialogs/DepartmentDialog.vue';
 import { getAllDepartments } from 'src/services/DepartmentService';
 import { IDepartment } from 'src/types';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 const searchDepartment = ref('');
 const departments = ref([] as IDepartment[]);
+const departmentsFiltered = ref([] as IDepartment[]);
 const showDialog = ref(false);
 const departmentStatus = ref('ACTIVE');
+const loading = ref(false);
 
 interface IResponse {
   data: IDepartment[] | null;
@@ -80,7 +92,9 @@ function close() {
 }
 
 async function getDepartments() {
-  const { data, error }: IResponse = await getAllDepartments();
+  loading.value = true;
+  const { data, error }: IResponse = await getAllDepartments(departmentStatus.value);
+  loading.value = false;
 
   if (error) {
     Notify.create({
@@ -93,8 +107,19 @@ async function getDepartments() {
 
   if (data) {
     departments.value = data;
+    departmentsFiltered.value = data;
   }
 }
+
+watch(departmentStatus, () => {
+  getDepartments();
+});
+
+watch(searchDepartment, (value: string) => {
+  departmentsFiltered.value = departments.value.filter((item) =>
+    item.name.toLowerCase().includes(value.toLowerCase())
+  );
+});
 
 onMounted(() => {
   getDepartments();

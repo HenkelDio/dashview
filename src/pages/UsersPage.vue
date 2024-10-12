@@ -142,7 +142,7 @@ import {
   listUsers,
   reactivateUser,
 } from 'src/services/UserService';
-import { IUserTable, User } from 'src/types';
+import { Column, IUserTable, User } from 'src/types';
 import { onMounted, ref, watch } from 'vue';
 
 const usersFilter = ref('ACTIVE');
@@ -159,14 +159,6 @@ const searchParam = ref('');
 const filteredRows = ref([] as IUserTable[]);
 const userDocumentEditing = ref('');
 
-interface Column {
-  name: string;
-  required?: boolean;
-  label: string;
-  align?: 'left' | 'center' | 'right';
-  field: string;
-  sortable?: boolean;
-}
 const columns = ref<Column[]>([
   {
     name: 'name',

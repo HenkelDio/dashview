@@ -122,7 +122,7 @@ interface IResponse {
 
 async function getDepartments() {
   loadingDepartments.value = true;
-  const { data, error }: IResponse = await getAllDepartments();
+  const { data, error }: IResponse = await getAllDepartments('ACTIVE');
   loadingDepartments.value = false;
 
   if (error) {
