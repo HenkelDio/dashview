@@ -12,20 +12,20 @@ declare module 'vue' {
 }
 
 // Criação das instâncias do Axios
-const api = axios.create({
-  baseURL: 'http://localhost:8087',
-});
-const publicApi = axios.create({
-  baseURL: 'http://localhost:8087',
-});
-
 // const api = axios.create({
-//   baseURL: 'https://viewdash.onrender.com',
-// })
-
-// const publicApi = axios.create({
-//   baseURL: 'https://viewdash.onrender.com',
+//   baseURL: 'http://localhost:8087',
 // });
+// const publicApi = axios.create({
+//   baseURL: 'http://localhost:8087',
+// });
+
+const api = axios.create({
+  baseURL: 'https://viewdash.onrender.com',
+})
+
+const publicApi = axios.create({
+  baseURL: 'https://viewdash.onrender.com',
+});
 
 // Interceptores de requisição
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
