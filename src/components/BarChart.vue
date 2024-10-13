@@ -1,8 +1,8 @@
 <template>
   <q-card style="width: 100%; max-width: 100%" flat>
     <q-card-section>
-      <div class="text-h6 inter-medium">{{ indicator.description }}</div>
-      <div class="text-subtitle2">{{ indicator.type }}</div>
+      <div class="text-h6 inter-medium">{{ indicator.title }}</div>
+      <div class="text-subtitle2">{{ indicator.department }}</div>
     </q-card-section>
     <q-card-section>
       <Bar id="my-chart-id" :options="chartOptions" :data="chartData" />
@@ -13,14 +13,8 @@
         <q-list bordered separator>
           <q-item clickable v-ripple>
             <q-item-section>
-              <q-item-label>{{ indicator.description }}</q-item-label>
+              <q-item-label>{{ indicator.title }}</q-item-label>
               <q-item-label caption>Descrição</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section>
-              <q-item-label>{{ indicator.type }}</q-item-label>
-              <q-item-label caption>Tipo</q-item-label>
             </q-item-section>
           </q-item>
           <q-item clickable v-ripple>
@@ -31,19 +25,19 @@
           </q-item>
           <q-item clickable v-ripple>
             <q-item-section>
-              <q-item-label>{{ indicator.perpective }}</q-item-label>
+              <q-item-label>{{ indicator.perspective }}</q-item-label>
               <q-item-label caption>Perspectiva</q-item-label>
             </q-item-section>
           </q-item>
           <q-item clickable v-ripple>
             <q-item-section>
-              <q-item-label>{{ indicator.departament }}</q-item-label>
+              <q-item-label>{{ indicator.department }}</q-item-label>
               <q-item-label caption>Setor</q-item-label>
             </q-item-section>
           </q-item>
           <q-item clickable v-ripple>
             <q-item-section>
-              <q-item-label>{{ indicator.responsable }}</q-item-label>
+              <q-item-label>{{ indicator.responsible }}</q-item-label>
               <q-item-label caption>Responsável</q-item-label>
             </q-item-section>
           </q-item>
@@ -83,7 +77,7 @@ import {
   LinearScale,
 } from 'chart.js';
 import { computed, ref } from 'vue';
-import { Indicator } from 'src/types';
+import { IChart, IChartData } from 'src/types';
 import { useQuasar } from 'quasar';
 
 const $q = useQuasar();
@@ -98,45 +92,29 @@ ChartJS.register(
 );
 
 interface IProps {
-  indicator: Indicator;
+  chart: IChart;
 }
 
 const props = defineProps<IProps>();
-const indicator = props.indicator;
+const indicator = props.chart;
 
 const isMobile = computed(() => $q.platform.is.mobile);
 
 const chartData = ref({
-  labels: [
-    'Janeiro',
-    'Fevereiro',
-    'Março',
-    'Abril',
-    'Maio',
-    'Junho',
-    'Julho',
-    'Agosto',
-    'Setembro',
-    'Agosto',
-    'Outubro',
-    'Novembro',
-    'Dezembro',
-  ],
-  datasets: [
-    {
-      label: indicator.label,
-      data: indicator.data,
-      backgroundColor: indicator.backgroundColor,
-      borderWidth: 1,
-      borderRadius: 5,
-      borderSkipped: false,
-    },
-  ],
+  labels: indicator.labels,
+  datasets: indicator.chartData.map((indicator: IChartData) => ({
+    label: indicator.label,
+    data: indicator.data,
+    backgroundColor: indicator.backgroundColor,
+    borderWidth: 1,
+    borderRadius: 5,
+    borderSkipped: false,
+  }))
 });
-
+console.log(isMobile)
 const chartOptions = ref({
   responsive: true,
-  maintainAspectRatio: isMobile.value ? true : false,
+  maintainAspectRatio: false,
   plugins: {
     datalabels: {
       display: true,

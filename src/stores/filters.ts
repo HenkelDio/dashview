@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 export const useFilterStore = defineStore('filters', {
   state: () => ({
     typeModel: '',
+    perspectiveModel: '',
     processModel: '',
     departmentModel: '',
     responsibleModel: '',
@@ -11,6 +12,9 @@ export const useFilterStore = defineStore('filters', {
   actions: {
     setTypeModel(value: string) {
       this.typeModel = value;
+    },
+    setPerspectiveModel(value: string) {
+      this.perspectiveModel = value;
     },
     setProcessModel(value: string) {
       this.processModel = value;

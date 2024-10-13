@@ -3,14 +3,7 @@
       <q-card-section>
         <div class="flex items-center justify-between">
           <div class="inter-bold text-h6">{{props.title}}</div>
-            <div
-              style="
-                width: 7px;
-                height: 7px;
-                background-color: blue;
-                border-radius: 10px;
-              "
-            ></div>
+          <q-badge rounded color="primary" label="Novo" />
         </div>
         <div class="text-caption text-grey-9">
             {{props.description}}

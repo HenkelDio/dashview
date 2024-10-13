@@ -41,6 +41,12 @@
       </q-toolbar>
     </q-header>
 
+    <GreetingsDialog
+      v-if="showGreetingsDialog"
+      @close="showGreetingsDialog = false"
+      :name="name"
+    />
+
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <div class="text-h5 text-center q-my-md q-mb-lg">
         <q-img src="../assets/logo.svg" width="30%" />
@@ -74,6 +80,7 @@ import EssentialLink, {
 } from 'components/EssentialLink.vue';
 import { useUserStore } from 'src/stores/userStore';
 import { useRouter } from 'vue-router';
+import GreetingsDialog from 'src/components/Dialogs/GreetingsDialog.vue';
 
 defineOptions({
   name: 'MainLayout',
@@ -126,6 +133,8 @@ const linksList: EssentialLinkProps[] = [
 const userStore = useUserStore();
 const name = ref(userStore.$state.user.name);
 const role = ref(userStore.$state.user.role);
+
+const showGreetingsDialog = ref(userStore.$state.user.permissions ? userStore.$state.user.permissions.firstLogin : false);
 
 const leftDrawerOpen = ref(false);
 

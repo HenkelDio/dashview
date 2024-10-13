@@ -1,13 +1,13 @@
 <template>
   <q-page class="q-pa-md q-pt-xl">
-    <div class="text-h5 page-title">Gráficos</div>
+    <div class="text-h5 page-title">Processos</div>
 
     <q-card flat class="q-mt-xl">
       <q-card-section>
         <div class="flex justify-between">
           <div class="flex q-gutter-md">
             <q-btn-toggle
-              v-model="chartStatus"
+              v-model="processStatus"
               color="grey-4"
               toggle-color="grey-5"
               no-caps
@@ -31,13 +31,12 @@
 
           <q-btn
             no-caps
-            label="Adicionar gráfico"
+            label="Adicionar processo"
             color="primary"
             class="inter-bold"
             size="1rem"
             unelevated
-            @click="$router.push({ path: '/create-chart'})"
-            :style="inputStyle"
+            @click="processId = '', showDialog = true"
           />
         </div>
       </q-card-section>
@@ -52,7 +51,7 @@
           rows-per-page-label="Resultados por página"
           loading-label="Carregando..."
           :loading="loading"
-          no-data-label="Nenhum gráfico encontrado"
+          no-data-label="Sem dados disponíveis"
         >
         <template v-slot:body-cell-createdBy="props">
             <div class="flex items-center q-py-sm q-pl-xl">
@@ -79,7 +78,7 @@
                 dense
                 icon="edit"
                 color="primary"
-                @click="$router.push({path: `/create-chart`, query: {id: props.row.id }})"
+                @click="showDialogEdit(props.row.id)"
               />
               <q-btn
                 flat
@@ -98,51 +97,60 @@
             <GenericDialog
               v-if="showDisableDialog"
               @close="() => showDisableDialog = false"
-              @confirm="changeStatus(props.row.id, props.row.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE')"
-              title="Desativar gráfico?"
-              description="O gráfico não ficará mais visível"
+              @confirm="changeStatusProcess(props.row.id, props.row.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE')"
+              title="Desativar processo?"
+              description=""
               confirm-label-button="Desativar"
               color-label-button="red"
-              :loading="loadingDisable"
+              :loading="loadingDisablePerspective"
             />
           </template>
         </q-table>
       </q-card-section>
     </q-card>
+
+    <ProcessDialog
+      v-if="showDialog"
+      @close="showDialog = false, getAllProcesses()"
+      :id="processId"
+    />
   </q-page>
 </template>
 
 <script lang="ts" setup>
-import { Notify, useQuasar } from 'quasar';
-import { Column, IChart, STATUS } from 'src/types';
-import { computed, onMounted, ref, watch } from 'vue';
+import { Notify } from 'quasar';
+import { changeStatus, findAllProcesses } from 'src/services/ModuleService';
+import { Column, IProcess, STATUS } from 'src/types';
+import { onMounted, ref, watch } from 'vue';
 import moment from 'moment';
 import 'moment/dist/locale/pt-br'
 import GenericDialog from 'src/components/Dialogs/GenericDialog.vue';
-import { changeStatusChart, findAllChartsByDepartment } from 'src/services/ChartService';
+import ProcessDialog from 'src/components/Dialogs/ProcessDialog.vue';
 
-interface IChartTable {
+interface IProcessTable {
   id: string,
-  title: string,
+  name: string,
   createdBy: string
   createdOn: string,
   status: STATUS
 }
 
 const loading = ref(false);
-const rows = ref([] as IChartTable[]);
+const rows = ref([] as IProcessTable[]);
 const showDisableDialog = ref(false);
 const searchParam = ref('');
-const filteredRows = ref([] as IChartTable[]);
-const chartStatus = ref('ACTIVE');
-const loadingDisable = ref(false);
+const filteredRows = ref([] as IProcessTable[]);
+const processStatus = ref('ACTIVE');
+const showDialog = ref(false);
+const loadingDisablePerspective = ref(false);
+const processId = ref('');
 
 const columns = ref<Column[]>([
   {
-    name: 'title',
+    name: 'name',
     required: true,
-    field: 'title',
-    label: 'GRÁFICO',
+    field: 'name',
+    label: 'PROCESSO',
     sortable: false,
     align: 'left',
   },
@@ -163,9 +171,9 @@ const columns = ref<Column[]>([
   { name: 'actions', align: 'center', field: 'actions', label: '' },
 ]);
 
-async function getAllChartByDepartment() {
+async function getAllProcesses() {
   loading.value = true;
-  const { data, error } = await findAllChartsByDepartment(chartStatus.value);
+  const { data, error } = await findAllProcesses(processStatus.value);
   loading.value = false;
 
   if(error) {
@@ -176,13 +184,13 @@ async function getAllChartByDepartment() {
   }
 
   if(data) {
-    const currentRows: IChartTable[] = data.map((chart: IChart) => {
+    const currentRows: IProcessTable[] = data.map((process: IProcess) => {
       return {
-        id: chart.id,
-        title: chart.title,
-        createdBy: chart.createdBy.name,
-        createdOn: formatDate(chart.createdOn),
-        status: chart.status,
+        id: process.id,
+        name: process.name,
+        createdBy: process.createdBy.name,
+        createdOn: formatDate(process.createdOn),
+        status: process.status,
       };
     });
 
@@ -196,10 +204,10 @@ function formatDate(timestamp: number): string {
     return moment(timestamp).fromNow();
 }
 
-async function changeStatus(id: string, status: string) {
-  loadingDisable.value = true;
-  const { error } = await changeStatusChart(status, id);
-  loadingDisable.value = false;
+async function changeStatusProcess(id: string, status: string) {
+  loadingDisablePerspective.value = true;
+  const { error } = await changeStatus(id, status, 'process');
+  loadingDisablePerspective.value = false;
 
   if(error) {
     Notify.create({
@@ -209,42 +217,35 @@ async function changeStatus(id: string, status: string) {
     return;
   }
   showDisableDialog.value = false;
-  getAllChartByDepartment();
+  getAllProcesses();
 }
 
 function handleShowDialog(status: string, id: string,) {
   if(status === 'ACTIVE') {
     showDisableDialog.value = true
   } else {
-    changeStatus(id, 'ACTIVE');
+    changeStatusProcess(id, 'ACTIVE');
   }
+}
+
+function showDialogEdit(id: string) {
+  showDialog.value = true;
+  processId.value = id;
 }
 
 watch(searchParam, (value: string) => {
   filteredRows.value = rows.value.filter((item) =>
-    item.title.toLowerCase().includes(value.toLowerCase())
+    item.name.toLowerCase().includes(value.toLowerCase())
   );
 });
 
-watch(chartStatus, () => {
+watch(processStatus, () => {
   showDisableDialog.value = false;
-  getAllChartByDepartment()
-});
-
-const $q = useQuasar();
-
-const inputStyle = computed(() => {
-  return $q.platform.is.mobile
-    ? {
-        marginTop: '10px',
-      }
-    : {
-
-      };
+  getAllProcesses()
 });
 
 onMounted(() => {
-  getAllChartByDepartment()
+  getAllProcesses()
 })
 
 </script>

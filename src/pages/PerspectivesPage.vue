@@ -217,6 +217,7 @@ async function changeStatusPerspective(id: string, status: string) {
     return;
   }
 
+  showDisableDialog.value = false;
   getAllPerspectives();
 }
 

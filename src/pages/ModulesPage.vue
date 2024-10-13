@@ -20,7 +20,8 @@ import { ref } from 'vue';
 
 const modules = ref([
   {title: 'Departamentos', description: 'Crie e edite departamentos', link: '/departments'},
-  {title: 'Perpectivas', description: 'Crie e edite perpectivas', link: '/perspectives'},
+  {title: 'Perspectivas', description: 'Crie e edite perspectivas', link: '/perspectives'},
+  {title: 'Processos', description: 'Crie e edite processos', link: '/processes'},
 ])
 
 </script>

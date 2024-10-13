@@ -1,8 +1,13 @@
 <template>
   <q-page class="q-pa-md q-pt-xl">
     <div class="flex justify-between items-top q-mb-xl q-mt-md">
-      <div class="text-h5 page-title" style="margin-bottom: 10px">
-        Dashboard
+      <div>
+        <div class="text-h5 page-title" style="margin-bottom: 10px">
+          Dashboard
+        </div>
+        <div class="text-subtitle1 inter-medium" style="margin-left: 2px;">
+          {{ store.$state.yearModel }}
+        </div>
       </div>
       <div>
         <q-btn
@@ -26,7 +31,7 @@
           colorIcon="blue"
         />
       </div> -->
-      <div
+      <!-- <div
         :style="{ width: isMobile ? '100%' : '280px', marginBottom: '20px' }"
       >
         <CardInfo
@@ -35,15 +40,31 @@
           icon="account_circle"
           colorIcon="green"
         />
-      </div>
+      </div> -->
+    </div>
+
+    <div v-if="loading" class="flex column q-gutter-y-md">
+      <q-skeleton type="QToolbar" height="250px"/>
+      <q-skeleton type="QToolbar" height="250px"/>
+      <q-skeleton type="QToolbar" height="250px"/>
+      <q-skeleton type="QToolbar" height="250px"/>
     </div>
 
     <div
       class="flex q-gutter-y-md"
-      v-for="(indicator, index) in filteredIndicators"
+      v-for="(chart, index) in filteredIndicators"
       :key="index"
     >
-      <BarChart :indicator="indicator" class="q-mb-md" />
+      <BarChart :chart="chart" class="q-mb-md" />
+    </div>
+
+    <div v-if="!loading && filteredIndicators.length === 0" class="q-mt-xl">
+      <div class="text-center">
+        <div class="text-h6 text-center inter-medium">Puxa, não foi encontrado nenhum gráfico...
+          <br>Você pode tentar realizar outro filtros ou cadastrar novos gráficos</div>
+          <q-btn flat label="Adicionar novo gráfico" class="inter-bold text-secondary" @click="$router.push({ path: '/list-charts'})"></q-btn>
+          <Vue3Lottie :animationData="notFound" :height="200" :width="200"/>
+      </div>
     </div>
 
     <FilterDialog v-if="showDialogFilter" @close="closeFilterDialog()" />
@@ -51,41 +72,46 @@
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar';
+import { Notify } from 'quasar';
 import BarChart from 'src/components/BarChart.vue';
-import CardInfo from 'src/components/CardInfo.vue';
 import FilterDialog from 'src/components/FilterDialog.vue';
-import { indicators } from 'src/content/mock';
+import { findAllChartsByDepartment } from 'src/services/ChartService';
 import { countUsers } from 'src/services/UserService';
 import { useFilterStore } from 'src/stores/filters';
+import { IChart } from 'src/types';
 import { computed, onMounted, ref } from 'vue';
+import notFound from '../assets/notfound.json';
+import { Vue3Lottie } from 'vue3-lottie';
 
 const store = useFilterStore();
 
 const showDialogFilter = ref(false);
 const usersQuantity = ref('0');
+const loading = ref(false);
+const charts = ref([] as IChart[]);
 
 function closeFilterDialog() {
   showDialogFilter.value = false;
 }
 
-const $q = useQuasar();
-const isMobile = computed(() => $q.platform.is.mobile);
-
 const filteredIndicators = computed(() => {
-  return indicators.filter((indicator) => {
+  return charts.value.filter((indicator: IChart) => {
     // Comparar os valores do store com os campos do indicador
-    const matchType = !store.typeModel || indicator.type === store.typeModel;
+    const matchPerspective = !store.perspectiveModel || indicator.perspective === store.perspectiveModel;
     const matchProcess =
       !store.processModel || indicator.process === store.processModel;
     const matchDepartment =
-      !store.departmentModel || indicator.departament === store.departmentModel;
+      !store.departmentModel || indicator.department === store.departmentModel;
     const matchResponsible =
       !store.responsibleModel ||
-      indicator.responsable === store.responsibleModel;
+      indicator.responsible === store.responsibleModel;
+
+    const matchYear =
+      !store.yearModel ||
+      indicator.year === store.yearModel;
 
     // Retorna apenas os indicadores que atendem a todos os critérios
-    return matchType && matchProcess && matchDepartment && matchResponsible;
+    return matchPerspective && matchProcess && matchDepartment && matchResponsible && matchYear;
   });
 });
 
@@ -99,7 +125,27 @@ async function getUsersQuantity() {
   usersQuantity.value = data.toString();
 }
 
+async function getChartsByDepartment() {
+  loading.value = true;
+  const { data, error }: {data: IChart[] | null, error: unknown} = await findAllChartsByDepartment('ACTIVE');
+  loading.value = false;
+
+  if(error) {
+    Notify.create({
+      message: 'Erro ao encontrar indicadores',
+      color: 'red'
+    })
+    return;
+  }
+
+  if(data) {
+    charts.value = data;
+  }
+
+}
+
 onMounted(() => {
   getUsersQuantity();
+  getChartsByDepartment();
 });
 </script>

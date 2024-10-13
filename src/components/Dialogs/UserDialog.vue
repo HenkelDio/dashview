@@ -55,6 +55,8 @@
             :rules="[(val) => !!val || 'Departamento é obrigatório']"
             :loading="loadingDepartments"
             :disable="loadingDepartments || loading"
+            option-value="name"
+            option-label="label"
             hint="O usuário pode ter mais de um departamento"
           />
         </div>
@@ -136,6 +138,7 @@ async function getDepartments() {
 
   if (data) {
     departmentsOptions.value = data;
+    console.log('departmentsOptions', departmentsOptions.value)
   }
 }
 

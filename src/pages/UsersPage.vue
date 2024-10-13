@@ -49,7 +49,7 @@
           table-header-class="inter-bold text-dark"
           rows-per-page-label="Resultados por página"
           :loading="loading"
-          no-data-label="Sem dados disponíveis"
+          no-data-label="Nenhum usuário encontrado"
         >
           <template v-slot:body-cell-name="props">
             <div class="flex items-center q-py-sm">

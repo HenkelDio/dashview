@@ -3,15 +3,15 @@
     <q-page-container class="inter">
       <q-page class="flex flex-center bg-grey-2">
         <div class="flex justify-between" style="width: 1100px">
-          <div class="q-pa-md">
+          <div class="q-pa-md displayOnMobile">
             <div class="text-h6 inter">DASH VIEW</div>
             <div class="text-h3 text-grey-10">
               Vamos transformar dados <br />
               em <b>respostas</b>
             </div>
           </div>
-          <div>
-            <q-card class="q-pa-md" style="width: 400px">
+          <div class="widthOnMobile">
+            <q-card class="q-pa-md widthOnMobile" style="width: 400px">
               <q-card-section class="text-center">
                 <div class="text-grey-9 text-h5 text-weight-bold">Entrar</div>
                 <div class="text-grey-8">
@@ -96,3 +96,15 @@ async function doLogin() {
   }
 }
 </script>
+
+<style lang="scss">
+@media (max-width: 750px) {
+  .displayOnMobile {
+    display: none;
+  }
+
+  .widthOnMobile {
+    width: 100% !important;
+  }
+}
+</style>

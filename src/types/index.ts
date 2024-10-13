@@ -21,6 +21,9 @@ export interface User {
   role: string;
   token?: string;
   status?: string;
+  permissions: {
+    firstLogin: boolean
+  }
 }
 
 export interface IUserTable {
@@ -67,3 +70,51 @@ export interface IPerspectiveCreate {
   name: string,
   descriptions: string[]
 }
+
+export interface IProcess {
+  id: string,
+  name: string,
+  createdBy: {document: string, name: string}
+  createdOn: number,
+  status: STATUS
+}
+
+export interface IChart {
+  id: string,
+  title: string
+  type: string
+  perspective: string
+  process: string
+  department: string
+  responsible: string
+  periodicity: string
+  objective: string
+  formula: string
+  labels: string[]
+  year: string,
+  createdBy: {document: string, name: string}
+  createdOn: number,
+  status: STATUS,
+  chartData: IChartData[]
+}
+
+export interface IChartData {
+  label: string
+  data: number[]
+  backgroundColor: string
+}
+
+export interface IChartCreate {
+  title: string
+  type: string
+  perspective: string
+  process: string
+  department: string
+  responsible: string
+  periodicity: string
+  objective: string
+  formula: string
+  labels: string[]
+  chartData: IChartData[]
+}
+

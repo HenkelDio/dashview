@@ -105,3 +105,12 @@ export const countUsers = async () => {
     return { data: null, error: e };
   }
 };
+
+export const setNotFirstLogin = async () => {
+  try {
+    const response = await api.put('/users/set-not-first-login');
+    return { data: response.data, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
+};

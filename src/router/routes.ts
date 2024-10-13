@@ -122,6 +122,23 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/processes',
+    props: (route) => ({ id: route.query.id }),
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/ProcessesPage.vue') },
+    ],
+  },
+
+  {
     path: '/list-charts',
     beforeEnter: (_to, _from, next) => {
       const store = useUserStore();
@@ -139,6 +156,7 @@ const routes: RouteRecordRaw[] = [
 
   {
     path: '/create-chart',
+    props: (route) => ({ id: route.query.id }),
     beforeEnter: (_to, _from, next) => {
       const store = useUserStore();
       if (store.$state.isAuthenticated) {
