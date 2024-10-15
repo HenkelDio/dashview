@@ -118,3 +118,10 @@ export interface IChartCreate {
   chartData: IChartData[]
 }
 
+export interface IFilterCharts {
+  department?: string,
+  perspective?: string,
+  process?: string,
+  responsible?: string,
+  year?: string
+}

@@ -114,7 +114,7 @@
 
 <script lang="ts" setup>
 import { Notify, useQuasar } from 'quasar';
-import { Column, IChart, STATUS } from 'src/types';
+import { Column, IChart, IFilterCharts, STATUS } from 'src/types';
 import { computed, onMounted, ref, watch } from 'vue';
 import moment from 'moment';
 import 'moment/dist/locale/pt-br'
@@ -165,7 +165,12 @@ const columns = ref<Column[]>([
 
 async function getAllChartByDepartment() {
   loading.value = true;
-  const { data, error } = await findAllChartsByDepartment(chartStatus.value);
+
+  const payload: IFilterCharts = {
+
+  }
+
+  const { data, error } = await findAllChartsByDepartment(chartStatus.value, payload);
   loading.value = false;
 
   if(error) {

@@ -52,13 +52,13 @@
 
     <div
       class="flex q-gutter-y-md"
-      v-for="(chart, index) in filteredIndicators"
+      v-for="(chart, index) in charts"
       :key="index"
     >
       <BarChart :chart="chart" class="q-mb-md" />
     </div>
 
-    <div v-if="!loading && filteredIndicators.length === 0" class="q-mt-xl">
+    <div v-if="!loading && charts.length === 0" class="q-mt-xl">
       <div class="text-center">
         <div class="text-h6 text-center inter-medium">Puxa, não foi encontrado nenhum gráfico...
           <br>Você pode tentar realizar outro filtros ou cadastrar novos gráficos</div>
@@ -78,8 +78,8 @@ import FilterDialog from 'src/components/FilterDialog.vue';
 import { findAllChartsByDepartment } from 'src/services/ChartService';
 import { countUsers } from 'src/services/UserService';
 import { useFilterStore } from 'src/stores/filters';
-import { IChart } from 'src/types';
-import { computed, onMounted, ref } from 'vue';
+import { IChart, IFilterCharts } from 'src/types';
+import { onMounted, ref } from 'vue';
 import notFound from '../assets/notfound.json';
 import { Vue3Lottie } from 'vue3-lottie';
 
@@ -89,31 +89,43 @@ const showDialogFilter = ref(false);
 const usersQuantity = ref('0');
 const loading = ref(false);
 const charts = ref([] as IChart[]);
+const filters = ref({} as IFilterCharts);
 
 function closeFilterDialog() {
+
+  filters.value = {
+    department: store.departmentModel,
+    perspective: store.perspectiveModel,
+    process: store.processModel,
+    responsible: store.responsibleModel,
+    year: store.yearModel
+  }
+
   showDialogFilter.value = false;
+  getChartsByDepartment();
+
 }
 
-const filteredIndicators = computed(() => {
-  return charts.value.filter((indicator: IChart) => {
-    // Comparar os valores do store com os campos do indicador
-    const matchPerspective = !store.perspectiveModel || indicator.perspective === store.perspectiveModel;
-    const matchProcess =
-      !store.processModel || indicator.process === store.processModel;
-    const matchDepartment =
-      !store.departmentModel || indicator.department === store.departmentModel;
-    const matchResponsible =
-      !store.responsibleModel ||
-      indicator.responsible === store.responsibleModel;
+// const filteredIndicators = computed(() => {
+//   return charts.value.filter((indicator: IChart) => {
+//     // Comparar os valores do store com os campos do indicador
+//     const matchPerspective = !store.perspectiveModel || indicator.perspective === ;
+//     const matchProcess =
+//       !store.processModel || indicator.process === ;
+//     const matchDepartment =
+//       !store.departmentModel || indicator.department === ;
+//     const matchResponsible =
+//       !store.responsibleModel ||
+//       indicator.responsible === ;
 
-    const matchYear =
-      !store.yearModel ||
-      indicator.year === store.yearModel;
+//     const matchYear =
+//       !store.yearModel ||
+//       indicator.year === store.yearModel;
 
-    // Retorna apenas os indicadores que atendem a todos os critérios
-    return matchPerspective && matchProcess && matchDepartment && matchResponsible && matchYear;
-  });
-});
+//     // Retorna apenas os indicadores que atendem a todos os critérios
+//     return matchPerspective && matchProcess && matchDepartment && matchResponsible && matchYear;
+//   });
+// });
 
 async function getUsersQuantity() {
   const { data, error } = await countUsers();
@@ -127,7 +139,7 @@ async function getUsersQuantity() {
 
 async function getChartsByDepartment() {
   loading.value = true;
-  const { data, error }: {data: IChart[] | null, error: unknown} = await findAllChartsByDepartment('ACTIVE');
+  const { data, error }: {data: IChart[] | null, error: unknown} = await findAllChartsByDepartment('ACTIVE', filters.value);
   loading.value = false;
 
   if(error) {

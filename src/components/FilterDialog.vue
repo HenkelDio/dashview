@@ -19,6 +19,7 @@
           v-model="perspectiveModel"
           :options="perspetiveOptions"
           label="Perspectiva"
+          :loading="loadingPerspective"
         />
       </div>
 
@@ -27,6 +28,7 @@
           v-model="proccessModel"
           :options="processesOptions"
          label="Processo"
+         :loading="loadingProcesses"
         />
       </div>
 
@@ -43,6 +45,7 @@
           v-model="responsibleModel"
           :options="responsibleOptions"
          label="Responsável"
+         :loadingUsers="loadingUsers"
         />
       </div>
 
