@@ -4,7 +4,7 @@
       <q-card class="card-dash" flat>
         <q-card-section>
           <div class="text-caption inter-medium text-grey-9 q-mb-lg">
-            INDICADOR RECEITAS E DESPESAS %
+            INDICADOR DE RECEBIDO E FATURADO %
           </div>
           <div style="height: 300px">
             <Doughnut
@@ -19,7 +19,7 @@
         <q-card style="height: 100%" flat>
           <q-card-section>
             <div class="text-caption inter-medium text-grey-9 q-mb-xl">
-              INDICADOR RECEITAS E DESPESAS R$
+              INDICADOR DE RECEBIDO E FATURADO %
             </div>
             <div style="height: 300px">
               <Bar
@@ -85,11 +85,11 @@ const chartOptionsDepartament = {
 
 // Dados para o gráfico de barras horizontais
 const chartDataDepartament = {
-  labels: ['RECEITAS', 'DESPESAS'],
+  labels: ['RECEBIDO', 'FATURADO'],
   datasets: [
     {
       label: 'Quantidade de Indicadores',
-      data: [50, 20], // Quantidades para cada setor
+      data: [500000, 450000], // Quantidades para cada setor
       backgroundColor: '#1565C0', // Cor das barras
       hoverBackgroundColor: '#0D47A1', // Cor ao passar o mouse
     },
@@ -118,11 +118,11 @@ const chartOptions = {
 };
 
 const chartData = {
-  labels: ['RECEITAS', 'DESPESAS'],
+  labels: ['RECEBIDO', 'FATURADO'],
   datasets: [
     {
       label: 'Indicadores por Perspectiva',
-      data: [19, 15],
+      data: [500000, 450000],
       backgroundColor: ['#0D47A1', '#1976D2'], // Tonalidades de azul
       hoverBackgroundColor: ['#0B3D91', '#1565C0'], // Tonalidades de azul mais escuras
     },

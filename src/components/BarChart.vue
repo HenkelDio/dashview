@@ -23,7 +23,7 @@
               <q-item-label caption>Processo</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item clickable v-ripple>
+          <q-item clickable v-ripple v-if="indicator.perspective">
             <q-item-section>
               <q-item-label>{{ indicator.perspective }}</q-item-label>
               <q-item-label caption>Perspectiva</q-item-label>
@@ -76,11 +76,8 @@ import {
   CategoryScale,
   LinearScale,
 } from 'chart.js';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { IChart, IChartData } from 'src/types';
-import { useQuasar } from 'quasar';
-
-const $q = useQuasar();
 
 ChartJS.register(
   Title,
@@ -98,20 +95,27 @@ interface IProps {
 const props = defineProps<IProps>();
 const indicator = props.chart;
 
-const isMobile = computed(() => $q.platform.is.mobile);
-
 const chartData = ref({
   labels: indicator.labels,
   datasets: indicator.chartData.map((indicator: IChartData) => ({
     label: indicator.label,
-    data: indicator.data,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: (indicator.data as any[]).map((value) => {
+      if (typeof value === 'string') {
+        return Number(value.replace(/\./g, '').replace(',', '.'));
+      } else if (typeof value === 'number') {
+        return value;
+      }
+      console.warn(`Valor inválido encontrado: ${value}`);
+      return 0;
+    }),
     backgroundColor: indicator.backgroundColor,
     borderWidth: 1,
     borderRadius: 5,
     borderSkipped: false,
-  }))
+  })),
 });
-console.log(isMobile)
+
 const chartOptions = ref({
   responsive: true,
   maintainAspectRatio: false,
@@ -120,6 +124,34 @@ const chartOptions = ref({
       display: true,
       color: 'white',
     },
+    tooltip:
+      indicator.mask === 'CURRENCY'
+        ? {
+            callbacks: {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              label: function (context: any) {
+                const value = context.raw; // Valor original (número)
+                return new Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                }).format(value);
+              },
+            },
+          }
+        : indicator.mask === 'PERCENTAGE'
+        ? {
+            callbacks: {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              label: function (context: any) {
+                const value = context.raw; // Valor original (número)
+                return new Intl.NumberFormat('pt-BR', {
+                  style: 'percent',
+                  minimumFractionDigits: 2, // Exibe duas casas decimais (opcional)
+                }).format(value / 100); // Divida por 100 para converter de base 100
+              },
+            },
+          }
+        : {},
   },
 });
 </script>

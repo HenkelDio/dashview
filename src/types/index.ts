@@ -22,8 +22,8 @@ export interface User {
   token?: string;
   status?: string;
   permissions: {
-    firstLogin: boolean
-  }
+    firstLogin: boolean;
+  };
 }
 
 export interface IUserTable {
@@ -38,7 +38,7 @@ export interface IUserTable {
 export interface IDepartment {
   label: string;
   name: string;
-  status: STATUS
+  status: STATUS;
 }
 
 export interface IDepartmentCreate {
@@ -46,7 +46,7 @@ export interface IDepartmentCreate {
   name: string;
 }
 
-export type STATUS = 'ACTIVE' | 'INACTIVE'
+export type STATUS = 'ACTIVE' | 'INACTIVE';
 
 export interface Column {
   name: string;
@@ -58,70 +58,75 @@ export interface Column {
 }
 
 export interface IPerspective {
-  id: string,
-  name: string,
-  descriptions: string[],
-  createdBy: {document: string, name: string}
-  createdOn: number,
-  status: STATUS
+  id: string;
+  name: string;
+  descriptions: string[];
+  createdBy: { document: string; name: string };
+  createdOn: number;
+  status: STATUS;
 }
 
 export interface IPerspectiveCreate {
-  name: string,
-  descriptions: string[]
+  name: string;
+  descriptions: string[];
 }
 
 export interface IProcess {
-  id: string,
-  name: string,
-  createdBy: {document: string, name: string}
-  createdOn: number,
-  status: STATUS
+  id: string;
+  name: string;
+  createdBy: { document: string; name: string };
+  createdOn: number;
+  status: STATUS;
 }
 
 export interface IChart {
-  id: string,
-  title: string
-  type: string
-  perspective: string
-  process: string
-  department: string
-  responsible: string
-  periodicity: string
-  objective: string
-  formula: string
-  labels: string[]
-  year: string,
-  createdBy: {document: string, name: string}
-  createdOn: number,
-  status: STATUS,
-  chartData: IChartData[]
+  id: string;
+  title: string;
+  type: string;
+  perspective: string;
+  process: string;
+  department: string;
+  responsible: string;
+  periodicity: string;
+  objective: string;
+  formula: string;
+  labels: string[];
+  year: string;
+  createdBy: { document: string; name: string };
+  createdOn: number;
+  status: STATUS;
+  chartData: IChartData[];
+  mask: string;
+}
+
+export enum EMask {
+  CURRENCY,
 }
 
 export interface IChartData {
-  label: string
-  data: number[]
-  backgroundColor: string
+  label: string;
+  data: number[];
+  backgroundColor: string;
 }
 
 export interface IChartCreate {
-  title: string
-  type: string
-  perspective: string
-  process: string
-  department: string
-  responsible: string
-  periodicity: string
-  objective: string
-  formula: string
-  labels: string[]
-  chartData: IChartData[]
+  title: string;
+  type: string;
+  perspective: string;
+  process: string;
+  department: string;
+  responsible: string;
+  periodicity: string;
+  objective: string;
+  formula: string;
+  labels: string[];
+  chartData: IChartData[];
 }
 
 export interface IFilterCharts {
-  department?: string,
-  perspective?: string,
-  process?: string,
-  responsible?: string,
-  year?: string
+  department?: string;
+  perspective?: string;
+  process?: string;
+  responsible?: string;
+  year?: string;
 }

@@ -49,9 +49,9 @@
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <div class="text-h5 text-center q-my-md q-mb-lg">
-        <q-img src="../assets/logo.svg" width="30%" />
+        <q-img src="../assets/logo.png" width="60%" />
       </div>
-      <div class="flex column justify-between" style="height: 80%">
+      <div class="flex column justify-between" style="height: 70%">
         <q-list>
           <div v-for="link in linksList" :key="link.title">
             <!-- Mostrar todas as abas para 'admin' ou abas sem 'security' -->
@@ -134,7 +134,11 @@ const userStore = useUserStore();
 const name = ref(userStore.$state.user.name);
 const role = ref(userStore.$state.user.role);
 
-const showGreetingsDialog = ref(userStore.$state.user.permissions ? userStore.$state.user.permissions.firstLogin : false);
+const showGreetingsDialog = ref(
+  userStore.$state.user.permissions
+    ? userStore.$state.user.permissions.firstLogin
+    : false
+);
 
 const leftDrawerOpen = ref(false);
 

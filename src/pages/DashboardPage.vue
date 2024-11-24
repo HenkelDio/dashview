@@ -5,7 +5,7 @@
         <div class="text-h5 page-title" style="margin-bottom: 10px">
           Dashboard
         </div>
-        <div class="text-subtitle1 inter-medium" style="margin-left: 2px;">
+        <div class="text-subtitle1 inter-medium" style="margin-left: 2px">
           {{ store.$state.yearModel }}
         </div>
       </div>
@@ -44,26 +44,29 @@
     </div>
 
     <div v-if="loading" class="flex column q-gutter-y-md">
-      <q-skeleton type="QToolbar" height="250px"/>
-      <q-skeleton type="QToolbar" height="250px"/>
-      <q-skeleton type="QToolbar" height="250px"/>
-      <q-skeleton type="QToolbar" height="250px"/>
+      <q-skeleton type="QToolbar" height="250px" />
+      <q-skeleton type="QToolbar" height="250px" />
+      <q-skeleton type="QToolbar" height="250px" />
+      <q-skeleton type="QToolbar" height="250px" />
     </div>
 
-    <div
-      class="flex q-gutter-y-md"
-      v-for="(chart, index) in charts"
-      :key="index"
-    >
+    <div class="flex q-gutter-y-md" v-for="chart in charts" :key="chart.id">
       <BarChart :chart="chart" class="q-mb-md" />
     </div>
 
     <div v-if="!loading && charts.length === 0" class="q-mt-xl">
       <div class="text-center">
-        <div class="text-h6 text-center inter-medium">Puxa, não foi encontrado nenhum gráfico...
-          <br>Você pode tentar realizar outro filtros ou cadastrar novos gráficos</div>
-          <q-btn flat label="Adicionar novo gráfico" class="inter-bold text-secondary" @click="$router.push({ path: '/list-charts'})"></q-btn>
-          <Vue3Lottie :animationData="notFound" :height="200" :width="200"/>
+        <div class="text-h6 text-center inter-medium">
+          Puxa, não foi encontrado nenhum gráfico... <br />Você pode tentar
+          realizar outro filtros ou cadastrar novos gráficos
+        </div>
+        <q-btn
+          flat
+          label="Adicionar novo gráfico"
+          class="inter-bold text-secondary"
+          @click="$router.push({ path: '/list-charts' })"
+        ></q-btn>
+        <Vue3Lottie :animationData="notFound" :height="200" :width="200" />
       </div>
     </div>
 
@@ -92,18 +95,16 @@ const charts = ref([] as IChart[]);
 const filters = ref({} as IFilterCharts);
 
 function closeFilterDialog() {
-
   filters.value = {
     department: store.departmentModel,
     perspective: store.perspectiveModel,
     process: store.processModel,
     responsible: store.responsibleModel,
-    year: store.yearModel
-  }
+    year: store.yearModel,
+  };
 
   showDialogFilter.value = false;
   getChartsByDepartment();
-
 }
 
 // const filteredIndicators = computed(() => {
@@ -139,21 +140,21 @@ async function getUsersQuantity() {
 
 async function getChartsByDepartment() {
   loading.value = true;
-  const { data, error }: {data: IChart[] | null, error: unknown} = await findAllChartsByDepartment('ACTIVE', filters.value);
+  const { data, error }: { data: IChart[] | null; error: unknown } =
+    await findAllChartsByDepartment('ACTIVE', filters.value);
   loading.value = false;
 
-  if(error) {
+  if (error) {
     Notify.create({
       message: 'Erro ao encontrar indicadores',
-      color: 'red'
-    })
+      color: 'red',
+    });
     return;
   }
 
-  if(data) {
+  if (data) {
     charts.value = data;
   }
-
 }
 
 onMounted(() => {

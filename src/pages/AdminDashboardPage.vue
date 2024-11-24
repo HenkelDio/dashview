@@ -16,9 +16,7 @@
     </div>
 
     <div class="q-mb-xl" style="margin-left: 3px">
-      <div class="text-h6 inter-medium">
-        {{ dashboardType }}
-      </div>
+      <div class="text-h6 inter-medium">FATURAMENTO</div>
       <div class="text-caption inter-medium">
         {{ store.$state.yearModel || '2024' }}
       </div>
