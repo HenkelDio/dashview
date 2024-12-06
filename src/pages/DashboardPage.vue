@@ -50,8 +50,20 @@
       <q-skeleton type="QToolbar" height="250px" />
     </div>
 
-    <div class="flex q-gutter-y-md" v-for="chart in charts" :key="chart.id">
+    <!-- <div class="flex q-gutter-y-md" v-for="chart in charts" :key="chart.id">
       <BarChart :chart="chart" class="q-mb-md" />
+    </div> -->
+
+    <div
+      class="flex q-gutter-md"
+      v-for="(layout, index) in charts"
+      :key="index + Math.random()"
+    >
+      <div style="background-color: blue" class="flex row">
+        <div v-for="chart in layout" :key="chart.id">
+          <BarChart :chart="chart as IChart" class="q-mb-md" />
+        </div>
+      </div>
     </div>
 
     <div v-if="!loading && charts.length === 0" class="q-mt-xl">
@@ -91,7 +103,174 @@ const store = useFilterStore();
 const showDialogFilter = ref(false);
 const usersQuantity = ref('0');
 const loading = ref(false);
-const charts = ref([] as IChart[]);
+const charts = ref([
+  [
+    {
+      id: '670dba0b1fce8a3f70941d2f',
+      title: 'NPS - NET PROMOTER SCORE',
+      type: 'bar',
+      perspective: 'CLIENTES E MERCADO',
+      process: 'GESTÃO DA QUALIDADE',
+      department: 'QUALIDADE',
+      responsible: 'ELLEN',
+      periodicity: 'Mensal',
+      objective:
+        'Aumentar a fidelização e satisfação do cliente paciente e acompanhantes.',
+      formula:
+        '% Clientes promotores -% clientes detratores=NPS (Fonte IBES Instituto Brasiseiro de Excelência em S',
+      labels: [
+        'Janeiro',
+        'Fevereiro',
+        'Março',
+        'Abril',
+        'Maio',
+        'Junho',
+        'Julho',
+        'Agosto',
+        'Setembro',
+        'Outubro',
+        'Novembro',
+        'Dezembro',
+      ],
+      chartData: [
+        {
+          label: 'Dados',
+          data: [75, 82.93, 95.6, 100, 100, 94.4, 95.6, 98.2, 98.4, 0, 0, 0],
+          backgroundColor: '#FF5733',
+        },
+      ],
+      createdBy: {
+        name: 'ELLEN',
+        document: '0',
+      },
+      createdOn: 1728952843146,
+      status: 'ACTIVE',
+      year: '2024',
+      mask: 'PERCENTAGE',
+      layoutType: 'large',
+    },
+  ],
+  [
+    {
+      id: '670dba0b1fce8a3f70941d30',
+      title: 'TAXA DE ADESÃO PESQUISAS DE SATISFAÇÃO',
+      type: 'bar',
+      perspective: 'Na',
+      process: 'GESTÃO DA QUALIDADE',
+      department: 'QUALIDADE',
+      responsible: 'ELLEN',
+      periodicity: 'Mensal',
+      objective:
+        'Mensurar a TAXA da adesão de pesquisas de satisfação respondidas pelos pacientes.',
+      formula:
+        'Total de pacientes que responderam a pesquisa / { número de cirurgias posto de enfermagem*100',
+      labels: [
+        'Janeiro',
+        'Fevereiro',
+        'Março',
+        'Abril',
+        'Maio',
+        'Junho',
+        'Julho',
+        'Agosto',
+        'Setembro',
+        'Outubro',
+        'Novembro',
+        'Dezembro',
+      ],
+      chartData: [
+        {
+          label: 'Pacientes internados',
+          data: [216, 247, 294, 329, 317, 349, 471, 383, 304, '342', 0, 0],
+          backgroundColor: '#FF5733',
+        },
+        {
+          label: 'Respondidos',
+          data: [
+            '8',
+            '61',
+            '90',
+            '32',
+            '25',
+            '23',
+            '75',
+            '116',
+            '70',
+            '24',
+            11,
+            12,
+          ],
+          backgroundColor: '#422878',
+        },
+      ],
+      createdBy: {
+        name: 'ELLEN',
+        document: '0',
+      },
+      createdOn: 1728952843192,
+      status: 'ACTIVE',
+      year: '2024',
+      mask: null,
+      layoutType: 'short',
+    },
+    {
+      id: '674352607b79b93c9799e276',
+      title: 'PRAZO MÉDIO DE RECEBIMENTO DAS CONTAS EM DIAS',
+      type: 'bar',
+      perspective: 'FINANCEIRA',
+      process: 'FATURAMENTO',
+      department: 'FATURAMENTO',
+      responsible: 'érico vinicius',
+      periodicity: 'Mensal',
+      objective: 'Identificar o prazo médio de recebimento em dias.',
+      formula:
+        'Média de dias entre a data de faturamento da conta e o recebimento desta',
+      labels: [
+        'Janeiro',
+        'Fevereiro',
+        'Março',
+        'Abril',
+        'Maio',
+        'Junho',
+        'Julho',
+        'Agosto',
+        'Setembro',
+        'Outubro',
+        'Novembro',
+        'Dezembro',
+      ],
+      chartData: [
+        {
+          label: 'Quantidade de dias',
+          data: [
+            '39',
+            '36',
+            '34',
+            '34',
+            '34',
+            '32',
+            '33',
+            '0',
+            '0',
+            '0',
+            '0',
+            '0',
+          ],
+          backgroundColor: '#422878',
+        },
+      ],
+      createdBy: {
+        name: 'Willian Henkel',
+        document: '12440038912',
+      },
+      createdOn: 1732465248399,
+      status: 'ACTIVE',
+      year: '2024',
+      mask: null,
+      layoutType: 'medium',
+    },
+  ],
+]);
 const filters = ref({} as IFilterCharts);
 
 function closeFilterDialog() {
@@ -153,7 +332,7 @@ async function getChartsByDepartment() {
   }
 
   if (data) {
-    charts.value = data;
+    // charts.value = data;
   }
 }
 

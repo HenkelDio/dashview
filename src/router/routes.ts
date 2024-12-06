@@ -75,6 +75,24 @@ const routes: RouteRecordRaw[] = [
       { path: '', component: () => import('pages/PerspectivesPage.vue') },
     ],
   },
+  {
+    path: '/nps',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/NpsPage.vue') }],
+  },
+
+  {
+    path: '/form',
+    children: [{ path: '', component: () => import('pages/FormPage.vue') }],
+  },
 
   {
     path: '/modules',

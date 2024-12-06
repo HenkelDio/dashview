@@ -7,7 +7,10 @@
             <div class="inter-bold text-h6" style="margin-bottom: 2px">
               {{ props.value }}
             </div>
-            <div class="inter">{{ props.description }}</div>
+            <div class="inter" v-if="!action">{{ props.description }}</div>
+            <div class="inter" v-if="action">
+              {{ props.description }}
+            </div>
           </div>
           <div>
             <q-icon :name="icon" :color="colorIcon" size="3rem" />
@@ -24,6 +27,7 @@ interface IProps {
   description: string;
   icon: string;
   colorIcon: string;
+  action?: boolean;
 }
 
 const props = defineProps<IProps>();

@@ -1,5 +1,5 @@
 <template>
-  <q-card style="width: 100%; max-width: 100%" flat>
+  <q-card flat style="background-color: red">
     <q-card-section>
       <div class="text-h6 inter-medium">{{ indicator.title }}</div>
       <div class="text-subtitle2">{{ indicator.department }}</div>

@@ -130,3 +130,27 @@ export interface IFilterCharts {
   responsible?: string;
   year?: string;
 }
+
+export interface INPSTable {
+  date: string;
+  sendBy: string;
+  formType: string;
+}
+
+export interface IForm {
+  questions: IQuestion[];
+  status: string;
+}
+
+export interface IQuestion {
+  title: string;
+  inputType: INPUT_TYPE;
+  options: string[];
+  answer: string;
+  observation: string;
+}
+
+enum INPUT_TYPE {
+  select,
+  text,
+}
