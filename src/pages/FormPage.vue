@@ -15,7 +15,30 @@
 
           <div v-for="(question, index) in form.questions" :key="index">
             <div class="q-mt-xl q-gutter-y-md">
-              <SelectInputForm
+              <RadioInputForm
+                v-if="question.inputType === 'radio'"
+                :title="question.title"
+                :options="question.options"
+                :showObservation="question.showObservation"
+                @updateAnswer="updateAnswer(index, $event)"
+              />
+
+              <TextInputForm
+                v-if="question.inputType === 'text'"
+                :title="question.title"
+                :options="question.options"
+                @updateAnswer="updateAnswer(index, $event)"
+              />
+
+              <DateInputForm
+                v-if="question.inputType === 'date'"
+                :title="question.title"
+                :options="question.options"
+                @updateAnswer="updateAnswer(index, $event)"
+              />
+
+              <PatientInputForm
+                v-if="question.inputType === 'patientReturn'"
                 :title="question.title"
                 :options="question.options"
                 @updateAnswer="updateAnswer(index, $event)"
@@ -40,7 +63,10 @@
 
 <script lang="ts" setup>
 import { Notify } from 'quasar';
-import SelectInputForm from 'src/components/form/SelectInputForm.vue';
+import DateInputForm from 'src/components/form/DateInputForm.vue';
+import PatientInputForm from 'src/components/form/PatientInputForm.vue';
+import RadioInputForm from 'src/components/form/RadioInputForm.vue';
+import TextInputForm from 'src/components/form/TextInputForm.vue';
 import { getForm } from 'src/services/NPSService';
 import { IForm, IQuestion } from 'src/types';
 import { computed, onMounted, ref } from 'vue';
@@ -65,20 +91,39 @@ async function loadForm() {
     title: question.title,
     answer: '',
     observation: '',
+    patientName: '',
+    patientPhone: '',
   }));
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function updateAnswer(index: number, { answer, observation }: any) {
+function updateAnswer(
+  index: number,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  { answer, observation, patientName, patientPhone }: any
+) {
   answers.value[index].answer = answer;
   answers.value[index].observation = observation;
+  answers.value[index].patientName = patientName;
+  answers.value[index].patientPhone = patientPhone;
 }
 
 const isValid = computed(() => {
-  return answers.value.every((item: IQuestion) => item.answer.trim() !== '');
+  if (answers.value) {
+    let filteredAnswers = answers.value.filter(
+      (item: IQuestion) => item.title !== 'Gostaria de um retorno?'
+    );
+
+    return (
+      filteredAnswers &&
+      filteredAnswers.every((item: IQuestion) => item.answer.trim() !== '')
+    );
+  }
+
+  return false;
 });
 
 async function submitAnswers() {
+  console.log('aa', answers.value);
   if (!isValid.value) {
     return;
   }

@@ -1,20 +1,26 @@
 <template>
   <q-card style="padding: 20px; text-align: start" bordered flat>
     <div class="text-subtitle1">
-      Qual nota você daria para a clínica Los Angeles?
+      {{ props.title }}
     </div>
-    <q-input
-      v-model="value"
-      outlined
-      dense
-      class="q-mt-md"
-      placeholder="Digite aqui"
-    ></q-input>
+
+    <q-input v-model="answer" label="Resposta" class="q-mt-md" dense outlined />
   </q-card>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
-const value = ref('');
+interface IProps {
+  title: string;
+}
+
+const emit = defineEmits(['updateAnswer']);
+const props = defineProps<IProps>();
+
+const answer = ref('');
+
+watch(answer, (newVal) => {
+  emit('updateAnswer', { answer: newVal });
+});
 </script>

@@ -131,10 +131,21 @@ export interface IFilterCharts {
   year?: string;
 }
 
+export interface INPS {
+  sentDate: number;
+  sentBy: string;
+  patientNpsList: PatientNps[];
+}
+
 export interface INPSTable {
-  date: string;
-  sendBy: string;
-  formType: string;
+  sentDate: string;
+  sentBy: string;
+  patientNpsList: PatientNps[];
+}
+
+export interface PatientNps {
+  name: string;
+  email: string;
 }
 
 export interface IForm {
@@ -144,13 +155,9 @@ export interface IForm {
 
 export interface IQuestion {
   title: string;
-  inputType: INPUT_TYPE;
+  inputType: string;
   options: string[];
   answer: string;
   observation: string;
-}
-
-enum INPUT_TYPE {
-  select,
-  text,
+  showObservation: boolean;
 }

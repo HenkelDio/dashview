@@ -102,11 +102,17 @@ const linksList: EssentialLinkProps[] = [
     icon: 'insert_chart',
     link: '/dashboard',
   },
+  // {
+  //   title: 'Novo gráfico',
+  //   caption: 'Criar novo gráfico',
+  //   icon: 'add_chart',
+  //   link: '/list-charts',
+  // },
   {
-    title: 'Novo gráfico',
-    caption: 'Criar novo gráfico',
-    icon: 'add_chart',
-    link: '/list-charts',
+    title: 'NPS',
+    caption: 'Gerenciamento de NPS',
+    icon: 'fact_check',
+    link: '/nps',
   },
   {
     title: 'Usuários',

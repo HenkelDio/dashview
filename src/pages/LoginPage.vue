@@ -9,7 +9,7 @@
             </div>
             <div class="text-h3 text-grey-10">
               Clínica Los Angeles <br />
-              | <b>Bussiness Inteligence</b>
+              | <b>Bussiness Intelligence</b>
             </div>
           </div>
           <div class="widthOnMobile">
