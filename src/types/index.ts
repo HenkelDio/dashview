@@ -154,6 +154,7 @@ export interface IForm {
 }
 
 export interface IQuestion {
+  index: string;
   title: string;
   inputType: string;
   options: string[];

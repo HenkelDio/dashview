@@ -10,11 +10,12 @@
         }"
       >
         <CardInfo
-          value="20"
+          :value="feedbackCount"
           description="Solicitições de retorno"
           icon="account_circle"
           colorIcon="green"
           :action="true"
+          :loading="loadingFeedbackReturns"
         />
       </div>
 
@@ -25,10 +26,11 @@
         }"
       >
         <CardInfo
-          value="15"
+          :value="answersCount"
           description="Formulários respondidos"
           icon="insert_chart"
           colorIcon="blue"
+          :loading="loadingAnswers"
         />
       </div>
     </div>
@@ -179,7 +181,12 @@
 import { Column, INPS, INPSTable } from 'src/types';
 import { computed, onMounted, ref } from 'vue';
 import CardInfo from 'src/components/CardInfo.vue';
-import { getNPS, sendNPS } from 'src/services/NPSService';
+import {
+  countAnswers,
+  countFeedbackReturns,
+  getNPS,
+  sendNPS,
+} from 'src/services/NPSService';
 import { Notify } from 'quasar';
 import moment from 'moment';
 import 'moment/dist/locale/pt-br';
@@ -191,6 +198,10 @@ const dateValue = ref({} as { to: string; from: string });
 const file = ref<File | null>(null);
 const loadingFile = ref(false);
 const showDialogEmails = ref(false);
+const loadingAnswers = ref(false);
+const loadingFeedbackReturns = ref(false);
+const answersCount = ref(0);
+const feedbackCount = ref(0);
 
 const columns = ref<Column[]>([
   {
@@ -266,6 +277,7 @@ async function uploadFile() {
     color: 'green',
   });
 
+  file.value = null;
   showDialog.value = false;
   listNps();
 }
@@ -303,7 +315,29 @@ function formatDate(timestamp: number): string {
   return moment(timestamp).fromNow();
 }
 
+async function getAnswersCount() {
+  loadingAnswers.value = true;
+  const { data } = await countAnswers();
+  loadingAnswers.value = false;
+
+  if (data) {
+    answersCount.value = data;
+  }
+}
+
+async function getFeedbackReturnsCount() {
+  loadingFeedbackReturns.value = true;
+  const { data } = await countFeedbackReturns();
+  loadingFeedbackReturns.value = false;
+
+  if (data) {
+    feedbackCount.value = data;
+  }
+}
+
 onMounted(() => {
+  getFeedbackReturnsCount();
+  getAnswersCount();
   listNps();
 });
 </script>
