@@ -9,7 +9,7 @@
             </div>
             <div class="text-h3 text-grey-10">
               Clínica Los Angeles <br />
-              | <b>Bussiness Intelligence</b>
+              | <b>Gerenciador de NPS</b>
             </div>
           </div>
           <div class="widthOnMobile">

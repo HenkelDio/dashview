@@ -42,25 +42,24 @@
       </q-card-section>
 
       <q-card-section>
-
-
         <q-inner-loading
           :showing="loading"
-          style="height: 100px;"
+          style="height: 100px"
           color="primary"
         />
 
         <div class="flex q-gutter-md" v-if="!loading">
-          <div v-for="(item) in departmentsFiltered" v-bind:key="item.name">
+          <div v-for="item in departmentsFiltered" v-bind:key="item.name">
             <div style="width: 300px">
-              <CardDepartment :department="item" @changedStatus="getDepartments()"/>
+              <CardDepartment
+                :department="item"
+                @changedStatus="getDepartments()"
+              />
             </div>
           </div>
         </div>
       </q-card-section>
     </q-card>
-
-
 
     <DepartmentDialog v-if="showDialog" @close="close" />
   </q-page>
@@ -93,7 +92,9 @@ function close() {
 
 async function getDepartments() {
   loading.value = true;
-  const { data, error }: IResponse = await getAllDepartments(departmentStatus.value);
+  const { data, error }: IResponse = await getAllDepartments(
+    departmentStatus.value
+  );
   loading.value = false;
 
   if (error) {

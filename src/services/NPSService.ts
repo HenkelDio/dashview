@@ -10,11 +10,11 @@ export const getForm = async () => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const saveAnswer = async (answers: any, token: string | undefined) => {
+export const saveAnswer = async (payload: any, token: string | undefined) => {
   try {
     const response = await publicApi.post(
       `/public/form/save-answer?token=${token}`,
-      answers
+      payload
     );
     return { data: response.data, error: null };
   } catch (e) {
@@ -36,18 +36,33 @@ export const sendNPS = async (file: File) => {
   }
 };
 
-export const getNPS = async () => {
+export const getNPS = async (startDate: number, endDate: number) => {
+  const headers = {
+    startDate,
+    endDate,
+  };
+
   try {
-    const response = await api.get('/nps/get-nps');
+    const response = await api.get('/nps/get-nps', { headers });
     return { data: response.data, error: null };
   } catch (e) {
     return { data: null, error: e };
   }
 };
 
-export const countAnswers = async () => {
+export const countAnswers = async (
+  startDate: number,
+  endDate: number,
+  departmentId: string
+) => {
+  const headers = {
+    startDate,
+    endDate,
+    departmentId,
+  };
+
   try {
-    const response = await api.get('/nps/count-answers');
+    const response = await api.get('/nps/count-answers', { headers });
     return { data: response.data, error: null };
   } catch (e) {
     return { data: null, error: e };
@@ -57,6 +72,68 @@ export const countAnswers = async () => {
 export const countFeedbackReturns = async () => {
   try {
     const response = await api.get('/nps/count-feedback-returns');
+    return { data: response.data, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
+};
+
+export const getAnswers = async (
+  sortBy: string,
+  npsId: string,
+  startDate: number,
+  endDate: number
+) => {
+  const headers = {
+    startDate,
+    endDate,
+  };
+
+  try {
+    const response = await api.get(
+      `/nps/get-answers?sortBy=${sortBy}&npsId=${npsId}`,
+      { headers }
+    );
+    return { data: response.data, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
+};
+
+export const loadScoreDepartments = async (
+  startDate: number,
+  endDate: number
+) => {
+  const headers = {
+    startDate,
+    endDate,
+  };
+
+  try {
+    const response = await api.get('/nps/get-score-departments', { headers });
+    return { data: response.data, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
+};
+
+export const getAllAnswers = async (
+  startDate: number,
+  endDate: number,
+  departmentId: string,
+  pageNumber: number
+) => {
+  const headers = {
+    startDate,
+    endDate,
+    departmentId,
+  };
+
+  try {
+    const response = await api.get(
+      `/nps/get-all-answers?pageNumber=${pageNumber}`,
+      { headers }
+    );
     return { data: response.data, error: null };
   } catch (e) {
     return { data: null, error: e };

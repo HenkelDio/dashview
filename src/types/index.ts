@@ -36,14 +36,18 @@ export interface IUserTable {
 }
 
 export interface IDepartment {
+  id: string;
   label: string;
   name: string;
   status: STATUS;
+  emailManager: string;
 }
 
 export interface IDepartmentCreate {
+  id?: string;
   label: string;
   name: string;
+  emailManager: string;
 }
 
 export type STATUS = 'ACTIVE' | 'INACTIVE';
@@ -151,6 +155,11 @@ export interface PatientNps {
 export interface IForm {
   questions: IQuestion[];
   status: string;
+  parameters: IFormParameters;
+}
+
+export interface IFormParameters {
+  feedbackRequest: boolean;
 }
 
 export interface IQuestion {
@@ -161,4 +170,28 @@ export interface IQuestion {
   answer: string;
   observation: string;
   showObservation: boolean;
+}
+
+export interface IAnswer {
+  feedbackReturn: boolean;
+  timestamp: number;
+  questions: IQuestion[];
+  patientName: string;
+  patientPhone: string;
+  dateOfAdmission: number;
+  answerType: string;
+}
+
+export interface IScoreDepartment {
+  detractors: object;
+  neutrals: object;
+  promoters: object;
+}
+
+export interface IChartAnswer {
+  type: string;
+  question: string;
+  dateOfAdmission: number | string;
+  timestamp: number | string;
+  patientName?: string;
 }

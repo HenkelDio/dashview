@@ -86,7 +86,49 @@ const routes: RouteRecordRaw[] = [
       }
     },
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/NpsPage.vue') }],
+    children: [
+      { path: '', component: () => import('pages/NpsPage.vue') },
+      {
+        path: '/dashboard-nps',
+        component: () => import('pages/NpsDashboardPage.vue'),
+      },
+      {
+        path: '/forms',
+        component: () => import('pages/FormManagerPage.vue'),
+      },
+      {
+        path: '/answers',
+        props: (route) => ({
+          sortBy: route.query.sortBy,
+          npsId: route.query.npsId,
+        }),
+        component: () => import('pages/AnswersFormPage.vue'),
+      },
+      {
+        path: '/general-view',
+        props: (route) => ({
+          sortBy: route.query.sortBy,
+          npsId: route.query.npsId,
+        }),
+        component: () => import('pages/ViewGeneralAnswersPage.vue'),
+      },
+    ],
+  },
+
+  {
+    path: '/create-form',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/CreateFormPage.vue') },
+    ],
   },
 
   {
@@ -156,23 +198,6 @@ const routes: RouteRecordRaw[] = [
       { path: '', component: () => import('pages/ProcessesPage.vue') },
     ],
   },
-
-  {
-    path: '/list-charts',
-    beforeEnter: (_to, _from, next) => {
-      const store = useUserStore();
-      if (store.$state.isAuthenticated) {
-        next();
-      } else {
-        next({ path: '/' });
-      }
-    },
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/ListChartsPage.vue') },
-    ],
-  },
-
   {
     path: '/create-chart',
     props: (route) => ({ id: route.query.id }),

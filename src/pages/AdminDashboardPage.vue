@@ -22,10 +22,6 @@
       </div>
     </div>
 
-    <div style="margin-bottom: 10px" v-if="dashboardType === 'Painel PE'">
-      <AdminCharts />
-    </div>
-
     <div
       style="margin-bottom: 10px"
       v-if="store.$state.typeModel === 'Recursos Naturais'"
@@ -45,21 +41,19 @@
 </template>
 
 <script setup lang="ts">
-import AdminCharts from 'src/components/AdminCharts/AdminCharts.vue';
 import FinanceCharts from 'src/components/AdminCharts/FinanceCharts.vue';
 import NaturalResourcesCharts from 'src/components/AdminCharts/NaturalResourcesCharts.vue';
 import FilterDialogAdmin from 'src/components/Dialogs/FilterDialogAdmin.vue';
 import { countUsers } from 'src/services/UserService';
 import { useFilterStore } from 'src/stores/filters';
 import { useUserStore } from 'src/stores/userStore';
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 const store = useFilterStore();
 const userStore = useUserStore();
 
 const showDialogFilter = ref(false);
 const usersQuantity = ref('0');
-const dashboardType = computed(() => store.$state.typeModel || 'Painel PE');
 
 function closeFilterDialog() {
   showDialogFilter.value = false;

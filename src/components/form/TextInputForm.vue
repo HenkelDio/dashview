@@ -4,7 +4,14 @@
       {{ props.title }}
     </div>
 
-    <q-input v-model="answer" label="Resposta" class="q-mt-md" dense outlined />
+    <q-input
+      v-model="answer"
+      label="Resposta"
+      class="q-mt-md"
+      dense
+      outlined
+      :disable="props.disabled"
+    />
   </q-card>
 </template>
 
@@ -13,6 +20,7 @@ import { ref, watch } from 'vue';
 
 interface IProps {
   title: string;
+  disabled: boolean;
 }
 
 const emit = defineEmits(['updateAnswer']);

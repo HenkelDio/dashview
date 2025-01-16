@@ -1,70 +1,29 @@
 <template>
   <q-page class="q-pa-md q-pt-xl">
-    <div class="text-h5 page-title">NPS</div>
-
-    <div class="flex q-gutter-x-md q-mt-xl">
-      <div
-        :style="{
-          width: '280px',
-          marginBottom: '20px',
-        }"
-      >
-        <CardInfo
-          :value="feedbackCount"
-          description="Solicitições de retorno"
-          icon="account_circle"
-          colorIcon="green"
-          :action="true"
-          :loading="loadingFeedbackReturns"
-        />
-      </div>
-
-      <div
-        :style="{
-          width: '280px',
-          marginBottom: '20px',
-        }"
-      >
-        <CardInfo
-          :value="answersCount"
-          description="Formulários respondidos"
-          icon="insert_chart"
-          colorIcon="blue"
-          :loading="loadingAnswers"
-        />
-      </div>
-    </div>
+    <div class="text-h5 page-title q-mb-xl">Envio de NPS</div>
 
     <q-card flat class="q-mt-sm">
       <q-card-section>
         <div class="flex justify-between">
-          <q-input id="period" outlined dense readonly v-model="dateDisplay">
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy
-                  ref="qDateProxy"
-                  transition-show="scale"
-                  transition-hide="scale"
-                >
-                  <q-date
-                    :options="dateOptions"
-                    mask="DD/MM/YYYY"
-                    v-model="dateValue"
-                    range
-                  >
-                    <div class="row items-center justify-end">
-                      <q-btn
-                        v-close-popup
-                        label="FECHAR"
-                        color="primary"
-                        flat
-                      />
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
+          <div class="flex q-gutter-x-md">
+            <DateRangeInput
+              @from="startDate = $event"
+              @to="endDate = $event"
+              :currentDate="false"
+            />
+            <q-btn
+              v-if="startDate > 0 && endDate > 0"
+              dense
+              label="Buscar"
+              color="secondary"
+              class="inter-medium q-px-md"
+              size="1rem"
+              unelevated
+              no-caps
+              icon="search"
+              @click="listNps"
+            />
+          </div>
 
           <q-btn
             no-caps
@@ -118,7 +77,23 @@
       </q-card-section>
 
       <q-card-section>
+        <div v-if="rows.length === 0 && !loading">
+          <div class="text-center">
+            <div class="text-h6 text-center inter-medium">
+              Nenhum resultado encontrado
+            </div>
+            <Vue3Lottie :animationData="notFound" :height="200" :width="200" />
+          </div>
+        </div>
+
+        <q-inner-loading
+          :showing="loading"
+          style="height: 100px"
+          color="primary"
+        />
+
         <q-table
+          v-if="rows.length > 0"
           flat
           class="my-sticky-header-table"
           style="height: 400px"
@@ -132,6 +107,50 @@
           :loading="loading"
           no-data-label="Sem dados disponíveis"
         >
+          <template v-slot:body="props">
+            <q-tr :props="props">
+              <q-td style="width: 20%" key="sentDate" :props="props">{{
+                props.row.sentDate || '-'
+              }}</q-td>
+              <q-td style="width: 20%" key="sentBy" :props="props">{{
+                props.row.sentBy || '-'
+              }}</q-td>
+              <q-td
+                style="width: 10%"
+                class="my-special-class"
+                key="actions"
+                :props="props"
+              >
+                <q-btn
+                  class="buttonDropDownActions"
+                  icon="more_vert"
+                  color="primary"
+                  outline
+                  flat
+                >
+                  <q-menu>
+                    <q-list class="listActions" style="width: 150px">
+                      <div>
+                        <q-btn
+                          flat
+                          outline
+                          label="Visualizar respostas"
+                          class="labelAction full-width"
+                          style="font-size: 12px"
+                          @click="
+                            $router.push(
+                              '/answers?sortBy=all&npsId=' + props.row.id
+                            )
+                          "
+                        ></q-btn>
+                      </div>
+                    </q-list>
+                  </q-menu>
+                </q-btn>
+              </q-td>
+            </q-tr>
+          </template>
+
           <template v-slot:body-cell-actions="props">
             <div>
               <q-btn
@@ -139,7 +158,6 @@
                 icon="visibility"
                 color="primary"
                 class="text-weight-bold"
-                @click="showDialogEmails = true"
                 >Visualizar envios</q-btn
               >
             </div>
@@ -179,29 +197,25 @@
 
 <script lang="ts" setup>
 import { Column, INPS, INPSTable } from 'src/types';
-import { computed, onMounted, ref } from 'vue';
-import CardInfo from 'src/components/CardInfo.vue';
-import {
-  countAnswers,
-  countFeedbackReturns,
-  getNPS,
-  sendNPS,
-} from 'src/services/NPSService';
+import { onMounted, ref } from 'vue';
+import { countFeedbackReturns, getNPS, sendNPS } from 'src/services/NPSService';
 import { Notify } from 'quasar';
 import moment from 'moment';
 import 'moment/dist/locale/pt-br';
+import DateRangeInput from 'src/components/DateRangeInput.vue';
+import notFound from '../assets/notfound.json';
+import { Vue3Lottie } from 'vue3-lottie';
 
 const loading = ref(false);
 const rows = ref([] as INPSTable[]);
 const showDialog = ref(false);
-const dateValue = ref({} as { to: string; from: string });
 const file = ref<File | null>(null);
 const loadingFile = ref(false);
 const showDialogEmails = ref(false);
-const loadingAnswers = ref(false);
 const loadingFeedbackReturns = ref(false);
-const answersCount = ref(0);
 const feedbackCount = ref(0);
+const startDate = ref(0);
+const endDate = ref(0);
 
 const columns = ref<Column[]>([
   {
@@ -227,23 +241,6 @@ const columns = ref<Column[]>([
 //     item.name.toLowerCase().includes(value.toLowerCase())
 //   );
 // });
-
-const dateDisplay = computed(() => {
-  if (!dateValue.value) {
-    return '';
-  }
-
-  if (!dateValue.value.from || !dateValue.value.to) {
-    return '';
-  }
-
-  const displayDate = `${dateValue.value.from} - ${dateValue.value.to}`;
-  return displayDate;
-});
-
-function dateOptions(date: string) {
-  return new Date(date) <= new Date();
-}
 
 async function uploadFile() {
   if (!file.value) {
@@ -284,7 +281,7 @@ async function uploadFile() {
 
 async function listNps() {
   loading.value = true;
-  const { data, error } = await getNPS();
+  const { data, error } = await getNPS(startDate.value, endDate.value);
   loading.value = false;
 
   if (error) {
@@ -312,17 +309,7 @@ function formatNpsData(data: INPS[]) {
 
 function formatDate(timestamp: number): string {
   moment.locale('pt-br');
-  return moment(timestamp).fromNow();
-}
-
-async function getAnswersCount() {
-  loadingAnswers.value = true;
-  const { data } = await countAnswers();
-  loadingAnswers.value = false;
-
-  if (data) {
-    answersCount.value = data;
-  }
+  return moment(timestamp).format('DD/MM/YYYY');
 }
 
 async function getFeedbackReturnsCount() {
@@ -337,7 +324,6 @@ async function getFeedbackReturnsCount() {
 
 onMounted(() => {
   getFeedbackReturnsCount();
-  getAnswersCount();
   listNps();
 });
 </script>

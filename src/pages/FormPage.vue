@@ -47,6 +47,7 @@
                   :options="question.options"
                   :showObservation="question.showObservation"
                   @updateAnswer="updateAnswer(index, $event)"
+                  :disabled="loadingSubmit"
                 />
 
                 <TextInputForm
@@ -54,6 +55,7 @@
                   :title="question.title"
                   :options="question.options"
                   @updateAnswer="updateAnswer(index, $event)"
+                  :disabled="loadingSubmit"
                 />
 
                 <DateInputForm
@@ -61,16 +63,20 @@
                   :title="question.title"
                   :options="question.options"
                   @updateAnswer="updateAnswer(index, $event)"
-                />
-
-                <PatientInputForm
-                  v-if="question.inputType === 'patientReturn'"
-                  :title="question.title"
-                  :options="question.options"
-                  @updateAnswer="updateAnswer(index, $event)"
+                  :disabled="loadingSubmit"
                 />
               </div>
             </div>
+
+            <PatientInputForm
+              class="q-mt-xl"
+              v-if="feedbackRequest"
+              title="Gostaria de retorno?"
+              @setPatientName="patientName = $event"
+              @setPatientPhone="patientPhone = $event"
+              @patientFeedbackReturn="patientFeedbackReturn = $event"
+              :disabled="loadingSubmit"
+            />
 
             <q-btn
               color="primary"
@@ -78,6 +84,7 @@
               style="width: 100%; height: 40px"
               @click="submitAnswers"
               :disable="!isValid"
+              :loading="loadingSubmit"
             >
               ENVIAR
             </q-btn>
@@ -89,7 +96,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Notify } from 'quasar';
+import { Notify, useMeta } from 'quasar';
 import DateInputForm from 'src/components/form/DateInputForm.vue';
 import PatientInputForm from 'src/components/form/PatientInputForm.vue';
 import RadioInputForm from 'src/components/form/RadioInputForm.vue';
@@ -105,12 +112,19 @@ const form = ref({} as IForm);
 const loading = ref(false);
 const loadingSubmit = ref(false);
 const submitted = ref(false);
-[];
+const feedbackRequest = ref(false);
+const patientFeedbackReturn = ref(false);
 const answers = ref();
+const patientName = ref('');
+const patientPhone = ref('');
 
 const route = useRoute();
 
 const token = ref(route.query.token);
+
+useMeta(() => ({
+  title: 'Formulário | Clínica Los Angeles',
+}));
 
 async function loadForm() {
   loading.value = true;
@@ -126,25 +140,23 @@ async function loadForm() {
   }
 
   form.value = data;
+  feedbackRequest.value = form.value.parameters.feedbackRequest;
+
   answers.value = form.value.questions.map((question) => ({
     index: question.index,
     title: question.title,
     answer: '',
     observation: '',
-    patientName: '',
-    patientPhone: '',
   }));
 }
 
 function updateAnswer(
   index: number,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  { answer, observation, patientName, patientPhone }: any
+  { answer, observation }: any
 ) {
   answers.value[index].answer = answer;
   answers.value[index].observation = observation;
-  answers.value[index].patientName = patientName;
-  answers.value[index].patientPhone = patientPhone;
 }
 
 const isValid = computed(() => {
@@ -168,7 +180,17 @@ async function submitAnswers() {
   }
 
   loadingSubmit.value = true;
-  const { error } = await saveAnswer(answers.value, token.value?.toString());
+
+  const payload = {
+    answers: answers.value,
+    patientInfo: {
+      patientName: patientName.value,
+      patientPhone: patientPhone.value,
+      patientFeedbackReturn: patientFeedbackReturn.value,
+    },
+  };
+
+  const { error } = await saveAnswer(payload, token.value?.toString());
   loadingSubmit.value = false;
 
   console.log('error', error);
@@ -197,5 +219,12 @@ onMounted(() => {
   width: 600px;
   text-align: center;
   margin: 0 auto;
+}
+
+@media (max-width: 700px) {
+  .form-page {
+    width: 100%;
+    padding: 10px;
+  }
 }
 </style>

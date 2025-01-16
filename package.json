@@ -1,8 +1,8 @@
 {
   "name": "dashview",
   "version": "0.0.1",
-  "description": "B.I Clínica Los Angeles",
-  "productName": "BI | Clínica Los Angeles",
+  "description": "NPS | Clínica Los Angeles",
+  "productName": "NPS | Clínica Los Angeles",
   "author": "HenkelDio <willianhenkel@gmail.com>",
   "private": true,
   "scripts": {

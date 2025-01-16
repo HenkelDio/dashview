@@ -6,9 +6,34 @@
         <div class="inter-bold">{{ label }}</div>
       </q-card-section>
       <q-card-actions>
-        <q-btn flat dense :label="buttonLabel" :color="colorButton" class="inter-bold" @click="showDialog()" :loading="loading" />
+        <q-btn
+          flat
+          dense
+          :label="buttonLabel"
+          :color="colorButton"
+          class="inter-bold"
+          @click="showDialog()"
+          :loading="loading"
+        />
+        <q-btn
+          flat
+          dense
+          icon="edit"
+          color="primary"
+          class="inter-bold"
+          @click="showEditDialog = true"
+          :loading="loading"
+        />
       </q-card-actions>
     </q-card>
+
+    <DepartmentDialog
+      v-if="showEditDialog"
+      @close="(showEditDialog = false), emit('changedStatus')"
+      :name-department="label"
+      :email-department="email"
+      :id="props.department.id"
+    />
 
     <GenericDialog
       v-if="show"
@@ -25,26 +50,29 @@
 
 <script lang="ts" setup>
 import { IDepartment } from 'src/types';
-import {changeStatusDepartment} from '../services/DepartmentService';
+import { changeStatusDepartment } from '../services/DepartmentService';
 import { Notify } from 'quasar';
 import { computed, ref } from 'vue';
 import GenericDialog from './Dialogs/GenericDialog.vue';
+import DepartmentDialog from './Dialogs/DepartmentDialog.vue';
 interface IProps {
-  department: IDepartment
+  department: IDepartment;
 }
 
 const props = defineProps<IProps>();
 const label = props.department.label;
 const name = props.department.name;
 const status = props.department.status;
+const email = props.department.emailManager;
 
 const loading = ref(false);
 const show = ref(false);
+const showEditDialog = ref(false);
 
-const emit = defineEmits(['changedStatus'])
+const emit = defineEmits(['changedStatus']);
 
 function showDialog() {
-  if(status === 'INACTIVE') {
+  if (status === 'INACTIVE') {
     changeStatus();
   } else {
     show.value = true;
@@ -52,15 +80,15 @@ function showDialog() {
 }
 
 async function changeStatus() {
-  loading.value = true
-  const {error} = await changeStatusDepartment(statusParam.value, name)
-  loading.value = false
+  loading.value = true;
+  const { error } = await changeStatusDepartment(statusParam.value, name);
+  loading.value = false;
 
-  if(error){
+  if (error) {
     Notify.create({
       message: 'Erro ao inativar departamento',
-      color: 'red'
-    })
+      color: 'red',
+    });
     return;
   }
 
@@ -68,15 +96,14 @@ async function changeStatus() {
 }
 
 const buttonLabel = computed(() => {
-  return status === 'ACTIVE' ? 'INATIVAR' : 'ATIVAR'
-})
+  return status === 'ACTIVE' ? 'INATIVAR' : 'ATIVAR';
+});
 
 const colorButton = computed(() => {
-  return status === 'ACTIVE' ? 'negative' : 'positive'
-})
+  return status === 'ACTIVE' ? 'negative' : 'positive';
+});
 
 const statusParam = computed(() => {
-  return status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'
-})
-
+  return status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+});
 </script>

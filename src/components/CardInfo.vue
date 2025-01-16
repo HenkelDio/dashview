@@ -19,8 +19,13 @@
               />
             </div>
 
-            <div class="inter" v-if="!action">{{ props.description }}</div>
-            <div class="inter" v-if="action">
+            <div class="inter" v-if="!link">{{ props.description }}</div>
+            <div
+              class="inter action"
+              v-if="link"
+              style="text-decoration: underline; cursor: pointer"
+              @click="$router.push('/answers')"
+            >
               {{ props.description }}
             </div>
           </div>
@@ -39,9 +44,15 @@ interface IProps {
   description: string;
   icon: string;
   colorIcon: string;
-  action?: boolean;
+  link?: boolean;
   loading: boolean;
 }
 
 const props = defineProps<IProps>();
 </script>
+
+<style lang="scss">
+.action:hover {
+  font-weight: 600;
+}
+</style>

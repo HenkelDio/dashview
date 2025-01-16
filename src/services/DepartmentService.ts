@@ -17,17 +17,30 @@ export const createDepartment = async (payload: IDepartmentCreate) => {
   } catch (e) {
     return { data: null, error: e };
   }
-}
+};
 
-  export const changeStatusDepartment = async (status: string, name: string) => {
-    const headers = {
-      name
-    }
+export const updateDepartment = async (payload: IDepartmentCreate) => {
+  try {
+    const response = await api.put('/departments', payload);
+    return { data: response.data, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
+};
 
-    try {
-      const response = await api.put(`/departments/change-status?status=${status}`, {}, {headers});
-      return { data: response.data, error: null };
-    } catch (e) {
-      return { data: null, error: e };
+export const changeStatusDepartment = async (status: string, name: string) => {
+  const headers = {
+    name,
+  };
+
+  try {
+    const response = await api.put(
+      `/departments/change-status?status=${status}`,
+      {},
+      { headers }
+    );
+    return { data: response.data, error: null };
+  } catch (e) {
+    return { data: null, error: e };
   }
 };

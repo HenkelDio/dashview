@@ -4,23 +4,32 @@
       {{ props.title }}
     </div>
 
-    <q-checkbox v-model="answer" label="Sim" class="q-mt-md" dense outlined />
+    <q-checkbox
+      v-model="patientFeedbackReturn"
+      label="Sim"
+      class="q-mt-md"
+      dense
+      outlined
+      :disable="disabled"
+    />
 
     <q-input
-      v-if="answer"
+      v-if="patientFeedbackReturn"
       v-model="patientName"
       label="Seu nome completo"
       class="q-mt-md"
       dense
       outlined
+      :disable="disabled"
     />
     <q-input
-      v-if="answer"
+      v-if="patientFeedbackReturn"
       v-model="patientPhone"
       label="Seu número de telefone"
       class="q-mt-md"
       dense
       outlined
+      :disable="disabled"
     />
   </q-card>
 </template>
@@ -30,36 +39,29 @@ import { ref, watch } from 'vue';
 
 interface IProps {
   title: string;
+  disabled: boolean;
 }
 
-const emit = defineEmits(['updateAnswer']);
+const emit = defineEmits([
+  'setPatientName',
+  'setPatientPhone',
+  'patientFeedbackReturn',
+]);
 const props = defineProps<IProps>();
 
 const patientName = ref('');
 const patientPhone = ref('');
-const answer = ref(false);
+const patientFeedbackReturn = ref(false);
 
 watch(patientName, (newVal) => {
-  emit('updateAnswer', {
-    answer: answer.value,
-    patientName: newVal,
-    patientPhone: patientPhone.value,
-  });
+  emit('setPatientName', newVal);
 });
 
 watch(patientPhone, (newVal) => {
-  emit('updateAnswer', {
-    answer: answer.value,
-    patientName: patientName.value,
-    patientPhone: newVal,
-  });
+  emit('setPatientPhone', newVal);
 });
 
-watch(answer, (newVal) => {
-  emit('updateAnswer', {
-    answer: newVal,
-    patientName: patientName.value,
-    patientPhone: patientPhone.value,
-  });
+watch(patientFeedbackReturn, (newVal) => {
+  emit('patientFeedbackReturn', newVal);
 });
 </script>

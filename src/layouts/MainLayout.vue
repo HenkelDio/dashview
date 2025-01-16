@@ -89,19 +89,19 @@ defineOptions({
 const router = useRouter();
 
 const linksList: EssentialLinkProps[] = [
-  {
-    title: 'Dashboard Admin',
-    caption: 'Visualizar gráficos administrativo',
-    icon: 'analytics',
-    link: '/dashboard-admin',
-    security: 'admin',
-  },
-  {
-    title: 'Dashboard',
-    caption: 'Visualizar gráficos',
-    icon: 'insert_chart',
-    link: '/dashboard',
-  },
+  //  {
+  //    title: 'Dashboard Admin',
+  //    caption: 'Visualizar gráficos administrativo',
+  //    icon: 'analytics',
+  //    link: '/dashboard-admin',
+  //    security: 'admin',
+  //  },
+  //  {
+  //    title: 'Dashboard',
+  //    caption: 'Visualizar gráficos',
+  //    icon: 'insert_chart',
+  //    link: '/dashboard',
+  //  },
   // {
   //   title: 'Novo gráfico',
   //   caption: 'Criar novo gráfico',
@@ -113,6 +113,28 @@ const linksList: EssentialLinkProps[] = [
     caption: 'Gerenciamento de NPS',
     icon: 'fact_check',
     link: '/nps',
+    children: [
+      {
+        title: 'Dashboard',
+        link: '/dashboard-nps',
+        icon: 'analytics',
+      },
+      {
+        title: 'Envio de NPS',
+        link: '/nps',
+        icon: 'schedule_send',
+      },
+      {
+        title: 'Respostas',
+        link: '/answers',
+        icon: 'chat',
+      },
+      // {
+      //   title: 'Formulários',
+      //   link: '/forms',
+      //   icon: 'description',
+      // },
+    ],
   },
   {
     title: 'Usuários',
@@ -122,12 +144,19 @@ const linksList: EssentialLinkProps[] = [
     security: 'admin',
   },
   {
-    title: 'Módulos',
-    caption: 'Configurações de módulos',
-    icon: 'view_module',
-    link: '/modules',
+    title: 'Departamentos',
+    caption: 'Editar departamentos',
+    icon: 'group',
+    link: '/departments',
     security: 'admin',
   },
+  // {
+  //   title: 'Módulos',
+  //   caption: 'Configurações de módulos',
+  //   icon: 'view_module',
+  //   link: '/modules',
+  //   security: 'admin',
+  // },
   {
     title: 'Preferências',
     caption: 'Edite seu perfil',

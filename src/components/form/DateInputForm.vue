@@ -13,6 +13,7 @@
       mask="##/##/####"
       label="Selecione uma data"
       @focus="showDatePicker = true"
+      :disabled="props.disabled"
     >
       <template v-slot:append>
         <q-icon
@@ -50,6 +51,7 @@ import { ref, watch } from 'vue';
 
 interface IProps {
   title: string;
+  disabled: boolean;
 }
 
 const emit = defineEmits(['updateAnswer']);
