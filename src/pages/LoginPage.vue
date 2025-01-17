@@ -92,9 +92,9 @@ async function doLogin() {
 
   // window.open('http://localhost:9000/dashboard', '_self')
   if (state.$state.user.role === 'admin') {
-    router.push({ path: '/dashboard-admin' });
+    router.push({ path: '/dashboard-nps' });
   } else {
-    router.push({ path: '/dashboard' });
+    router.push({ path: '/dashboard-nps' });
   }
 }
 </script>
