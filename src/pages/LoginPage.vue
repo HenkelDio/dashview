@@ -91,11 +91,7 @@ async function doLogin() {
   state.setUser(data);
 
   // window.open('http://localhost:9000/dashboard', '_self')
-  if (state.$state.user.role === 'admin') {
-    router.push({ path: '/dashboard-nps' });
-  } else {
-    router.push({ path: '/dashboard-nps' });
-  }
+  router.push({ path: '/dashboard-nps' });
 }
 </script>
 

@@ -76,6 +76,13 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/dashboard-nps',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/NpsDashboardPage.vue') },
+    ],
+  },
+  {
     path: '/nps',
     beforeEnter: (_to, _from, next) => {
       const store = useUserStore();
@@ -88,10 +95,6 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/NpsPage.vue') },
-      {
-        path: '/dashboard-nps',
-        component: () => import('pages/NpsDashboardPage.vue'),
-      },
       {
         path: '/forms',
         component: () => import('pages/FormManagerPage.vue'),
