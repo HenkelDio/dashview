@@ -4,10 +4,12 @@
       <q-page class="flex flex-center bg-grey-2">
         <div class="flex justify-between" style="width: 1100px">
           <div class="displayOnMobile">
-            <div class="text-h6 inter">DASH VIEW</div>
+            <div>
+              <q-img src="../assets/logo.png" width="30%" />
+            </div>
             <div class="text-h3 text-grey-10">
-              Vamos transformar dados <br />
-              em <b>respostas</b>
+              Clínica Los Angeles <br />
+              | <b>Gerenciador de NPS</b>
             </div>
           </div>
           <div class="widthOnMobile">
