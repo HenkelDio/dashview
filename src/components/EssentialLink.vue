@@ -53,6 +53,7 @@ export interface EssentialLinkProps {
   icon?: string;
   security?: string;
   children?: EssentialLinkProps[];
+  permission?: string;
 }
 
 withDefaults(defineProps<EssentialLinkProps>(), {

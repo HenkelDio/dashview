@@ -40,13 +40,17 @@
             label="Função"
             v-model="user.role"
             outlined
-            label-slot
             emit-value
             :options="roleOptions"
             :rules="[(val) => !!val || 'Função é obrigatório']"
             :disable="loading"
-          />
+          >
+            <template v-slot:selected-item="props">
+              {{ props.opt === 'admin' ? 'Administrador' : 'Usuário' }}
+            </template>
+          </q-select>
           <q-select
+            v-if="user.role === 'user'"
             label="Departamento"
             v-model="user.departments"
             outlined
@@ -59,6 +63,48 @@
             option-label="label"
             hint="O usuário pode ter mais de um departamento"
           />
+
+          <q-expansion-item
+            expand-separator
+            icon="tune"
+            label="Permissões de usuário"
+            v-if="user.role === 'admin'"
+          >
+            <q-card>
+              <q-card-section class="flex column q-gutter-md">
+                <q-checkbox
+                  v-model="permissions.sendNps"
+                  label="Enviar NPS"
+                  color="primary"
+                  :disable="loading"
+                />
+                <q-checkbox
+                  v-model="permissions.viewAnswers"
+                  label="Visualizar respostas"
+                  color="primary"
+                  :disable="loading"
+                />
+                <q-checkbox
+                  v-model="permissions.viewDashboard"
+                  label="Visualizar dashboard"
+                  color="primary"
+                  :disable="loading"
+                />
+                <q-checkbox
+                  v-model="permissions.viewAndEditUsers"
+                  label="Visualizar e editar usuários"
+                  color="primary"
+                  :disable="loading"
+                />
+                <q-checkbox
+                  v-model="permissions.viewAndEditDepartments"
+                  label="Visualizar e editar departamentos"
+                  color="primary"
+                  :disable="loading"
+                />
+              </q-card-section>
+            </q-card>
+          </q-expansion-item>
         </div>
       </q-card-section>
       <q-card-actions align="right">
@@ -93,11 +139,18 @@ import {
   updateUser,
 } from 'src/services/UserService';
 import { IDepartment, User } from 'src/types';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 const show = ref(true);
 
 const user = ref({} as User);
+const permissions = ref({
+  sendNps: false,
+  viewAnswers: false,
+  viewDashboard: false,
+  viewAndEditUsers: false,
+  viewAndEditDepartments: false,
+});
 const departmentsOptions = ref([] as IDepartment[]);
 const loading = ref(false);
 const loadingDepartments = ref(false);
@@ -138,13 +191,13 @@ async function getDepartments() {
 
   if (data) {
     departmentsOptions.value = data;
-    console.log('departmentsOptions', departmentsOptions.value)
   }
 }
 
 async function createUser() {
   loading.value = true;
   user.value.document = user.value.document.replace('-', '').replace('.', '');
+  user.value.permissions = { ...permissions.value, firstLogin: true };
   const { error } = await createNewUser(user.value);
   loading.value = false;
 
@@ -167,20 +220,28 @@ async function createUser() {
 }
 
 const isFormValid = computed(() => {
-  return (
+  const defaultFields =
     user.value.name !== '' &&
     user.value.email !== '' &&
     user.value.document !== '' &&
-    user.value.role !== '' &&
-    user.value.departments &&
-    user.value.departments.length > 0
-  );
+    user.value.role !== '';
+
+  if (user.value.role === 'user') {
+    return (
+      defaultFields &&
+      user.value.departments &&
+      user.value.departments.length > 0
+    );
+  }
+
+  return defaultFields;
 });
 
 async function updateOneUser() {
   loading.value = true;
 
   user.value.document = user.value.document.replace('-', '').replace('.', '');
+  user.value.permissions = permissions.value;
   const { error } = await updateUser(user.value);
 
   loading.value = false;
@@ -219,6 +280,10 @@ async function loadUser() {
     }
 
     user.value = data;
+
+    if (data.permissions) {
+      permissions.value = data.permissions;
+    }
   }
 }
 
@@ -243,6 +308,31 @@ async function resetPassword() {
     color: 'green',
   });
 }
+
+watch(
+  () => user.value.role,
+  (role: string) => {
+    if (role === 'admin' && !isEdit.value) {
+      permissions.value.sendNps = true;
+      permissions.value.viewAnswers = true;
+      permissions.value.viewDashboard = true;
+      permissions.value.viewAndEditUsers = true;
+      permissions.value.viewAndEditDepartments = true;
+    }
+
+    if (role === 'admin' && isEdit.value) {
+      user.value.departments = [];
+    }
+
+    if (role === 'user') {
+      permissions.value.sendNps = false;
+      permissions.value.viewAnswers = false;
+      permissions.value.viewDashboard = false;
+      permissions.value.viewAndEditUsers = false;
+      permissions.value.viewAndEditDepartments = false;
+    }
+  }
+);
 
 onMounted(() => {
   getDepartments();

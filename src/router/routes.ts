@@ -1,5 +1,5 @@
 import { useUserStore } from 'src/stores/userStore';
-import { RouteRecordRaw } from 'vue-router';
+import { NavigationGuardNext, RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -35,12 +35,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/users',
     beforeEnter: (_to, _from, next) => {
-      const store = useUserStore();
-      if (store.$state.isAuthenticated) {
-        next();
-      } else {
-        next({ path: '/' });
-      }
+      handleAcessRoute(next, 'viewAndEditUsers');
     },
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('pages/UsersPage.vue') }],
@@ -48,12 +43,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/departments',
     beforeEnter: (_to, _from, next) => {
-      const store = useUserStore();
-      if (store.$state.isAuthenticated) {
-        next();
-      } else {
-        next({ path: '/' });
-      }
+      handleAcessRoute(next, 'viewAndEditDepartments');
     },
     component: () => import('layouts/MainLayout.vue'),
     children: [
@@ -78,26 +68,23 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/dashboard-nps',
     component: () => import('layouts/MainLayout.vue'),
+    beforeEnter: (_to, _from, next) => {
+      handleAcessRoute(next, 'viewDashboard');
+    },
     children: [
       { path: '', component: () => import('pages/NpsDashboardPage.vue') },
     ],
   },
   {
     path: '/nps',
-    beforeEnter: (_to, _from, next) => {
-      const store = useUserStore();
-      if (store.$state.isAuthenticated) {
-        next();
-      } else {
-        next({ path: '/' });
-      }
-    },
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/NpsPage.vue') },
       {
-        path: '/forms',
-        component: () => import('pages/FormManagerPage.vue'),
+        path: '',
+        beforeEnter: (_to, _from, next) => {
+          handleAcessRoute(next, 'sendNps');
+        },
+        component: () => import('pages/NpsPage.vue'),
       },
       {
         path: '/answers',
@@ -105,6 +92,9 @@ const routes: RouteRecordRaw[] = [
           sortBy: route.query.sortBy,
           npsId: route.query.npsId,
         }),
+        beforeEnter: (_to, _from, next) => {
+          handleAcessRoute(next, 'viewAnswers');
+        },
         component: () => import('pages/AnswersFormPage.vue'),
       },
       {
@@ -186,8 +176,7 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: '/processes',
-    props: (route) => ({ id: route.query.id }),
+    path: '/not-allowed',
     beforeEnter: (_to, _from, next) => {
       const store = useUserStore();
       if (store.$state.isAuthenticated) {
@@ -198,7 +187,7 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/ProcessesPage.vue') },
+      { path: '', component: () => import('pages/NotAllowedAccessPage.vue') },
     ],
   },
 
@@ -222,5 +211,31 @@ const routes: RouteRecordRaw[] = [
     component: () => import('pages/ErrorNotFound.vue'),
   },
 ];
+
+type PermissionType =
+  | 'firstLogin'
+  | 'sendNps'
+  | 'viewAnswers'
+  | 'viewDashboard'
+  | 'viewAndEditUsers'
+  | 'viewAndEditDepartments';
+
+function handleAcessRoute(
+  next: NavigationGuardNext,
+  permissionType: PermissionType
+) {
+  const store = useUserStore();
+
+  if (!store.$state.isAuthenticated) {
+    console.log('Não está autenticado');
+    return next({ path: '/' }); // ⬅ Retorna imediatamente
+  }
+
+  if (store.$state.user.permissions[permissionType]) {
+    return next(); // ⬅ Retorna imediatamente
+  }
+
+  return next({ path: '/not-allowed' }); // ⬅ Garante que só será chamado uma vez
+}
 
 export default routes;

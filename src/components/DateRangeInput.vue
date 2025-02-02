@@ -42,6 +42,8 @@ const emit = defineEmits(['to', 'from']);
 
 interface IProps {
   currentDate?: boolean;
+  startDate?: number;
+  endDate?: number;
 }
 
 const props = defineProps<IProps>();
@@ -114,7 +116,12 @@ const callLocale = computed(() => {
 });
 
 onMounted(() => {
-  setCurrentDate();
+  if (props.startDate && props.endDate) {
+    dateValue.value.from = formatDate(new Date(props.startDate));
+    dateValue.value.to = formatDate(new Date(props.endDate));
+  } else {
+    setCurrentDate();
+  }
 });
 </script>
 

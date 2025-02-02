@@ -88,26 +88,11 @@ defineOptions({
 
 const router = useRouter();
 
+const userStore = useUserStore();
+const name = ref(userStore.$state.user.name);
+const role = ref(userStore.$state.user.role);
+
 const linksList: EssentialLinkProps[] = [
-  //  {
-  //    title: 'Dashboard Admin',
-  //    caption: 'Visualizar gráficos administrativo',
-  //    icon: 'analytics',
-  //    link: '/dashboard-admin',
-  //    security: 'admin',
-  //  },
-  //  {
-  //    title: 'Dashboard',
-  //    caption: 'Visualizar gráficos',
-  //    icon: 'insert_chart',
-  //    link: '/dashboard',
-  //  },
-  // {
-  //   title: 'Novo gráfico',
-  //   caption: 'Criar novo gráfico',
-  //   icon: 'add_chart',
-  //   link: '/list-charts',
-  // },
   {
     title: 'NPS',
     caption: 'Gerenciamento de NPS',
@@ -123,17 +108,13 @@ const linksList: EssentialLinkProps[] = [
         title: 'Envio de NPS',
         link: '/nps',
         icon: 'schedule_send',
+        permission: 'sendNps',
       },
       {
         title: 'Respostas',
         link: '/answers',
         icon: 'chat',
       },
-      // {
-      //   title: 'Formulários',
-      //   link: '/forms',
-      //   icon: 'description',
-      // },
     ],
   },
   {
@@ -146,17 +127,10 @@ const linksList: EssentialLinkProps[] = [
   {
     title: 'Departamentos',
     caption: 'Editar departamentos',
-    icon: 'group',
+    icon: 'apartment',
     link: '/departments',
     security: 'admin',
   },
-  // {
-  //   title: 'Módulos',
-  //   caption: 'Configurações de módulos',
-  //   icon: 'view_module',
-  //   link: '/modules',
-  //   security: 'admin',
-  // },
   {
     title: 'Preferências',
     caption: 'Edite seu perfil',
@@ -164,10 +138,6 @@ const linksList: EssentialLinkProps[] = [
     link: '/preferences',
   },
 ];
-
-const userStore = useUserStore();
-const name = ref(userStore.$state.user.name);
-const role = ref(userStore.$state.user.role);
 
 const showGreetingsDialog = ref(
   userStore.$state.user.permissions

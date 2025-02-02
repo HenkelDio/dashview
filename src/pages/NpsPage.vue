@@ -25,15 +25,25 @@
             />
           </div>
 
-          <q-btn
-            no-caps
-            label="Importar arquivo"
-            color="primary"
-            class="inter-bold"
-            size="1rem"
-            unelevated
-            @click="showDialog = true"
-          />
+          <div class="flex q-gutter-x-md align-center">
+            <q-btn
+              flat
+              no-caps
+              color="secondary"
+              class="inter-medium"
+              @click="showTutorial = true"
+              >Como enviar o NPS?</q-btn
+            >
+            <q-btn
+              no-caps
+              label="Importar arquivo"
+              color="primary"
+              class="inter-bold"
+              size="1rem"
+              unelevated
+              @click="showDialog = true"
+            />
+          </div>
 
           <!-- 
           /> -->
@@ -47,7 +57,7 @@
                 Importe o arquivo de e-mails dos pacientes, para que seja
                 enviado a pesquisa de satisfação.
               </div>
-              <div class="text-caption">O arquivo deve ser um .csv</div>
+              <div class="text-caption">O arquivo deve ser um .xls</div>
             </q-card-section>
             <q-card-section>
               <q-file
@@ -57,7 +67,7 @@
                 color="white"
                 dense
                 v-model="file"
-                accept=".csv"
+                accept=".xls"
               >
                 <template v-slot:prepend>
                   <q-icon name="attachment" /> </template
@@ -192,6 +202,147 @@
         </q-table>
       </q-card-section>
     </q-card>
+
+    <q-dialog v-model="showTutorial">
+      <q-card style="min-height: 500px">
+        <q-card-section>
+          <div class="text-h6">Como enviar o NPS?</div>
+          <div class="caption">
+            Para enviar a pesquisa de satisfação você precisará exportar um
+            arquivo do sistema de internação da RISC e importar aqui.
+          </div>
+
+          <q-tabs
+            v-model="tab"
+            dense
+            class="text-grey q-mt-md"
+            active-color="primary"
+            indicator-color="primary"
+            align="justify"
+            narrow-indicator
+          >
+            <q-tab name="video" label="Vídeo" />
+            <q-tab name="text" label="Descrito" />
+          </q-tabs>
+
+          <q-separator />
+
+          <q-tab-panels v-model="tab" animated>
+            <q-tab-panel name="video">
+              <div>
+                <div class="text-subtitle2">Como gerar o arquivo</div>
+                <q-video style="height: 400px" :src="reportVideo" />
+              </div>
+              <div>
+                <div class="text-subtitle2 q-mt-lg">
+                  Como importar o arquivo
+                </div>
+                <q-video style="height: 400px" :src="importVideo" />
+              </div>
+            </q-tab-panel>
+            <q-tab-panel name="text">
+              <div class="text-body2 q-mt-md">
+                <div class="text-subtitle2">
+                  1. Acessar o Sistema de Internação da RISC
+                </div>
+                <div class="text-grey-9">
+                  Acesse o sistema de internação da RISC. Faça login com suas
+                  credenciais de acesso.
+                </div>
+              </div>
+
+              <div class="text-body2 q-mt-md">
+                <div class="text-subtitle2">2. Acessar Relatórios</div>
+                <div class="text-grey-9">
+                  No painel de navegação, clique em "Relatórios" para expandir
+                  as opções.
+                </div>
+              </div>
+
+              <div class="text-body2 q-mt-md">
+                <div class="text-subtitle2">
+                  3. Selecionar Relatório de Dados do Paciente - Excel
+                </div>
+                <div class="text-grey-9">
+                  No menu de relatórios, clique em "Relatório Dados do Paciente
+                  - Excel" para abrir a tela de configuração do relatório.
+                </div>
+              </div>
+
+              <div class="text-body2 q-mt-md">
+                <div class="text-subtitle2">4. Selecionar o Período</div>
+                <div class="text-grey-9">
+                  Escolha o intervalo de datas desejado preenchendo as datas de
+                  início e término do período.
+                </div>
+              </div>
+
+              <div class="text-body2 q-mt-md">
+                <div class="text-subtitle2">
+                  5. Configurar o Tipo de Pesquisa
+                </div>
+                <div class="text-grey-9">
+                  Em "Tipo de Pesquisa", selecione a opção "Pesquisar pela data
+                  de Alta".
+                </div>
+              </div>
+
+              <div class="text-body2 q-mt-md">
+                <div class="text-subtitle2">6. Gerar o Relatório</div>
+                <div class="text-grey-9">
+                  Clique em "Ok" ou "Gerar Relatório" para processar os dados e
+                  gerar o arquivo .xls.
+                </div>
+              </div>
+
+              <div class="text-body2 q-mt-md">
+                <div class="text-subtitle2">
+                  7. Acessar o Sistema Gerenciador de NPS
+                </div>
+                <div class="text-grey-9">
+                  Acesse o Sistema Gerenciador de NPS. Faça login com suas
+                  credenciais.
+                </div>
+              </div>
+
+              <div class="text-body2 q-mt-md">
+                <div class="text-subtitle2">
+                  8. Ir para a Aba de Envio de NPS
+                </div>
+                <div class="text-grey-9">
+                  No Sistema Gerenciador de NPS, clique na aba "Envio de NPS"
+                  para abrir a tela de importação de arquivos.
+                </div>
+              </div>
+
+              <div class="text-body2 q-mt-md">
+                <div class="text-subtitle2">9. Importar o Arquivo</div>
+                <div class="text-grey-9">
+                  Clique em "Importar" e selecione o arquivo .xls gerado pelo
+                  sistema de internação da RISC. Clique em "Abrir".
+                </div>
+              </div>
+
+              <div class="text-body2 q-mt-md">
+                <div class="text-subtitle2">10. Enviar o Arquivo</div>
+                <div class="text-grey-9">
+                  Após a seleção, clique em "Enviar" para importar os dados do
+                  arquivo para o Sistema Gerenciador de NPS.
+                </div>
+              </div>
+
+              <div class="text-body2 q-mt-md">
+                <div class="text-subtitle2">11. Confirmar o Envio</div>
+                <div class="text-grey-9">
+                  O sistema processará o arquivo. Aguarde a mensagem de
+                  confirmação do envio.
+                </div>
+              </div>
+            </q-tab-panel>
+          </q-tab-panels>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -205,6 +356,8 @@ import 'moment/dist/locale/pt-br';
 import DateRangeInput from 'src/components/DateRangeInput.vue';
 import notFound from '../assets/notfound.json';
 import { Vue3Lottie } from 'vue3-lottie';
+import reportVideo from '../assets/como_gerar_o_relatorio.mp4';
+import importVideo from '../assets/envio_de_email.mp4';
 
 const loading = ref(false);
 const rows = ref([] as INPSTable[]);
@@ -216,6 +369,8 @@ const loadingFeedbackReturns = ref(false);
 const feedbackCount = ref(0);
 const startDate = ref(0);
 const endDate = ref(0);
+const showTutorial = ref(false);
+const tab = ref('video');
 
 const columns = ref<Column[]>([
   {

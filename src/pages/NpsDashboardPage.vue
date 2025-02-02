@@ -37,7 +37,7 @@
       <div class="flex q-gutter-x-md q-mb-md">
         <q-skeleton height="110px" width="260px" square v-if="loadingAnswers" />
 
-        <q-card flat v-if="!loadingAnswers">
+        <q-card flat v-if="!loadingAnswers && !departmentModel.label">
           <q-card-section>
             <div class="flex justify-between">
               <div class="flex column">
@@ -73,13 +73,13 @@
                   <div class="inter text-grey-8" style="font-size: 0.8rem">
                     TOTAL DE PERGUNTAS RESPONDIDAS POR NOTA
                   </div>
-                  <div
+                  <!-- <div
                     class="inter text-caption cursor-pointer"
                     @click="$router.push({ path: '/general-view' })"
                   >
                     ver mais
                     <q-tooltip> Ir para detalhes de respostas </q-tooltip>
-                  </div>
+                  </div> -->
                 </div>
 
                 <div class="flex justify-between q-mt-sm q-gutter-x-md">
@@ -157,6 +157,8 @@
               @from="startDate = $event"
               @to="endDate = $event"
               :currentDate="true"
+              :startDate="startDate"
+              :endDate="endDate"
             />
             <q-select
               v-model="departmentModel"

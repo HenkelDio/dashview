@@ -81,9 +81,18 @@
                 key="patient"
                 :props="props"
               >
-                <div v-if="props.row.patient">
+                <div v-if="props.row.patient && !props.row.requestAnswered">
                   <q-badge color="blue" label="Solicitação de retorno" />
                   <div>{{ props.row.patient || '' }}</div>
+                </div>
+                <div v-if="props.row.patient && props.row.requestAnswered">
+                  <q-badge
+                    color="green"
+                    :label="`Solicitação de retorno respondida em ${formatDate(
+                      props.row.requestAnswered.date
+                    )}`"
+                  />
+                  <div>{{ props.row.patient }}</div>
                 </div>
                 <div v-if="!props.row.patient">Sem informações</div>
               </q-td>
@@ -124,13 +133,27 @@
                         <q-btn
                           flat
                           outline
-                          v-if="props.row.feedbackReturn"
+                          label="Informações do paciente"
+                          class="labelAction full-width"
+                          style="font-size: 12px"
+                          @click="
+                            patientInfo = props.row;
+                            showPatientInfoDialog = true;
+                          "
+                        ></q-btn>
+                        <q-btn
+                          flat
+                          outline
+                          v-if="
+                            props.row.feedbackReturn &&
+                            !props.row.requestAnswered
+                          "
                           label="Marcar como respondido"
                           class="labelAction full-width"
                           style="font-size: 12px"
                           @click="
-                            questions = props.row.questions;
-                            show = true;
+                            answerId = props.row.id;
+                            showConfirm = true;
                           "
                         ></q-btn>
                       </div>
@@ -165,6 +188,69 @@
                 </q-card-section>
               </q-card>
             </q-dialog>
+
+            <q-dialog v-model="showPatientInfoDialog">
+              <q-card style="min-width: 600px">
+                <q-card-section>
+                  <div class="text-h6">Informações do paciente</div>
+                  <q-list bordered separator>
+                    <q-item clickable v-ripple>
+                      <q-item-section>
+                        <q-item-label>Nome</q-item-label>
+                        <q-item-label caption lines="2">{{
+                          patientInfo.patient
+                        }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-ripple>
+                      <q-item-section>
+                        <q-item-label>Telefone</q-item-label>
+                        <q-item-label caption lines="2">{{
+                          patientInfo.patientPhone
+                        }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-ripple>
+                      <q-item-section>
+                        <q-item-label>E-mail</q-item-label>
+                        <q-item-label caption lines="2">{{
+                          patientInfo.patientEmail
+                        }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-card-section>
+              </q-card>
+            </q-dialog>
+
+            <q-dialog v-model="showConfirm" persistent>
+              <q-card style="min-width: 400px">
+                <q-card-section>
+                  <div class="text-h6">
+                    Tem certeza que deseja marcar como respondido?
+                  </div>
+                </q-card-section>
+                <q-card-actions align="right">
+                  <q-btn
+                    label="Fechar"
+                    flat
+                    @click="showConfirm = false"
+                    :disable="loadingAnswered"
+                  >
+                  </q-btn>
+                  <q-btn
+                    unelevated
+                    color="primary"
+                    label="Sim"
+                    @click="setAnswered()"
+                    :loading="loadingAnswered"
+                  >
+                  </q-btn>
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
           </template>
         </q-table>
       </q-card-section>
@@ -173,10 +259,10 @@
 </template>
 
 <script lang="ts" setup>
-import { Column, IAnswer, IQuestion } from 'src/types';
+import { Column, IAnswer, IQuestion, IRequestAnswered } from 'src/types';
 import { onMounted, ref, watch } from 'vue';
 import { Notify } from 'quasar';
-import { getAnswers } from 'src/services/NPSService';
+import { getAnswers, setRequestAnswered } from 'src/services/NPSService';
 import moment from 'moment';
 import 'moment/dist/locale/pt-br';
 import DateRangeInput from 'src/components/DateRangeInput.vue';
@@ -185,10 +271,14 @@ import notFound from '../assets/notfound.json';
 import { Vue3Lottie } from 'vue3-lottie';
 
 interface IAnswerTable {
+  id: string;
   patient: string;
+  patientEmail: string;
+  patientPhone: string;
   date: string;
   questions: IQuestion[];
   actions: string;
+  requestAnswered?: IRequestAnswered;
 }
 
 const route = useRoute();
@@ -202,6 +292,13 @@ const show = ref(false);
 const questions = ref([] as IQuestion[]);
 const startDate = ref(0);
 const endDate = ref(0);
+const patientInfo = ref(
+  {} as { patient: string; patientEmail: string; patientPhone: string }
+);
+const showPatientInfoDialog = ref(false);
+const showConfirm = ref(false);
+const loadingAnswered = ref(false);
+const answerId = ref('');
 
 const columns = ref<Column[]>([
   {
@@ -259,10 +356,14 @@ async function loadAnswers() {
 function formatRows(data: IAnswer[]) {
   return data.map((item: IAnswer) => {
     return {
+      id: item.id || '',
       patient: item.patientName,
+      patientPhone: item.patientPhone,
       date: formatDate(item.timestamp),
       questions: item.questions,
       feedbackReturn: item.feedbackReturn,
+      patientEmail: item.patientEmail,
+      requestAnswered: item.requestAnswered,
       actions: '',
     };
   });
@@ -271,6 +372,29 @@ function formatRows(data: IAnswer[]) {
 function formatDate(timestamp: number): string {
   moment.locale('pt-br');
   return moment(timestamp).format('DD/MM/YYYY');
+}
+
+async function setAnswered() {
+  loadingAnswered.value = true;
+  const { data, error } = await setRequestAnswered(answerId.value);
+  loadingAnswered.value = false;
+
+  if (error) {
+    Notify.create({
+      message: 'Erro ao marcar como respondido',
+      color: 'red',
+    });
+    return;
+  }
+
+  if (data) {
+    Notify.create({
+      message: 'Solicitação marcada como respondida',
+      color: 'green',
+    });
+    loadAnswers();
+    showConfirm.value = false;
+  }
 }
 
 onMounted(() => {

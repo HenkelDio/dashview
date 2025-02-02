@@ -12,10 +12,12 @@ export const getForm = async () => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const saveAnswer = async (payload: any, token: string | undefined) => {
   try {
-    const response = await publicApi.post(
-      `/public/form/save-answer?token=${token}`,
-      payload
-    );
+    let url = '/public/form/save-answer';
+    if (token) {
+      url = `${url}?token=${token}`;
+    }
+
+    const response = await publicApi.post(url, payload);
     return { data: response.data, error: null };
   } catch (e) {
     return { data: null, error: e };
@@ -132,6 +134,23 @@ export const getAllAnswers = async (
   try {
     const response = await api.get(
       `/nps/get-all-answers?pageNumber=${pageNumber}`,
+      { headers }
+    );
+    return { data: response.data, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
+};
+
+export const setRequestAnswered = async (answerId: string) => {
+  const headers = {
+    answerId,
+  };
+
+  try {
+    const response = await api.put(
+      '/nps/set-request-answered',
+      {},
       { headers }
     );
     return { data: response.data, error: null };

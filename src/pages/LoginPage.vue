@@ -90,8 +90,12 @@ async function doLogin() {
   const state = useUserStore();
   state.setUser(data);
 
-  // window.open('http://localhost:9000/dashboard', '_self')
-  router.push({ path: '/dashboard-nps' });
+  if (data.permissions && data.permissions.viewDashboard) {
+    console.log('oiiiii');
+    router.push({ path: '/dashboard-nps' });
+  } else {
+    router.push({ path: '/nps' });
+  }
 }
 </script>
 

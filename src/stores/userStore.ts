@@ -7,7 +7,7 @@ export const useUserStore = defineStore('user', {
     const isAuthenticated = localStorage.getItem('isAuthenticated');
     return {
       isAuthenticated: isAuthenticated ? true : false,
-      user: storedUser ? JSON.parse(storedUser) as User : ({} as User),
+      user: storedUser ? (JSON.parse(storedUser) as User) : ({} as User),
     };
   },
   getters: {},
@@ -16,6 +16,7 @@ export const useUserStore = defineStore('user', {
       this.user = user;
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('isAuthenticated', JSON.stringify('true'));
+      this.isAuthenticated = true;
     },
     setUserNotFirstLogin() {
       this.user.permissions.firstLogin = false;

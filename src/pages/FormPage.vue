@@ -74,7 +74,9 @@
               title="Gostaria de retorno?"
               @setPatientName="patientName = $event"
               @setPatientPhone="patientPhone = $event"
+              @patientEmail="patientEmail = $event"
               @patientFeedbackReturn="patientFeedbackReturn = $event"
+              @fieldError="fieldError = $event"
               :disabled="loadingSubmit"
             />
 
@@ -117,6 +119,8 @@ const patientFeedbackReturn = ref(false);
 const answers = ref();
 const patientName = ref('');
 const patientPhone = ref('');
+const patientEmail = ref('');
+const fieldError = ref(false);
 
 const route = useRoute();
 
@@ -160,18 +164,27 @@ function updateAnswer(
 }
 
 const isValid = computed(() => {
-  if (answers.value) {
-    let filteredAnswers = answers.value.filter(
-      (item: IQuestion) => item.title !== 'Gostaria de um retorno?'
-    );
+  if (!answers.value) return false;
 
-    return (
-      filteredAnswers &&
-      filteredAnswers.every((item: IQuestion) => item.answer.trim() !== '')
+  const filteredAnswers = answers.value.filter(
+    (item: IQuestion) => item.title !== 'Gostaria de um retorno?'
+  );
+
+  const allAnswersFilled = filteredAnswers.every((item: IQuestion) =>
+    Boolean(item.answer?.trim())
+  );
+
+  if (patientFeedbackReturn.value) {
+    return Boolean(
+      patientEmail.value &&
+        patientName.value &&
+        patientPhone.value &&
+        !fieldError.value &&
+        allAnswersFilled
     );
   }
 
-  return false;
+  return allAnswersFilled;
 });
 
 async function submitAnswers() {
@@ -185,7 +198,8 @@ async function submitAnswers() {
     answers: answers.value,
     patientInfo: {
       patientName: patientName.value,
-      patientPhone: patientPhone.value,
+      patientPhone: patientPhone.value.replace(/\D/g, ''),
+      patientEmail: patientEmail.value,
       patientFeedbackReturn: patientFeedbackReturn.value,
     },
   };
@@ -209,6 +223,7 @@ async function submitAnswers() {
     color: 'green',
   });
 }
+
 onMounted(() => {
   loadForm();
 });

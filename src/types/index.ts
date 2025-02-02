@@ -21,9 +21,16 @@ export interface User {
   role: string;
   token?: string;
   status?: string;
-  permissions: {
-    firstLogin: boolean;
-  };
+  permissions: IPermissions;
+}
+
+export interface IPermissions {
+  firstLogin?: boolean;
+  sendNps?: boolean;
+  viewAnswers?: boolean;
+  viewDashboard?: boolean;
+  viewAndEditUsers?: boolean;
+  viewAndEditDepartments?: boolean;
 }
 
 export interface IUserTable {
@@ -173,13 +180,21 @@ export interface IQuestion {
 }
 
 export interface IAnswer {
+  id?: string;
   feedbackReturn: boolean;
   timestamp: number;
   questions: IQuestion[];
   patientName: string;
   patientPhone: string;
+  patientEmail: string;
   dateOfAdmission: number;
   answerType: string;
+  requestAnswered: IRequestAnswered;
+}
+
+export interface IRequestAnswered {
+  username: string;
+  timestamp: number;
 }
 
 export interface IScoreDepartment {

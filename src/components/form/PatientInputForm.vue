@@ -16,26 +16,53 @@
     <q-input
       v-if="patientFeedbackReturn"
       v-model="patientName"
+      ref="patientNameRef"
       label="Seu nome completo"
       class="q-mt-md"
       dense
       outlined
       :disable="disabled"
+      :rules="[
+        (val) => !!val || 'Nome é obrigatório',
+        (val) => val.length >= 3 || 'Nome inválido',
+      ]"
     />
+
     <q-input
       v-if="patientFeedbackReturn"
       v-model="patientPhone"
+      ref="patientPhoneRef"
       label="Seu número de telefone"
-      class="q-mt-md"
+      class="q-mt-sm"
       dense
       outlined
       :disable="disabled"
+      mask="(##) #####-####"
+      :rules="[
+        (val) => !!val || 'Telefone é obrigatório',
+        (val) => val.length === 15 || 'Telefone inválido',
+      ]"
+    />
+
+    <q-input
+      v-if="patientFeedbackReturn"
+      v-model="patientEmail"
+      ref="patientEmailRef"
+      label="Seu e-mail"
+      class="q-mt-sm"
+      dense
+      outlined
+      :disable="disabled"
+      :rules="[
+        (val) => !!val || 'E-mail é obrigatório',
+        (val) => /.+@.+\..+/.test(val) || 'E-mail inválido',
+      ]"
     />
   </q-card>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { ref, watch, nextTick } from 'vue';
 
 interface IProps {
   title: string;
@@ -45,20 +72,53 @@ interface IProps {
 const emit = defineEmits([
   'setPatientName',
   'setPatientPhone',
+  'patientEmail',
   'patientFeedbackReturn',
+  'fieldError',
 ]);
+
 const props = defineProps<IProps>();
 
 const patientName = ref('');
 const patientPhone = ref('');
+const patientEmail = ref('');
 const patientFeedbackReturn = ref(false);
 
-watch(patientName, (newVal) => {
-  emit('setPatientName', newVal);
+const patientNameRef = ref();
+const patientPhoneRef = ref();
+const patientEmailRef = ref();
+
+async function validateAndEmit(
+  fieldRef: { value: { validate: () => Promise<boolean> } | null },
+  fieldValue: string,
+  eventName:
+    | 'setPatientName'
+    | 'setPatientPhone'
+    | 'patientEmail'
+    | 'patientFeedbackReturn'
+) {
+  await nextTick();
+  if (fieldRef.value) {
+    const valid = await fieldRef.value.validate();
+    if (valid) {
+      emit(eventName, fieldValue);
+      emit('fieldError', false);
+    } else {
+      emit('fieldError', true);
+    }
+  }
+}
+
+watch(patientName, async (newVal) => {
+  await validateAndEmit(patientNameRef, newVal, 'setPatientName');
 });
 
-watch(patientPhone, (newVal) => {
-  emit('setPatientPhone', newVal);
+watch(patientPhone, async (newVal) => {
+  await validateAndEmit(patientPhoneRef, newVal, 'setPatientPhone');
+});
+
+watch(patientEmail, async (newVal) => {
+  await validateAndEmit(patientEmailRef, newVal, 'patientEmail');
 });
 
 watch(patientFeedbackReturn, (newVal) => {
