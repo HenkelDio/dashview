@@ -176,10 +176,10 @@
                     >
                       <q-item-section>
                         <q-item-label>{{ question.title }}</q-item-label>
-                        <q-item-label caption lines="2">{{
+                        <q-item-label caption lines="6">{{
                           question.answer
                         }}</q-item-label>
-                        <q-item-label caption lines="2">{{
+                        <q-item-label caption lines="4">{{
                           question.observation
                         }}</q-item-label>
                       </q-item-section>
