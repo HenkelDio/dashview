@@ -84,6 +84,30 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
+
+        <q-dialog v-model="showEmailsErrors">
+          <q-card>
+            <q-card-section>
+              <div class="text-h6">
+                Não foi possível enviar a pesquisa para os seguintes e-mails:
+              </div>
+            </q-card-section>
+            <q-card-section>
+              <div v-for="email in emailsErrors" :key="email">
+                <q-item clickable v-ripple>
+                  <q-item-section>{{ email }}</q-item-section>
+                </q-item>
+              </div>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn
+                label="Fechar"
+                color="primary"
+                @click="showEmailsErrors = false"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </q-card-section>
 
       <q-card-section>
@@ -371,6 +395,8 @@ const startDate = ref(0);
 const endDate = ref(0);
 const showTutorial = ref(false);
 const tab = ref('video');
+const showEmailsErrors = ref(false);
+const emailsErrors = ref([]);
 
 const columns = ref<Column[]>([
   {
@@ -409,7 +435,7 @@ async function uploadFile() {
     type: file.value.type,
   });
 
-  const { error } = await sendNPS(selectedFile);
+  const { error, data } = await sendNPS(selectedFile);
 
   loadingFile.value = false;
 
@@ -423,11 +449,16 @@ async function uploadFile() {
     return;
   }
 
-  Notify.create({
-    message: 'Pesquisas enviadas com sucesso!',
-    group: true,
-    color: 'green',
-  });
+  if (data.length > 0) {
+    showEmailsErrors.value = true;
+    emailsErrors.value = data;
+  } else {
+    Notify.create({
+      message: 'Pesquisas enviadas com sucesso!',
+      group: true,
+      color: 'green',
+    });
+  }
 
   file.value = null;
   showDialog.value = false;

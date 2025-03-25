@@ -115,6 +115,11 @@ const linksList: EssentialLinkProps[] = [
         link: '/answers',
         icon: 'chat',
       },
+      {
+        title: 'QR Code',
+        link: '/qr-code',
+        icon: 'qr_code',
+      },
     ],
   },
   {

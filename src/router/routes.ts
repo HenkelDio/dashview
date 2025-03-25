@@ -105,6 +105,14 @@ const routes: RouteRecordRaw[] = [
         }),
         component: () => import('pages/ViewGeneralAnswersPage.vue'),
       },
+      {
+        path: '/qr-code',
+        props: (route) => ({
+          sortBy: route.query.sortBy,
+          npsId: route.query.npsId,
+        }),
+        component: () => import('pages/QRCodePage.vue'),
+      },
     ],
   },
 
