@@ -61,7 +61,7 @@
             />
           </div>
         </q-list>
-        <div class="text-center text-caption inter-medium">Versão 1.0.0</div>
+        <div class="text-center text-caption inter-medium">Versão 1.5.0</div>
       </div>
     </q-drawer>
 
