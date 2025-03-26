@@ -14,7 +14,16 @@
     />
 
     <q-input
-      v-if="patientFeedbackReturn"
+      v-model="patientName"
+      ref="patientNameRef"
+      label="Seu nome completo (opcional)"
+      class="q-mt-md"
+      dense
+      outlined
+      :disable="disabled"
+    />
+
+    <!-- <q-input
       v-model="patientName"
       ref="patientNameRef"
       label="Seu nome completo"
@@ -26,13 +35,23 @@
         (val) => !!val || 'Nome é obrigatório',
         (val) => val.length >= 3 || 'Nome inválido',
       ]"
-    />
+    /> -->
 
     <q-input
-      v-if="patientFeedbackReturn"
       v-model="patientPhone"
       ref="patientPhoneRef"
-      label="Seu número de telefone"
+      label="Seu número de telefone (opcional)"
+      class="q-mt-sm"
+      dense
+      outlined
+      :disable="disabled"
+      mask="(##) #####-####"
+    />
+
+    <!-- <q-input
+      v-model="patientPhone"
+      ref="patientPhoneRef"
+      label="Seu número de telefone (opcional)"
       class="q-mt-sm"
       dense
       outlined
@@ -42,13 +61,12 @@
         (val) => !!val || 'Telefone é obrigatório',
         (val) => val.length === 15 || 'Telefone inválido',
       ]"
-    />
+    /> -->
 
-    <q-input
-      v-if="patientFeedbackReturn"
+    <!-- <q-input
       v-model="patientEmail"
       ref="patientEmailRef"
-      label="Seu e-mail"
+      label="Seu e-mail (opcional)"
       class="q-mt-sm"
       dense
       outlined
@@ -57,6 +75,16 @@
         (val) => !!val || 'E-mail é obrigatório',
         (val) => /.+@.+\..+/.test(val) || 'E-mail inválido',
       ]"
+    /> -->
+
+    <q-input
+      v-model="patientEmail"
+      ref="patientEmailRef"
+      label="Seu e-mail (opcional)"
+      class="q-mt-sm"
+      dense
+      outlined
+      :disable="disabled"
     />
   </q-card>
 </template>

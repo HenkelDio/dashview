@@ -71,7 +71,7 @@
             <PatientInputForm
               class="q-mt-xl"
               v-if="feedbackRequest"
-              title="Gostaria de retorno?"
+              title="Gostaria de um retorno de nossa equipe para esclarecimentos sobre seus relatos?"
               @setPatientName="patientName = $event"
               @setPatientPhone="patientPhone = $event"
               @patientEmail="patientEmail = $event"
