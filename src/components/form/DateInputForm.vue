@@ -2,6 +2,7 @@
   <q-card style="padding: 20px; text-align: start" bordered flat>
     <div class="text-subtitle1">
       {{ props.title }}
+      <span style="color: red; font-size: 0.8rem">* Obrigatório</span>
     </div>
 
     <!-- Campo de Entrada com q-date -->

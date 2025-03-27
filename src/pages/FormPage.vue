@@ -44,6 +44,7 @@
                 <RadioInputForm
                   v-if="question.inputType === 'radio'"
                   :title="question.title"
+                  :index="question.index"
                   :options="question.options"
                   :showObservation="question.showObservation"
                   @updateAnswer="updateAnswer(index, $event)"
@@ -85,8 +86,8 @@
               class="text-weight-bold q-my-lg"
               style="width: 100%; height: 40px"
               @click="submitAnswers"
-              :disable="!isValid"
               :loading="loadingSubmit"
+              :disable="!isValid"
             >
               ENVIAR
             </q-btn>
@@ -103,6 +104,7 @@ import DateInputForm from 'src/components/form/DateInputForm.vue';
 import PatientInputForm from 'src/components/form/PatientInputForm.vue';
 import RadioInputForm from 'src/components/form/RadioInputForm.vue';
 import TextInputForm from 'src/components/form/TextInputForm.vue';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { getForm, saveAnswer } from 'src/services/NPSService';
 import { IForm, IQuestion } from 'src/types';
 import { computed, onMounted, ref } from 'vue';
@@ -124,6 +126,7 @@ const fieldError = ref(false);
 
 const route = useRoute();
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const token = ref(route.query.token);
 
 useMeta(() => ({
@@ -163,11 +166,35 @@ function updateAnswer(
   answers.value[index].observation = observation;
 }
 
+// const isValid = computed(() => {
+//   if (!answers.value) return false;
+
+//   const filteredAnswers = answers.value.filter(
+//     (item: IQuestion) => item.title !== 'Gostaria de um retorno?'
+//   );
+
+//   const allAnswersFilled = filteredAnswers.every((item: IQuestion) =>
+//     Boolean(item.answer?.trim())
+//   );
+
+//   if (patientFeedbackReturn.value) {
+//     return Boolean(
+//       patientEmail.value &&
+//         patientName.value &&
+//         patientPhone.value &&
+//         !fieldError.value &&
+//         allAnswersFilled
+//     );
+//   }
+
+//   return allAnswersFilled;
+// });
+
 const isValid = computed(() => {
   if (!answers.value) return false;
 
-  const filteredAnswers = answers.value.filter(
-    (item: IQuestion) => item.title !== 'Gostaria de um retorno?'
+  const filteredAnswers = answers.value.filter((item: IQuestion) =>
+    ['13', '12', '15', '16'].includes(item.index)
   );
 
   const allAnswersFilled = filteredAnswers.every((item: IQuestion) =>
