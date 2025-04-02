@@ -113,6 +113,14 @@ const routes: RouteRecordRaw[] = [
         }),
         component: () => import('pages/QRCodePage.vue'),
       },
+      {
+        path: '/report',
+        component: () => import('pages/ReportPage.vue'),
+      },
+      {
+        path: '/report-by-question',
+        component: () => import('pages/ReportAllQuestionPage.vue'),
+      },
     ],
   },
 

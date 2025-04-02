@@ -51,7 +51,10 @@
       <div class="text-h5 text-center q-my-md q-mb-lg">
         <q-img src="../assets/logo.png" width="60%" />
       </div>
-      <div class="flex column justify-between" style="height: 70%">
+      <div
+        class="flex column justify-between"
+        style="height: auto; overflow-y: auto"
+      >
         <q-list>
           <div v-for="link in linksList" :key="link.title">
             <!-- Mostrar todas as abas para 'admin' ou abas sem 'security' -->
@@ -61,7 +64,9 @@
             />
           </div>
         </q-list>
-        <div class="text-center text-caption inter-medium">Versão 1.5.0</div>
+        <div class="text-center text-caption inter-medium absolute-bottom">
+          Versão 1.5.0
+        </div>
       </div>
     </q-drawer>
 
@@ -119,6 +124,11 @@ const linksList: EssentialLinkProps[] = [
         title: 'QR Code',
         link: '/qr-code',
         icon: 'qr_code',
+      },
+      {
+        title: 'Relatórios',
+        link: '/report',
+        icon: 'data_usage',
       },
     ],
   },

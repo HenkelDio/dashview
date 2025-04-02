@@ -158,3 +158,17 @@ export const setRequestAnswered = async (answerId: string) => {
     return { data: null, error: e };
   }
 };
+
+export const reportByQuestion = async (startDate: number, endDate: number) => {
+  const headers = {
+    startDate,
+    endDate,
+  };
+
+  try {
+    const response = await api.get('/nps/report-by-question', { headers });
+    return { data: response.data, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
+};

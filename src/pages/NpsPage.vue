@@ -149,6 +149,9 @@
               <q-td style="width: 20%" key="sentBy" :props="props">{{
                 props.row.sentBy || '-'
               }}</q-td>
+              <q-td style="width: 20%" key="sentBy" :props="props">{{
+                props.row.quantity + ' e-mails' || '-'
+              }}</q-td>
               <q-td
                 style="width: 10%"
                 class="my-special-class"
@@ -175,6 +178,17 @@
                             $router.push(
                               '/answers?sortBy=all&npsId=' + props.row.id
                             )
+                          "
+                        ></q-btn>
+                        <q-btn
+                          flat
+                          outline
+                          label="Visualizar e-mails"
+                          class="labelAction full-width"
+                          style="font-size: 12px"
+                          @click="
+                            patientNpsList = props.row.patientNpsList;
+                            showEmails = true;
                           "
                         ></q-btn>
                       </div>
@@ -367,11 +381,35 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+
+    <q-dialog v-model="showEmails">
+      <q-card style="min-height: 500px">
+        <q-card-section>
+          <div class="text-subtitle2 q-mb-sm">
+            Enviado para {{ patientNpsList.length }} e-mails
+          </div>
+
+          <q-list
+            bordered
+            separator
+            v-for="(email, index) in patientNpsList"
+            :key="index"
+          >
+            <q-item-section class="q-pa-sm">
+              <q-item-label class="inter-medium">{{
+                email.email
+              }}</q-item-label>
+              <q-item-label caption>{{ email.name }}</q-item-label>
+            </q-item-section>
+          </q-list>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script lang="ts" setup>
-import { Column, INPS, INPSTable } from 'src/types';
+import { Column, INPS, INPSTable, PatientNps } from 'src/types';
 import { onMounted, ref } from 'vue';
 import { countFeedbackReturns, getNPS, sendNPS } from 'src/services/NPSService';
 import { Notify } from 'quasar';
@@ -397,6 +435,8 @@ const showTutorial = ref(false);
 const tab = ref('video');
 const showEmailsErrors = ref(false);
 const emailsErrors = ref([]);
+const showEmails = ref(false);
+const patientNpsList = ref([] as PatientNps[]);
 
 const columns = ref<Column[]>([
   {
@@ -411,6 +451,13 @@ const columns = ref<Column[]>([
     name: 'sentBy',
     field: 'sentBy',
     label: 'ENVIADO POR',
+    sortable: false,
+    align: 'left',
+  },
+  {
+    name: 'quantity',
+    field: 'quantity',
+    label: 'ENVIADO PARA',
     sortable: false,
     align: 'left',
   },
@@ -489,6 +536,7 @@ function formatNpsData(data: INPS[]) {
     return {
       ...item,
       sentDate: formatDate(item.sentDate),
+      quantity: item.patientNpsList.length,
     };
   });
 }
