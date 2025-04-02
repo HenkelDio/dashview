@@ -51,21 +51,6 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: '/perspectives',
-    beforeEnter: (_to, _from, next) => {
-      const store = useUserStore();
-      if (store.$state.isAuthenticated) {
-        next();
-      } else {
-        next({ path: '/' });
-      }
-    },
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/PerspectivesPage.vue') },
-    ],
-  },
-  {
     path: '/dashboard-nps',
     component: () => import('layouts/MainLayout.vue'),
     beforeEnter: (_to, _from, next) => {
@@ -160,37 +145,6 @@ const routes: RouteRecordRaw[] = [
     children: [{ path: '', component: () => import('pages/ModulesPage.vue') }],
   },
 
-  {
-    path: '/preferences',
-    beforeEnter: (_to, _from, next) => {
-      const store = useUserStore();
-      if (store.$state.isAuthenticated) {
-        next();
-      } else {
-        next({ path: '/' });
-      }
-    },
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/PreferencesPage.vue') },
-    ],
-  },
-  {
-    path: '/preferences-details',
-    props: (route) => ({ id: route.query.id }),
-    beforeEnter: (_to, _from, next) => {
-      const store = useUserStore();
-      if (store.$state.isAuthenticated) {
-        next();
-      } else {
-        next({ path: '/' });
-      }
-    },
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/PerspectiveDetailsPage.vue') },
-    ],
-  },
   {
     path: '/not-allowed',
     beforeEnter: (_to, _from, next) => {
