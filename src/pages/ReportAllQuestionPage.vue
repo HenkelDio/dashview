@@ -49,6 +49,31 @@
       <div v-for="(item, index) in answers" :key="index">
         <ReportChart :details="item" />
       </div>
+      <div>
+        <ReportManifestChart :details="itemManifest" />
+      </div>
+      <div>
+        <q-card flat class="q-mt-sm">
+          <q-card-section>
+            <q-expansion-item
+              expand-separator
+              icon="info"
+              label="Relatos sobre experiências"
+              :caption="reviews.length + ' respostas'"
+            >
+              <q-list
+                bordered
+                separator
+                class="rounded-borders"
+                v-for="item in reviews"
+                :key="item"
+              >
+                <q-item>{{ item }}</q-item>
+              </q-list>
+            </q-expansion-item>
+          </q-card-section>
+        </q-card>
+      </div>
     </div>
   </q-page>
 </template>
@@ -57,6 +82,7 @@
 import { Notify } from 'quasar';
 import DateRangeInput from 'src/components/DateRangeInput.vue';
 import ReportChart from 'src/components/ReportChart.vue';
+import ReportManifestChart from 'src/components/ReportManifestChart.vue';
 import { reportByQuestion } from 'src/services/NPSService';
 import { ref } from 'vue';
 
@@ -72,6 +98,15 @@ const answers = ref(
   }[]
 );
 const loading = ref(false);
+const itemManifest = ref(
+  {} as {
+    title: string;
+    complaints: number;
+    compliments: number;
+    suggestions: number;
+  }
+);
+const reviews = ref([]);
 
 async function getReportByQuestion() {
   loading.value = true;
@@ -89,6 +124,8 @@ async function getReportByQuestion() {
     return;
   }
 
-  answers.value = data;
+  answers.value = data.department;
+  itemManifest.value = data.manifest;
+  reviews.value = data.reviews;
 }
 </script>
