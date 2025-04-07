@@ -46,13 +46,15 @@
     </q-card>
 
     <div v-if="!loading">
-      <div v-for="(item, index) in answers" :key="index">
-        <ReportChart :details="item" />
+      <div v-if="answers.length > 0">
+        <div v-for="(item, index) in answers" :key="index">
+          <ReportChart :details="item" />
+        </div>
       </div>
-      <div>
+      <div v-if="itemManifest.title">
         <ReportManifestChart :details="itemManifest" />
       </div>
-      <div>
+      <div v-if="reviews.length > 0">
         <q-card flat class="q-mt-sm">
           <q-card-section>
             <q-expansion-item
