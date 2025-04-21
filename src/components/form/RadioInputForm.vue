@@ -2,6 +2,11 @@
   <q-card style="padding: 20px; text-align: start" bordered flat>
     <div class="text-subtitle1">
       {{ props.title }}
+      <span
+        v-if="['13', '12', '16'].includes(props.index)"
+        style="color: red; font-size: 0.8rem"
+        >* Obrigatório</span
+      >
     </div>
 
     <div class="row justify-center">
@@ -38,6 +43,7 @@ interface IProps {
   options: string[];
   showObservation: boolean;
   disabled: boolean;
+  index: string;
 }
 
 const emit = defineEmits(['updateAnswer']);
