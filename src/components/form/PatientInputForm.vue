@@ -11,16 +11,29 @@
       dense
       outlined
       :disable="disabled"
+      @update:model-value="resetField"
     />
 
     <q-input
       v-model="patientName"
       ref="patientNameRef"
-      label="Seu nome completo (opcional)"
+      :label="
+        patientFeedbackReturn
+          ? 'Seu nome completo (obrigatório)'
+          : 'Seu nome completo (opcional)'
+      "
       class="q-mt-md"
       dense
       outlined
       :disable="disabled"
+      :rules="
+        patientFeedbackReturn
+          ? [
+              (val) => !!val || 'Nome é obrigatório',
+              (val) => val.length >= 3 || 'Nome inválido',
+            ]
+          : []
+      "
     />
 
     <!-- <q-input
@@ -40,12 +53,24 @@
     <q-input
       v-model="patientPhone"
       ref="patientPhoneRef"
-      label="Seu número de telefone (opcional)"
+      :label="
+        patientFeedbackReturn
+          ? 'Seu número de telefone (obrigatório)'
+          : 'Seu número de telefone (opcional)'
+      "
       class="q-mt-sm"
       dense
       outlined
       :disable="disabled"
       mask="(##) #####-####"
+      :rules="
+        patientFeedbackReturn
+          ? [
+              (val) => !!val || 'Telefone é obrigatório',
+              (val) => val.length === 15 || 'Telefone inválido',
+            ]
+          : []
+      "
     />
 
     <!-- <q-input
@@ -80,11 +105,23 @@
     <q-input
       v-model="patientEmail"
       ref="patientEmailRef"
-      label="Seu e-mail (opcional)"
+      :label="
+        patientFeedbackReturn
+          ? 'Seu e-mail (obrigatório)'
+          : 'Seu e-mail (opcional)'
+      "
       class="q-mt-sm"
       dense
       outlined
       :disable="disabled"
+      :rules="
+        patientFeedbackReturn
+          ? [
+              (val) => !!val || 'E-mail é obrigatório',
+              (val) => /.+@.+\..+/.test(val) || 'E-mail inválido',
+            ]
+          : []
+      "
     />
   </q-card>
 </template>
@@ -115,6 +152,12 @@ const patientFeedbackReturn = ref(false);
 const patientNameRef = ref();
 const patientPhoneRef = ref();
 const patientEmailRef = ref();
+
+function resetField() {
+  patientNameRef.value?.resetValidation();
+  patientPhoneRef.value?.resetValidation();
+  patientEmailRef.value?.resetValidation();
+}
 
 async function validateAndEmit(
   fieldRef: { value: { validate: () => Promise<boolean> } | null },
