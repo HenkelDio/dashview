@@ -1,5 +1,10 @@
 <template>
-  <q-card style="padding: 20px; text-align: start" bordered flat>
+  <q-card
+    style="padding: 20px; text-align: start"
+    bordered
+    flat
+    class="q-mt-xl"
+  >
     <div class="text-subtitle1">
       {{ props.title }}
     </div>
@@ -13,30 +18,37 @@
       :disable="disabled"
       @update:model-value="resetField"
     />
+  </q-card>
 
-    <q-input
-      v-model="patientName"
-      ref="patientNameRef"
-      :label="
-        patientFeedbackReturn
-          ? 'Seu nome completo (obrigatório)'
-          : 'Seu nome completo (opcional)'
-      "
-      class="q-mt-md"
-      dense
-      outlined
-      :disable="disabled"
-      :rules="
-        patientFeedbackReturn
-          ? [
-              (val) => !!val || 'Nome é obrigatório',
-              (val) => val.length >= 3 || 'Nome inválido',
-            ]
-          : []
-      "
-    />
+  <q-card bordered flat class="q-mt-xl">
+    <q-card-section>
+      <div class="text-subtitle1" style="text-align: start">
+        Suas informações de contato
+      </div>
 
-    <!-- <q-input
+      <q-input
+        v-model="patientName"
+        ref="patientNameRef"
+        :label="
+          patientFeedbackReturn
+            ? 'Seu nome completo (obrigatório)'
+            : 'Seu nome completo (opcional)'
+        "
+        class="q-mt-md"
+        dense
+        outlined
+        :disable="disabled"
+        :rules="
+          patientFeedbackReturn
+            ? [
+                (val) => !!val || 'Nome é obrigatório',
+                (val) => val.length >= 3 || 'Nome inválido',
+              ]
+            : []
+        "
+      />
+
+      <!-- <q-input
       v-model="patientName"
       ref="patientNameRef"
       label="Seu nome completo"
@@ -50,30 +62,30 @@
       ]"
     /> -->
 
-    <q-input
-      v-model="patientPhone"
-      ref="patientPhoneRef"
-      :label="
-        patientFeedbackReturn
-          ? 'Seu número de telefone (obrigatório)'
-          : 'Seu número de telefone (opcional)'
-      "
-      class="q-mt-sm"
-      dense
-      outlined
-      :disable="disabled"
-      mask="(##) #####-####"
-      :rules="
-        patientFeedbackReturn
-          ? [
-              (val) => !!val || 'Telefone é obrigatório',
-              (val) => val.length === 15 || 'Telefone inválido',
-            ]
-          : []
-      "
-    />
+      <q-input
+        v-model="patientPhone"
+        ref="patientPhoneRef"
+        :label="
+          patientFeedbackReturn
+            ? 'Seu número de telefone (obrigatório)'
+            : 'Seu número de telefone (opcional)'
+        "
+        class="q-mt-sm"
+        dense
+        outlined
+        :disable="disabled"
+        mask="(##) #####-####"
+        :rules="
+          patientFeedbackReturn
+            ? [
+                (val) => !!val || 'Telefone é obrigatório',
+                (val) => val.length === 15 || 'Telefone inválido',
+              ]
+            : []
+        "
+      />
 
-    <!-- <q-input
+      <!-- <q-input
       v-model="patientPhone"
       ref="patientPhoneRef"
       label="Seu número de telefone (opcional)"
@@ -88,7 +100,7 @@
       ]"
     /> -->
 
-    <!-- <q-input
+      <!-- <q-input
       v-model="patientEmail"
       ref="patientEmailRef"
       label="Seu e-mail (opcional)"
@@ -102,27 +114,28 @@
       ]"
     /> -->
 
-    <q-input
-      v-model="patientEmail"
-      ref="patientEmailRef"
-      :label="
-        patientFeedbackReturn
-          ? 'Seu e-mail (obrigatório)'
-          : 'Seu e-mail (opcional)'
-      "
-      class="q-mt-sm"
-      dense
-      outlined
-      :disable="disabled"
-      :rules="
-        patientFeedbackReturn
-          ? [
-              (val) => !!val || 'E-mail é obrigatório',
-              (val) => /.+@.+\..+/.test(val) || 'E-mail inválido',
-            ]
-          : []
-      "
-    />
+      <q-input
+        v-model="patientEmail"
+        ref="patientEmailRef"
+        :label="
+          patientFeedbackReturn
+            ? 'Seu e-mail (obrigatório)'
+            : 'Seu e-mail (opcional)'
+        "
+        class="q-mt-sm"
+        dense
+        outlined
+        :disable="disabled"
+        :rules="
+          patientFeedbackReturn
+            ? [
+                (val) => !!val || 'E-mail é obrigatório',
+                (val) => /.+@.+\..+/.test(val) || 'E-mail inválido',
+              ]
+            : []
+        "
+      />
+    </q-card-section>
   </q-card>
 </template>
 
