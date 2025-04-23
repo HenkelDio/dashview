@@ -81,11 +81,13 @@
                 key="patient"
                 :props="props"
               >
-                <div v-if="props.row.patient && !props.row.requestAnswered">
+                <div
+                  v-if="props.row.feedbackReturn && !props.row.requestAnswered"
+                >
                   <q-badge color="blue" label="Solicitação de retorno" />
                   <div>{{ props.row.patient || '' }}</div>
                 </div>
-                <div v-if="props.row.patient && props.row.requestAnswered">
+                <div v-if="props.row.requestAnswered">
                   <q-badge
                     color="green"
                     :label="`Solicitação de retorno respondida em ${formatDate(
@@ -95,6 +97,9 @@
                   <div>{{ props.row.patient }}</div>
                 </div>
                 <div v-if="!props.row.patient">Sem informações</div>
+                <div v-if="props.row.patient && !props.row.feedbackReturn">
+                  {{ props.row.patient }}
+                </div>
               </q-td>
               <q-td
                 style="width: 20%"
