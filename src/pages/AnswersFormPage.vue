@@ -88,10 +88,11 @@
                   <div>{{ props.row.patient || '' }}</div>
                 </div>
                 <div v-if="props.row.requestAnswered">
+                  <div>{{ props.row.requestAnswered.timestamp }}</div>
                   <q-badge
                     color="green"
                     :label="`Solicitação de retorno respondida em ${formatDate(
-                      props.row.requestAnswered.date
+                      props.row.requestAnswered.timestamp
                     )}`"
                   />
                   <div>{{ props.row.patient }}</div>
