@@ -127,7 +127,7 @@ const routes: RouteRecordRaw[] = [
 
   {
     path: '/form',
-    props: (route) => ({ token: route.query.token }),
+    props: (route) => ({ token: route.query.token, type: route.query.type }),
     children: [{ path: '', component: () => import('pages/FormPage.vue') }],
   },
 

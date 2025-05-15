@@ -127,6 +127,7 @@ const route = useRoute();
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const token = ref(route.query.token);
+const type = ref(route.query.type);
 
 useMeta(() => ({
   title: 'Formulário | Clínica Los Angeles',
@@ -134,7 +135,7 @@ useMeta(() => ({
 
 async function loadForm() {
   loading.value = true;
-  const { data, error } = await getForm();
+  const { data, error } = await getForm(type.value?.toString());
   loading.value = false;
 
   if (error) {

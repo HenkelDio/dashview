@@ -1,8 +1,12 @@
 import { api, publicApi } from 'src/boot/axios';
 
-export const getForm = async () => {
+export const getForm = async (type: string | undefined) => {
   try {
-    const response = await publicApi.get('/public/form/get-form');
+    let url = '/public/form/get-form';
+    if (type) {
+      url += '?type=' + type;
+    }
+    const response = await publicApi.get(url);
     return { data: response.data, error: null };
   } catch (e) {
     return { data: null, error: e };
