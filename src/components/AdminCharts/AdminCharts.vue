@@ -207,49 +207,51 @@ const doughnutOptions = {
 // Cores monocromáticas para cada gráfico
 const colorPalettes = {
   promoter: [
-    '#A5D6A7',
-    '#81C784',
-    '#66BB6A',
-    '#4CAF50',
-    '#388E3C',
-    '#2C6E1F',
-    '#1B5E20',
-    '#0D5301',
-    '#69F0AE',
-    '#00C853',
-    '#00E676',
-    '#43A047',
-    '#1B5E20',
+    '#1E88E5', // azul
+    '#43A047', // verde
+    '#FB8C00', // laranja
+    '#8E24AA', // roxo
+    '#00ACC1', // ciano
+    '#FDD835', // amarelo
+    '#6D4C41', // marrom
+    '#C2185B', // rosa escuro
+    '#3949AB', // azul intenso
+    '#7CB342', // verde oliva
+    '#D81B60', // rosa vibrante
+    '#5E35B1', // roxo escuro
+    '#00897B', // verde água
   ],
+
   detractor: [
-    '#FFCDD2',
-    '#EF9A9A',
-    '#E57373',
-    '#EF5350',
-    '#F44336',
-    '#D32F2F',
-    '#C62828',
-    '#B71C1C',
-    '#FF8A80',
-    '#FF5252',
-    '#FF1744',
-    '#D50000',
-    '#C2185B',
+    '#E53935', // vermelho vibrante
+    '#6A1B9A', // roxo fechado
+    '#F4511E', // laranja queimado
+    '#3949AB', // azul forte
+    '#C2185B', // rosa escuro
+    '#0097A7', // azul petróleo
+    '#7B1FA2', // roxo vibrante
+    '#1E88E5', // azul
+    '#D32F2F', // vermelho escuro
+    '#43A047', // verde escuro
+    '#FDD835', // amarelo solar
+    '#5E35B1', // roxo
+    '#00897B', // verde água
   ],
+
   neutral: [
-    '#FFE0B2',
-    '#FFCC80',
-    '#FFB74D',
-    '#FFA726',
-    '#FF9800',
-    '#FB8C00',
-    '#F57C00',
-    '#EF6C00',
-    '#FFB300',
-    '#FF9100',
-    '#FF6D00',
-    '#F4511E',
-    '#FF3D00',
+    '#90A4AE', // cinza azulado
+    '#FFC107', // amarelo moderno
+    '#26A69A', // verde água
+    '#7E57C2', // roxo claro
+    '#FF7043', // laranja claro
+    '#42A5F5', // azul claro
+    '#AB47BC', // roxo suave
+    '#66BB6A', // verde médio
+    '#FFA726', // laranja médio
+    '#26C6DA', // ciano claro
+    '#9CCC65', // verde limão
+    '#EC407A', // rosa claro
+    '#78909C', // cinza escuro
   ],
 };
 
