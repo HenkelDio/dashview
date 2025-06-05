@@ -6,7 +6,7 @@
           Dashboard
         </div>
         <div class="absolute">
-          {{ dateLabel }}
+          {{ startDate === 0 || endDate === 0 ? '' : dateLabel }}
         </div>
       </div>
       <div class="row q-gutter-x-sm">
