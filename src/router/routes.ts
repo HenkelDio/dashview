@@ -3,6 +3,20 @@ import { NavigationGuardNext, RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
   {
+    path: '/home',
+    component: () => import('layouts/MainLayout.vue'),
+    // beforeEnter: (_to, _from, next) => {
+    //   const store = useUserStore();
+    //   if (store.$state.isAuthenticated) {
+    //     next();
+    //   } else {
+    //     next({ path: '/' });
+    //   }
+    // },
+    children: [{ path: '', component: () => import('pages/HomePage.vue') }],
+  },
+
+  {
     path: '/dashboard',
     component: () => import('layouts/MainLayout.vue'),
     // beforeEnter: (_to, _from, next) => {
@@ -110,6 +124,55 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/rh',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        beforeEnter: (_to, _from, next) => {
+          handleAcessRoute(next, 'moduleRh');
+        },
+        component: () => import('pages/RhDashboardPage.vue'),
+      },
+      {
+        path: '/answers-rh',
+        props: (route) => ({
+          sortBy: route.query.sortBy,
+          npsId: route.query.npsId,
+        }),
+        beforeEnter: (_to, _from, next) => {
+          handleAcessRoute(next, 'moduleRh');
+        },
+        component: () => import('pages/RhAnswersFormPage.vue'),
+      },
+      {
+        path: '/general-view',
+        props: (route) => ({
+          sortBy: route.query.sortBy,
+          npsId: route.query.npsId,
+        }),
+        component: () => import('pages/ViewGeneralAnswersPage.vue'),
+      },
+      {
+        path: '/rh-qr-code',
+        props: (route) => ({
+          sortBy: route.query.sortBy,
+          npsId: route.query.npsId,
+        }),
+        component: () => import('pages/RhQRCodePage.vue'),
+      },
+      {
+        path: '/report',
+        component: () => import('pages/ReportPage.vue'),
+      },
+      {
+        path: '/report-by-question',
+        component: () => import('pages/ReportAllQuestionPage.vue'),
+      },
+    ],
+  },
+
+  {
     path: '/create-form',
     beforeEnter: (_to, _from, next) => {
       const store = useUserStore();
@@ -143,6 +206,22 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('pages/ModulesPage.vue') }],
+  },
+
+  {
+    path: '/preferences',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/PreferencesPage.vue') },
+    ],
   },
 
   {
@@ -188,7 +267,9 @@ type PermissionType =
   | 'viewAnswers'
   | 'viewDashboard'
   | 'viewAndEditUsers'
-  | 'viewAndEditDepartments';
+  | 'viewAndEditDepartments'
+  | 'moduleNps'
+  | 'moduleRh';
 
 function handleAcessRoute(
   next: NavigationGuardNext,

@@ -109,6 +109,24 @@
                 >{{ props.row.date || '-' }}</q-td
               >
               <q-td
+                style="width: 20%"
+                class="my-special-class"
+                key="score"
+                :props="props"
+              >
+                <q-badge
+                  :color="getBadgeTypeNPS(props.row.score.score)"
+                  :label="getLabelNPS(props.row.score.score)"
+                />
+              </q-td>
+              <q-td
+                style="width: 20%"
+                class="my-special-class"
+                key="description"
+                :props="props"
+                >{{ formatDescription(props.row.description) }}</q-td
+              >
+              <q-td
                 style="width: 10%"
                 class="my-special-class"
                 key="actions"
@@ -132,6 +150,7 @@
                           style="font-size: 12px"
                           @click="
                             questions = props.row.questions;
+                            answer = props.row;
                             show = true;
                           "
                         ></q-btn>
@@ -172,6 +191,62 @@
               <q-card style="min-width: 600px">
                 <q-card-section>
                   <div class="text-h6">Respostas</div>
+                  <q-item clickable v-ripple>
+                    <q-item-section>
+                      <q-item-label>Nome do paciente</q-item-label>
+                      <q-item-label caption lines="2">{{
+                        answer.patientName
+                          ? answer.patientName
+                          : 'Não informado'
+                      }}</q-item-label>
+                    </q-item-section>
+
+                    <q-item-section>
+                      <q-item-label>Data</q-item-label>
+                      <q-item-label caption lines="2">{{
+                        formatDate(answer.dateOfAdmission)
+                      }}</q-item-label>
+                    </q-item-section>
+
+                    <q-item-section>
+                      <q-item-label>Tipo</q-item-label>
+                      <q-item-label caption lines="2"
+                        ><q-badge
+                          :color="getBadgeType(answer.answerType)"
+                          :label="answer.answerType"
+                        />
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+
+                  <q-item clickable v-ripple>
+                    <q-item-section v-if="answer.patientEmail">
+                      <q-item-label>E-mail do paciente</q-item-label>
+                      <q-item-label caption lines="2">{{
+                        answer.patientEmail
+                      }}</q-item-label>
+                    </q-item-section>
+
+                    <q-item-section v-if="answer.patientPhone">
+                      <q-item-label>Telefone</q-item-label>
+                      <q-item-label caption lines="2">{{
+                        answer.patientPhone
+                      }}</q-item-label>
+                    </q-item-section>
+
+                    <q-item-section>
+                      <q-item-label>Score</q-item-label>
+                      <q-item-label caption lines="2"
+                        ><q-badge
+                          :color="getBadgeTypeNPS(answer.score.score)"
+                          :label="`${getLabelNPS(answer.score.score)} - ${
+                            answer.score.answer
+                          }`"
+                        />
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+
                   <q-list bordered separator>
                     <q-item
                       clickable
@@ -295,6 +370,7 @@ const loading = ref(false);
 const rows = ref([] as IAnswerTable[]);
 const show = ref(false);
 const questions = ref([] as IQuestion[]);
+const answer = ref({} as IAnswer);
 const startDate = ref(0);
 const endDate = ref(0);
 const patientInfo = ref(
@@ -321,6 +397,22 @@ const columns = ref<Column[]>([
     sortable: false,
     align: 'left',
   },
+  {
+    name: 'score',
+    required: true,
+    field: 'score',
+    label: 'SCORE',
+    sortable: false,
+    align: 'left',
+  },
+  {
+    name: 'description',
+    required: true,
+    field: 'description',
+    label: 'EXPERIÊNCIA',
+    sortable: false,
+    align: 'left',
+  },
   { name: 'actions', align: 'right', field: 'actions', label: '' },
 ]);
 
@@ -331,6 +423,47 @@ watch(sortBy, () => {
 interface IResponse {
   data: IAnswer[] | null;
   error: unknown | null;
+}
+
+function getLabelNPS(score: string) {
+  if (score === 'DETRACTOR') {
+    return 'Detrator';
+  }
+
+  if (score === 'NEUTRAL') {
+    return 'Neutro';
+  }
+
+  return 'Promotor';
+}
+
+function getBadgeType(type: string): string {
+  if (type === 'Reclamação') {
+    return 'red';
+  }
+
+  if (type === 'Sugestão') {
+    return 'grey';
+  }
+
+  return 'green';
+}
+
+function getBadgeTypeNPS(type: string): string {
+  if (type === 'DETRACTOR') {
+    return 'red';
+  }
+
+  if (type === 'NEUTRAL') {
+    return 'grey';
+  }
+
+  return 'green';
+}
+
+function formatDescription(text?: string): string {
+  if (!text) return '-';
+  return text.length > 50 ? text.slice(0, 50) + '...' : text;
 }
 
 async function loadAnswers() {
@@ -365,10 +498,17 @@ function formatRows(data: IAnswer[]) {
       patient: item.patientName,
       patientPhone: item.patientPhone,
       date: formatDate(item.timestamp),
+      score: {
+        score: item.score.score,
+        answer: item.score.answer,
+      },
+      description: item.questions.filter((item) => item.index === '14')[0]
+        .answer,
       questions: item.questions,
       feedbackReturn: item.feedbackReturn,
       patientEmail: item.patientEmail,
       requestAnswered: item.requestAnswered,
+      answerType: item.answerType,
       actions: '',
     };
   });

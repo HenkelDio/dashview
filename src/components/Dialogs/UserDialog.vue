@@ -73,6 +73,12 @@
             <q-card>
               <q-card-section class="flex column q-gutter-md">
                 <q-checkbox
+                  v-model="permissions.moduleNps"
+                  label="Visualizar módulos do NPS"
+                  color="primary"
+                  :disable="loading"
+                />
+                <q-checkbox
                   v-model="permissions.sendNps"
                   label="Enviar NPS"
                   color="primary"
@@ -99,6 +105,12 @@
                 <q-checkbox
                   v-model="permissions.viewAndEditDepartments"
                   label="Visualizar e editar departamentos"
+                  color="primary"
+                  :disable="loading"
+                />
+                <q-checkbox
+                  v-model="permissions.moduleRh"
+                  label="Visualizar módulos do RH"
                   color="primary"
                   :disable="loading"
                 />
@@ -150,6 +162,8 @@ const permissions = ref({
   viewDashboard: false,
   viewAndEditUsers: false,
   viewAndEditDepartments: false,
+  moduleRh: false,
+  moduleNps: false,
 });
 const departmentsOptions = ref([] as IDepartment[]);
 const loading = ref(false);

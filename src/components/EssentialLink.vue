@@ -15,7 +15,10 @@
           </template>
           <q-list class="q-mb-md">
             <div v-for="child in children" :key="child.title" class="q-pl-md">
-              <EssentialLink v-bind="child" />
+              <EssentialLink
+                v-bind="child"
+                v-if="hasPermission(child.permission)"
+              />
             </div>
           </q-list>
         </q-expansion-item>
@@ -42,9 +45,20 @@
 </template>
 
 <script setup lang="ts">
+import { useUserStore } from 'src/stores/userStore';
+
 defineOptions({
   name: 'EssentialLink',
 });
+
+const userStore = useUserStore();
+
+function hasPermission(permission?: string): boolean {
+  if (!permission) return true;
+  const permissions = userStore.$state.user.permissions || {};
+  console.log('permissions', permissions);
+  return (permissions as Record<string, boolean>)[permission] === true;
+}
 
 export interface EssentialLinkProps {
   title: string;

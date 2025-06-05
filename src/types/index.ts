@@ -31,6 +31,8 @@ export interface IPermissions {
   viewDashboard?: boolean;
   viewAndEditUsers?: boolean;
   viewAndEditDepartments?: boolean;
+  moduleNps?: boolean;
+  moduleRh?: boolean;
 }
 
 export interface IUserTable {
@@ -167,6 +169,7 @@ export interface IForm {
 
 export interface IFormParameters {
   feedbackRequest: boolean;
+  employeeName: boolean;
 }
 
 export interface IQuestion {
@@ -190,6 +193,10 @@ export interface IAnswer {
   dateOfAdmission: number;
   answerType: string;
   requestAnswered: IRequestAnswered;
+  score: {
+    answer: string;
+    score: string;
+  };
 }
 
 export interface IRequestAnswered {
@@ -201,6 +208,16 @@ export interface IScoreDepartment {
   detractors: object;
   neutrals: object;
   promoters: object;
+}
+
+export interface IAnswerRH {
+  description: string;
+  employeeName: string;
+  timestamp: number;
+  type: {
+    value: string;
+    label: string;
+  };
 }
 
 export interface IChartAnswer {

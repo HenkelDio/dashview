@@ -60,12 +60,12 @@
             <!-- Mostrar todas as abas para 'admin' ou abas sem 'security' -->
             <EssentialLink
               v-bind="link"
-              v-if="!link.security || role === 'admin'"
+              v-if="hasPermission(link.permission)"
             />
           </div>
         </q-list>
         <div class="text-center text-caption inter-medium absolute-bottom">
-          Versão 1.5.0
+          Versão 1.6.0
         </div>
       </div>
     </q-drawer>
@@ -95,7 +95,6 @@ const router = useRouter();
 
 const userStore = useUserStore();
 const name = ref(userStore.$state.user.name);
-const role = ref(userStore.$state.user.role);
 
 const linksList: EssentialLinkProps[] = [
   {
@@ -103,11 +102,13 @@ const linksList: EssentialLinkProps[] = [
     caption: 'Gerenciamento de NPS',
     icon: 'fact_check',
     link: '/nps',
+    permission: 'moduleNps',
     children: [
       {
         title: 'Dashboard',
         link: '/dashboard-nps',
         icon: 'analytics',
+        permission: 'viewDashboard',
       },
       {
         title: 'Envio de NPS',
@@ -119,6 +120,7 @@ const linksList: EssentialLinkProps[] = [
         title: 'Respostas',
         link: '/answers',
         icon: 'chat',
+        permission: 'viewAnswers',
       },
       {
         title: 'QR Code',
@@ -133,11 +135,36 @@ const linksList: EssentialLinkProps[] = [
     ],
   },
   {
+    title: 'RH',
+    caption: 'Peguntas RH',
+    icon: 'folder_shared',
+    link: '/rh',
+    permission: 'moduleRh',
+    children: [
+      {
+        title: 'Dashboard',
+        link: '/rh',
+        icon: 'analytics',
+      },
+      {
+        title: 'Respostas',
+        link: '/answers-rh',
+        icon: 'chat',
+      },
+      {
+        title: 'QR Code',
+        link: '/rh-qr-code',
+        icon: 'qr_code',
+      },
+    ],
+  },
+  {
     title: 'Usuários',
     caption: 'Editar usuários',
     icon: 'group',
     link: '/users',
     security: 'admin',
+    permission: 'viewAndEditUsers',
   },
   {
     title: 'Departamentos',
@@ -145,6 +172,7 @@ const linksList: EssentialLinkProps[] = [
     icon: 'apartment',
     link: '/departments',
     security: 'admin',
+    permission: 'viewAndEditDepartments',
   },
   {
     title: 'Preferências',
@@ -164,6 +192,12 @@ const leftDrawerOpen = ref(false);
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
+}
+
+function hasPermission(permission?: string): boolean {
+  if (!permission) return true;
+  const permissions = userStore.$state.user.permissions || {};
+  return (permissions as Record<string, boolean>)[permission] === true;
 }
 
 function logout() {

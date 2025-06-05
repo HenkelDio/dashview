@@ -9,7 +9,7 @@
             </div>
             <div class="text-h3 text-grey-10">
               Clínica Los Angeles <br />
-              | <b>Gerenciador de NPS</b>
+              | <b>Gerenciador de Pesquisas</b>
             </div>
           </div>
           <div class="widthOnMobile">
@@ -90,12 +90,7 @@ async function doLogin() {
   const state = useUserStore();
   state.setUser(data);
 
-  if (data.permissions && data.permissions.viewDashboard) {
-    console.log('oiiiii');
-    router.push({ path: '/dashboard-nps' });
-  } else {
-    router.push({ path: '/nps' });
-  }
+  router.push({ path: '/home' });
 }
 </script>
 

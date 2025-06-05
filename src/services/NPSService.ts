@@ -28,6 +28,17 @@ export const saveAnswer = async (payload: any, token: string | undefined) => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const saveRhAnswer = async (payload: any) => {
+  try {
+    const url = '/public/form/save-rh-answer';
+    const response = await publicApi.post(url, payload);
+    return { data: response.data, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
+};
+
 export const sendNPS = async (file: File) => {
   try {
     const formData = new FormData();
@@ -123,6 +134,20 @@ export const loadScoreDepartments = async (
   }
 };
 
+export const loadDashboardRh = async (startDate: number, endDate: number) => {
+  const headers = {
+    startDate,
+    endDate,
+  };
+
+  try {
+    const response = await api.get('/nps/count-rh-answers', { headers });
+    return { data: response.data, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
+};
+
 export const getAllAnswers = async (
   startDate: number,
   endDate: number,
@@ -171,6 +196,19 @@ export const reportByQuestion = async (startDate: number, endDate: number) => {
 
   try {
     const response = await api.get('/nps/report-by-question', { headers });
+    return { data: response.data, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
+};
+
+export const getAnswerById = async (id: string) => {
+  const headers = {
+    id,
+  };
+
+  try {
+    const response = await api.get('/nps/get-answer-by-id', { headers });
     return { data: response.data, error: null };
   } catch (e) {
     return { data: null, error: e };

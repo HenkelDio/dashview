@@ -80,11 +80,19 @@
               :disabled="loadingSubmit"
             />
 
+            <EmployeeInputForm
+              v-if="employeeName"
+              @employeeName="nameEmployee = $event"
+              :disabled="loadingSubmit"
+            />
+
             <q-btn
               color="primary"
               class="text-weight-bold q-my-lg"
               style="width: 100%; height: 40px"
-              @click="submitAnswers"
+              @click="
+                type === 'employeeChannel' ? submitRhAnswers() : submitAnswers()
+              "
               :loading="loadingSubmit"
               :disable="!isValid"
             >
@@ -104,12 +112,13 @@ import PatientInputForm from 'src/components/form/PatientInputForm.vue';
 import RadioInputForm from 'src/components/form/RadioInputForm.vue';
 import TextInputForm from 'src/components/form/TextInputForm.vue';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { getForm, saveAnswer } from 'src/services/NPSService';
+import { getForm, saveAnswer, saveRhAnswer } from 'src/services/NPSService';
 import { IForm, IQuestion } from 'src/types';
 import { computed, onMounted, ref } from 'vue';
 import { Vue3Lottie } from 'vue3-lottie';
 import congratulations from '../assets/congratulations.json';
 import { useRoute } from 'vue-router';
+import EmployeeInputForm from 'src/components/form/EmployeeInputForm.vue';
 
 const form = ref({} as IForm);
 const loading = ref(false);
@@ -122,6 +131,8 @@ const patientName = ref('');
 const patientPhone = ref('');
 const patientEmail = ref('');
 const fieldError = ref(false);
+const employeeName = ref(false);
+const nameEmployee = ref('');
 
 const route = useRoute();
 
@@ -148,6 +159,7 @@ async function loadForm() {
 
   form.value = data;
   feedbackRequest.value = form.value.parameters.feedbackRequest;
+  employeeName.value = form.value.parameters.employeeName;
 
   answers.value = form.value.questions.map((question) => ({
     index: question.index,
@@ -165,30 +177,6 @@ function updateAnswer(
   answers.value[index].answer = answer;
   answers.value[index].observation = observation;
 }
-
-// const isValid = computed(() => {
-//   if (!answers.value) return false;
-
-//   const filteredAnswers = answers.value.filter(
-//     (item: IQuestion) => item.title !== 'Gostaria de um retorno?'
-//   );
-
-//   const allAnswersFilled = filteredAnswers.every((item: IQuestion) =>
-//     Boolean(item.answer?.trim())
-//   );
-
-//   if (patientFeedbackReturn.value) {
-//     return Boolean(
-//       patientEmail.value &&
-//         patientName.value &&
-//         patientPhone.value &&
-//         !fieldError.value &&
-//         allAnswersFilled
-//     );
-//   }
-
-//   return allAnswersFilled;
-// });
 
 const isValid = computed(() => {
   if (!answers.value) return false;
@@ -213,6 +201,70 @@ const isValid = computed(() => {
 
   return allAnswersFilled;
 });
+
+async function submitRhAnswers() {
+  loadingSubmit.value = true;
+  const payload = {
+    employeeName: nameEmployee.value ? nameEmployee.value : null,
+    description: answers.value.filter(
+      (item: { index: string }) => item.index === '17'
+    )[0].answer,
+    type: getAnswerType(),
+  };
+
+  const { error } = await saveRhAnswer(payload);
+  loadingSubmit.value = false;
+
+  console.log('error', error);
+
+  if (error) {
+    Notify.create({
+      message: 'Erro ao enviar respostas.',
+      color: 'red',
+    });
+    return;
+  }
+
+  submitted.value = true;
+  Notify.create({
+    message: 'Respostas enviadas com sucesso!',
+    color: 'green',
+  });
+}
+
+function getAnswerType() {
+  const type = answers.value.filter(
+    (item: { index: string }) => item.index === '16'
+  )[0].answer;
+
+  if (type === 'Elogio') {
+    return {
+      value: 'compliment',
+      label: 'Elogio',
+    };
+  }
+
+  if (type === 'Sugestão') {
+    return {
+      value: 'suggestion',
+      label: 'Sugestão',
+    };
+  }
+
+  if (type === 'Reclamação') {
+    return {
+      value: 'complaint',
+      label: 'Reclamação',
+    };
+  }
+
+  if (type === 'Denúncia') {
+    return {
+      value: 'denunciation',
+      label: 'Denúncia',
+    };
+  }
+}
 
 async function submitAnswers() {
   if (!isValid.value) {
