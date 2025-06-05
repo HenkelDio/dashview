@@ -22,7 +22,7 @@ import { onMounted, ref } from 'vue';
 import QRCode from 'qrcode';
 
 const qrCanvas = ref<HTMLCanvasElement | null>(null);
-const qrLink = 'https://dashview-iota.vercel.app/type=employeeChannel';
+const qrLink = 'https://dashview-iota.vercel.app/form?type=employeeChannel';
 
 onMounted(() => {
   if (qrCanvas.value) {
