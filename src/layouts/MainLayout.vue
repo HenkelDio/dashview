@@ -109,7 +109,6 @@ const linksList: EssentialLinkProps[] = [
     icon: 'ballot',
     link: '/surveys',
     security: 'admin',
-    permission: 'viewAndEditUsers',
   },
   {
     title: 'QR Codes',
@@ -117,7 +116,6 @@ const linksList: EssentialLinkProps[] = [
     icon: 'qr_code',
     link: '/qr-codes',
     security: 'admin',
-    permission: 'viewAndEditUsers',
   },
   {
     title: 'Usuários',

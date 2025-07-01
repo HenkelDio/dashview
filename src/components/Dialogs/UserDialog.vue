@@ -86,16 +86,24 @@
                 />
                 <q-checkbox
                   v-model="permissions.viewAnswers"
-                  label="Visualizar respostas"
+                  label="Visualizar respostas NPS"
                   color="primary"
                   :disable="loading"
                 />
                 <q-checkbox
                   v-model="permissions.viewDashboard"
-                  label="Visualizar dashboard"
+                  label="Visualizar dashboard NPS"
                   color="primary"
                   :disable="loading"
                 />
+
+                <q-checkbox
+                  v-model="permissions.viewNpsReport"
+                  label="Visualizar relatórios nps"
+                  color="primary"
+                  :disable="loading"
+                />
+
                 <q-checkbox
                   v-model="permissions.viewAndEditUsers"
                   label="Visualizar e editar usuários"
@@ -111,6 +119,20 @@
                 <q-checkbox
                   v-model="permissions.moduleRh"
                   label="Visualizar módulos do RH"
+                  color="primary"
+                  :disable="loading"
+                />
+
+                <q-checkbox
+                  v-model="permissions.moduleProspecting"
+                  label="Visualizar módulo Clientes em Prospecção"
+                  color="primary"
+                  :disable="loading"
+                />
+
+                <q-checkbox
+                  v-model="permissions.moduleNotification"
+                  label="Visualizar módulo Experiência/Notificação"
                   color="primary"
                   :disable="loading"
                 />
@@ -164,6 +186,9 @@ const permissions = ref({
   viewAndEditDepartments: false,
   moduleRh: false,
   moduleNps: false,
+  moduleProspecting: false,
+  moduleNotification: false,
+  viewNpsReport: false,
 });
 const departmentsOptions = ref([] as IDepartment[]);
 const loading = ref(false);

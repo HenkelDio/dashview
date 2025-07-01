@@ -8,6 +8,7 @@
           :description="item.description"
           :link="item.link"
           :icon="item.icon"
+          :permission="item.permission"
         />
       </div>
     </div>
@@ -24,18 +25,21 @@ const modules = ref([
     description: 'Visualize e envie formulários de NPS aos pacientes.',
     link: '/nps-hub',
     icon: 'fact_check',
+    permission: 'moduleNps',
   },
   {
     title: 'Canal do colaborador',
     description: 'Gerencie experiências e respostas dos colaboradores.',
     link: '/rh-hub',
     icon: 'folder_shared',
+    permission: 'moduleRh',
   },
   {
     title: 'Clientes em prospecção',
     description: 'Visualize o que é importante na experiencia dos pacientes.',
     link: '/prospecting',
     icon: 'person_search',
+    permission: 'moduleProspecting',
   },
   {
     title: 'Experiência/Notificação',
@@ -43,6 +47,7 @@ const modules = ref([
       'Gerencie notificações e experiências do corpo clínico e colaboradores.',
     link: '/notification-hub',
     icon: 'badge',
+    permission: 'moduleNotification',
   },
 ]);
 </script>
