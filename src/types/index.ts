@@ -178,8 +178,9 @@ export interface IQuestion {
   inputType: string;
   options: string[];
   answer: string;
-  observation: string;
+  observation?: string;
   showObservation: boolean;
+  required: boolean;
 }
 
 export interface IAnswer {
@@ -192,6 +193,7 @@ export interface IAnswer {
   patientEmail: string;
   dateOfAdmission: number;
   answerType: string;
+  origin: string;
   requestAnswered: IRequestAnswered;
   score: {
     answer: string;
@@ -218,6 +220,14 @@ export interface IAnswerRH {
     value: string;
     label: string;
   };
+}
+
+export interface IAnswerGeneral {
+  answers: { index: string; title: string; answer: string }[];
+  userInfo: { name: string; email: string; phone: string };
+  feedbackReturn: boolean;
+  timestamp: number;
+  type: string;
 }
 
 export interface IChartAnswer {

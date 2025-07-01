@@ -2,18 +2,15 @@
   <q-card style="padding: 20px; text-align: start" bordered flat>
     <div class="text-subtitle1">
       {{ props.title }}
-      <span
-        v-if="['13', '12', '16'].includes(props.index)"
-        style="color: red; font-size: 0.8rem"
+      <span v-if="required" style="color: red; font-size: 0.8rem"
         >* Obrigatório</span
       >
     </div>
 
-    <div class="row justify-center">
+    <div class="row justify-left">
       <q-option-group
         v-model="answer"
         type="radio"
-        inline
         class="q-mt-md"
         :options="
           props.options.map((option) => ({ label: option, value: option }))
@@ -44,6 +41,7 @@ interface IProps {
   showObservation: boolean;
   disabled: boolean;
   index: string;
+  required: boolean;
 }
 
 const emit = defineEmits(['updateAnswer']);

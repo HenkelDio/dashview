@@ -72,24 +72,15 @@
               <q-td
                 style="width: 20%"
                 class="my-special-class"
-                key="employee"
+                key="patient"
                 :props="props"
               >
-                <div v-if="props.row.employeeName">
-                  {{ props.row.employeeName }}
+                <div v-if="props.row.patient">
+                  <div>{{ props.row.patient }}</div>
                 </div>
-                <div v-if="!props.row.employeeName">Não informado</div>
+                <div v-if="!props.row.patient">Não informado</div>
               </q-td>
-              <q-td
-                style="width: 20%"
-                class="my-special-class"
-                key="type"
-                :props="props"
-              >
-                <q-badge
-                  :color="getBadgeType(props.row.type)"
-                  :label="props.row.type"
-              /></q-td>
+
               <q-td
                 style="width: 20%"
                 class="my-special-class"
@@ -102,7 +93,7 @@
                 class="my-special-class"
                 key="description"
                 :props="props"
-                >{{ formatDescription(props.row.description) }}</q-td
+                >{{ formatDescription(props.row.answers[0].answer) }}</q-td
               >
               <q-td
                 style="width: 10%"
@@ -145,11 +136,9 @@
                   <q-list bordered separator>
                     <q-item clickable v-ripple>
                       <q-item-section>
-                        <q-item-label>Nome do colaborador</q-item-label>
+                        <q-item-label>Nome</q-item-label>
                         <q-item-label caption lines="2">{{
-                          answer.employeeName
-                            ? answer.employeeName
-                            : 'Não informado'
+                          answer.patient ? answer.patient : 'Não informado'
                         }}</q-item-label>
                       </q-item-section>
 
@@ -159,23 +148,20 @@
                           answer.date
                         }}</q-item-label>
                       </q-item-section>
-
-                      <q-item-section>
-                        <q-item-label>Tipo</q-item-label>
-                        <q-item-label caption lines="2"
-                          ><q-badge
-                            :color="getBadgeType(answer.type)"
-                            :label="answer.type"
-                          />
-                        </q-item-label>
-                      </q-item-section>
                     </q-item>
 
-                    <q-item clickable v-ripple>
+                    <q-item
+                      clickable
+                      v-ripple
+                      v-for="(item, index) in answer.answers"
+                      :key="index"
+                    >
                       <q-item-section>
-                        <q-item-label>Descrição</q-item-label>
+                        <q-item-label>{{ item.title }}</q-item-label>
                         <q-item-label caption lines="100">{{
-                          answer.description
+                          index === 2
+                            ? formatStringDate(item.answer)
+                            : item.answer
                         }}</q-item-label>
                       </q-item-section>
                     </q-item>
@@ -191,10 +177,10 @@
 </template>
 
 <script lang="ts" setup>
-import { Column, IAnswerRH } from 'src/types';
+import { Column, IAnswerGeneral } from 'src/types';
 import { onMounted, ref } from 'vue';
 import { Notify } from 'quasar';
-import { loadDashboardRh } from 'src/services/NPSService';
+import { loadDashboardGeneral } from 'src/services/NPSService';
 import moment from 'moment';
 import 'moment/dist/locale/pt-br';
 import DateRangeInput from 'src/components/DateRangeInput.vue';
@@ -202,10 +188,12 @@ import notFound from '../assets/notfound.json';
 import { Vue3Lottie } from 'vue3-lottie';
 
 interface IAnswerTable {
-  employeeName: string;
+  patient: string;
   date: string;
-  description: string;
-  type: string;
+  answers: { index: string; title: string; answer: string }[];
+  email: string;
+  phone: string;
+  feedbackReturn: boolean;
 }
 
 const loading = ref(false);
@@ -217,18 +205,10 @@ const endDate = ref(0);
 
 const columns = ref<Column[]>([
   {
-    name: 'employee',
+    name: 'patient',
     required: true,
-    field: 'employee',
-    label: 'COLABORADOR',
-    sortable: false,
-    align: 'left',
-  },
-  {
-    name: 'type',
-    required: true,
-    field: 'type',
-    label: 'TIPO',
+    field: 'patient',
+    label: 'NOME',
     sortable: false,
     align: 'left',
   },
@@ -243,7 +223,7 @@ const columns = ref<Column[]>([
     name: 'description',
     required: true,
     field: 'description',
-    label: 'DESCRIÇÃO',
+    label: 'CLASSIFICAÇÃO',
     sortable: false,
     align: 'left',
   },
@@ -251,7 +231,7 @@ const columns = ref<Column[]>([
 ]);
 
 interface IResponse {
-  data: IAnswerRH[] | null;
+  data: IAnswerGeneral[] | null;
   error: unknown | null;
 }
 
@@ -260,28 +240,19 @@ function formatDescription(text?: string): string {
   return text.length > 70 ? text.slice(0, 70) + '...' : text;
 }
 
-function getBadgeType(type: string): string {
-  if (type === 'Reclamação') {
-    return 'red';
-  }
-
-  if (type === 'Sugestão') {
-    return 'grey';
-  }
-
-  if (type === 'Denúncia') {
-    return 'yellow-9';
-  }
-
-  return 'green';
+function formatStringDate(date: string) {
+  const [year, month, day] = date.split('-');
+  const formatted = `${day}/${month}/${year}`;
+  return formatted;
 }
 
 async function loadAnswers() {
   loading.value = true;
 
-  const { data, error }: IResponse = await loadDashboardRh(
+  const { data, error }: IResponse = await loadDashboardGeneral(
     startDate.value,
-    endDate.value
+    endDate.value,
+    'notification'
   );
 
   loading.value = false;
@@ -299,13 +270,15 @@ async function loadAnswers() {
   }
 }
 
-function formatRows(data: IAnswerRH[]) {
-  return data.map((item: IAnswerRH) => {
+function formatRows(data: IAnswerGeneral[]) {
+  return data.map((item: IAnswerGeneral) => {
     return {
-      description: item.description,
-      employeeName: item.employeeName,
+      answers: item.answers,
+      patient: item.userInfo.name,
       date: formatDate(item.timestamp),
-      type: item.type.label,
+      email: item.userInfo.email,
+      phone: item.userInfo.phone,
+      feedbackReturn: item.feedbackReturn,
     };
   });
 }

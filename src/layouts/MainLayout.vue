@@ -47,7 +47,12 @@
       :name="name"
     />
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+    <q-drawer
+      v-model="leftDrawerOpen"
+      show-if-above
+      :mini="openDrawer"
+      bordered
+    >
       <div class="text-h5 text-center q-my-md q-mb-lg">
         <q-img src="../assets/logo.png" width="60%" />
       </div>
@@ -65,7 +70,7 @@
           </div>
         </q-list>
         <div class="text-center text-caption inter-medium absolute-bottom">
-          Versão 1.6.0
+          Versão 1.6.5
         </div>
       </div>
     </q-drawer>
@@ -95,68 +100,24 @@ const router = useRouter();
 
 const userStore = useUserStore();
 const name = ref(userStore.$state.user.name);
+const openDrawer = ref(false);
 
 const linksList: EssentialLinkProps[] = [
   {
-    title: 'NPS',
-    caption: 'Gerenciamento de NPS',
-    icon: 'fact_check',
-    link: '/nps',
-    permission: 'moduleNps',
-    children: [
-      {
-        title: 'Dashboard',
-        link: '/dashboard-nps',
-        icon: 'analytics',
-        permission: 'viewDashboard',
-      },
-      {
-        title: 'Envio de NPS',
-        link: '/nps',
-        icon: 'schedule_send',
-        permission: 'sendNps',
-      },
-      {
-        title: 'Respostas',
-        link: '/answers',
-        icon: 'chat',
-        permission: 'viewAnswers',
-      },
-      {
-        title: 'QR Code',
-        link: '/qr-code',
-        icon: 'qr_code',
-      },
-      {
-        title: 'Relatórios',
-        link: '/report',
-        icon: 'data_usage',
-      },
-    ],
+    title: 'Pesquisas',
+    caption: 'Gerenciar pesquisas',
+    icon: 'ballot',
+    link: '/surveys',
+    security: 'admin',
+    permission: 'viewAndEditUsers',
   },
   {
-    title: 'RH',
-    caption: 'Peguntas RH',
-    icon: 'folder_shared',
-    link: '/rh',
-    permission: 'moduleRh',
-    children: [
-      {
-        title: 'Dashboard',
-        link: '/rh',
-        icon: 'analytics',
-      },
-      {
-        title: 'Respostas',
-        link: '/answers-rh',
-        icon: 'chat',
-      },
-      {
-        title: 'QR Code',
-        link: '/rh-qr-code',
-        icon: 'qr_code',
-      },
-    ],
+    title: 'QR Codes',
+    caption: 'Gerenciar qr codes',
+    icon: 'qr_code',
+    link: '/qr-codes',
+    security: 'admin',
+    permission: 'viewAndEditUsers',
   },
   {
     title: 'Usuários',
@@ -165,14 +126,6 @@ const linksList: EssentialLinkProps[] = [
     link: '/users',
     security: 'admin',
     permission: 'viewAndEditUsers',
-  },
-  {
-    title: 'Departamentos',
-    caption: 'Editar departamentos',
-    icon: 'apartment',
-    link: '/departments',
-    security: 'admin',
-    permission: 'viewAndEditDepartments',
   },
   {
     title: 'Preferências',
@@ -191,7 +144,7 @@ const showGreetingsDialog = ref(
 const leftDrawerOpen = ref(false);
 
 function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
+  openDrawer.value = !openDrawer.value;
 }
 
 function hasPermission(permission?: string): boolean {

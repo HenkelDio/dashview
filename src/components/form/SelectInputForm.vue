@@ -2,6 +2,9 @@
   <q-card style="padding: 20px; text-align: start" bordered flat>
     <div class="text-subtitle1">
       {{ props.title }}
+      <span v-if="required" style="color: red; font-size: 0.8rem"
+        >* Obrigatório</span
+      >
     </div>
     <q-select
       v-model="answer"
@@ -12,9 +15,11 @@
       class="q-mt-md"
       label="Selecione"
       :options="props.options"
+      :disabled="disabled"
     ></q-select>
 
     <q-input
+      v-if="showObservation"
       v-model="observation"
       label="Observações"
       class="q-mt-md"
@@ -29,7 +34,10 @@ import { ref, watch } from 'vue';
 
 interface IProps {
   title: string;
+  disabled: boolean;
   options: string[];
+  required: boolean;
+  showObservation: boolean;
 }
 
 const emit = defineEmits(['updateAnswer']);

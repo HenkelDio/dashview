@@ -39,6 +39,17 @@ export const saveRhAnswer = async (payload: any) => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const saveGeneralAnswer = async (payload: any) => {
+  try {
+    const url = '/public/form/save-general-answer';
+    const response = await publicApi.post(url, payload);
+    return { data: response.data, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
+};
+
 export const sendNPS = async (file: File) => {
   try {
     const formData = new FormData();
@@ -142,6 +153,25 @@ export const loadDashboardRh = async (startDate: number, endDate: number) => {
 
   try {
     const response = await api.get('/nps/count-rh-answers', { headers });
+    return { data: response.data, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
+};
+
+export const loadDashboardGeneral = async (
+  startDate: number,
+  endDate: number,
+  type: string | undefined
+) => {
+  const headers = {
+    startDate,
+    endDate,
+    type,
+  };
+
+  try {
+    const response = await api.get('/nps/count-general-answers', { headers });
     return { data: response.data, error: null };
   } catch (e) {
     return { data: null, error: e };

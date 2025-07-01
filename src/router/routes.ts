@@ -225,6 +225,157 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/prospecting',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/ProspectingHub.vue') },
+    ],
+  },
+
+  {
+    path: '/notification-hub',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/NotificationHub.vue') },
+    ],
+  },
+
+  {
+    path: '/surveys',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/SurveysPage.vue') }],
+  },
+
+  {
+    path: '/nps-hub',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/NpsHub.vue') }],
+  },
+
+  {
+    path: '/rh-hub',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/RhHub.vue') }],
+  },
+
+  {
+    path: '/prospecting-answers',
+    props: (route) => ({ type: route.query.type }),
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/ProspectingAnswersFormPage.vue'),
+      },
+    ],
+  },
+
+  {
+    path: '/notification-answers',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/NotificationAnswersFormPage.vue'),
+      },
+    ],
+  },
+
+  {
+    path: '/qr-codes',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/QRCodesPage.vue'),
+      },
+    ],
+  },
+
+  {
+    path: '/notification-dashboard',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/NotificationDashboardPage.vue'),
+      },
+    ],
+  },
+
+  {
     path: '/not-allowed',
     beforeEnter: (_to, _from, next) => {
       const store = useUserStore();

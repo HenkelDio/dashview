@@ -85,7 +85,7 @@
                   v-if="props.row.feedbackReturn && !props.row.requestAnswered"
                 >
                   <q-badge color="blue" label="Solicitação de retorno" />
-                  <div>{{ props.row.patient || '' }}</div>
+                  <div>{{ props.row.patientName || '' }}</div>
                 </div>
                 <div v-if="props.row.requestAnswered">
                   <q-badge
@@ -94,11 +94,11 @@
                       props.row.requestAnswered.timestamp
                     )}`"
                   />
-                  <div>{{ props.row.patient }}</div>
+                  <div>{{ props.row.patientName }}</div>
                 </div>
-                <div v-if="!props.row.patient">Sem informações</div>
-                <div v-if="props.row.patient && !props.row.feedbackReturn">
-                  {{ props.row.patient }}
+                <div v-if="!props.row.patientName">Sem informações</div>
+                <div v-if="props.row.patientName && !props.row.feedbackReturn">
+                  {{ props.row.patientName }}
                 </div>
               </q-td>
               <q-td
@@ -245,6 +245,16 @@
                         />
                       </q-item-label>
                     </q-item-section>
+                    <q-item-section v-if="answer.origin">
+                      <q-item-label>Origem</q-item-label>
+                      <q-item-label caption lines="2">
+                        {{
+                          answer.origin === 'onlyNew'
+                            ? 'Formulário Recepção'
+                            : 'FOrmulário NPS'
+                        }}
+                      </q-item-label>
+                    </q-item-section>
                   </q-item>
 
                   <q-list bordered separator>
@@ -352,7 +362,7 @@ import { Vue3Lottie } from 'vue3-lottie';
 
 interface IAnswerTable {
   id: string;
-  patient: string;
+  patientName: string;
   patientEmail: string;
   patientPhone: string;
   date: string;
@@ -495,7 +505,7 @@ function formatRows(data: IAnswer[]) {
   return data.map((item: IAnswer) => {
     return {
       id: item.id || '',
-      patient: item.patientName,
+      patientName: item.patientName,
       patientPhone: item.patientPhone,
       date: formatDate(item.timestamp),
       score: {
@@ -509,6 +519,7 @@ function formatRows(data: IAnswer[]) {
       patientEmail: item.patientEmail,
       requestAnswered: item.requestAnswered,
       answerType: item.answerType,
+      origin: item.origin,
       actions: '',
     };
   });

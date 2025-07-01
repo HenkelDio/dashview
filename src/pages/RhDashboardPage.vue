@@ -1,5 +1,13 @@
 <template>
-  <q-page class="q-pa-md q-pt-md">
+  <q-page class="q-pa-md">
+    <q-btn
+      dense
+      icon="chevron_left"
+      flat
+      class="q-mb-lg"
+      @click="$router.back()"
+      >Voltar</q-btn
+    >
     <div class="flex justify-between items-top q-mt-md">
       <div>
         <div class="text-h5 page-title" style="margin-bottom: 10px">

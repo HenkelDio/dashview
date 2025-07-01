@@ -49,6 +49,17 @@
                   :showObservation="question.showObservation"
                   @updateAnswer="updateAnswer(index, $event)"
                   :disabled="loadingSubmit"
+                  :required="question.required"
+                />
+
+                <SelectInputForm
+                  v-if="question.inputType === 'select'"
+                  :title="question.title"
+                  :options="question.options"
+                  @updateAnswer="updateAnswer(index, $event)"
+                  :showObservation="question.showObservation"
+                  :disabled="loadingSubmit"
+                  :required="question.required"
                 />
 
                 <TextInputForm
@@ -57,6 +68,7 @@
                   :options="question.options"
                   @updateAnswer="updateAnswer(index, $event)"
                   :disabled="loadingSubmit"
+                  :required="question.required"
                 />
 
                 <DateInputForm
@@ -65,6 +77,7 @@
                   :options="question.options"
                   @updateAnswer="updateAnswer(index, $event)"
                   :disabled="loadingSubmit"
+                  :required="question.required"
                 />
               </div>
             </div>
@@ -90,9 +103,7 @@
               color="primary"
               class="text-weight-bold q-my-lg"
               style="width: 100%; height: 40px"
-              @click="
-                type === 'employeeChannel' ? submitRhAnswers() : submitAnswers()
-              "
+              @click="handleSubmit"
               :loading="loadingSubmit"
               :disable="!isValid"
             >
@@ -112,13 +123,19 @@ import PatientInputForm from 'src/components/form/PatientInputForm.vue';
 import RadioInputForm from 'src/components/form/RadioInputForm.vue';
 import TextInputForm from 'src/components/form/TextInputForm.vue';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { getForm, saveAnswer, saveRhAnswer } from 'src/services/NPSService';
+import {
+  getForm,
+  saveAnswer,
+  saveGeneralAnswer,
+  saveRhAnswer,
+} from 'src/services/NPSService';
 import { IForm, IQuestion } from 'src/types';
 import { computed, onMounted, ref } from 'vue';
 import { Vue3Lottie } from 'vue3-lottie';
 import congratulations from '../assets/congratulations.json';
 import { useRoute } from 'vue-router';
 import EmployeeInputForm from 'src/components/form/EmployeeInputForm.vue';
+import SelectInputForm from 'src/components/form/SelectInputForm.vue';
 
 const form = ref({} as IForm);
 const loading = ref(false);
@@ -166,6 +183,7 @@ async function loadForm() {
     title: question.title,
     answer: '',
     observation: '',
+    required: question.required,
   }));
 }
 
@@ -181,8 +199,8 @@ function updateAnswer(
 const isValid = computed(() => {
   if (!answers.value) return false;
 
-  const filteredAnswers = answers.value.filter((item: IQuestion) =>
-    ['13', '12', '15', '16'].includes(item.index)
+  const filteredAnswers = answers.value.filter(
+    (item: IQuestion) => item.required
   );
 
   const allAnswersFilled = filteredAnswers.every((item: IQuestion) =>
@@ -213,6 +231,83 @@ async function submitRhAnswers() {
   };
 
   const { error } = await saveRhAnswer(payload);
+  loadingSubmit.value = false;
+
+  console.log('error', error);
+
+  if (error) {
+    Notify.create({
+      message: 'Erro ao enviar respostas.',
+      color: 'red',
+    });
+    return;
+  }
+
+  submitted.value = true;
+  Notify.create({
+    message: 'Respostas enviadas com sucesso!',
+    color: 'green',
+  });
+}
+
+function getUserInfo() {
+  if (type.value === 'notification' && nameEmployee.value) {
+    return {
+      name: nameEmployee.value,
+    };
+  }
+
+  if (patientName.value || patientEmail.value || patientPhone.value) {
+    return {
+      name: patientName.value,
+      email: patientEmail.value,
+      phone: patientPhone.value,
+    };
+  }
+
+  return null;
+}
+
+async function handleSubmit() {
+  if (!isValid.value) {
+    return;
+  }
+
+  if (type.value === 'employeeChannel') {
+    await submitRhAnswers();
+  }
+
+  if (type.value === 'notification' || type.value === 'prospecting') {
+    await submitGeneralAnswers();
+  }
+
+  if (type.value === 'general' || type.value === 'onlyNew') {
+    await submitAnswers();
+  }
+}
+
+async function submitGeneralAnswers() {
+  loadingSubmit.value = true;
+  const payload = {
+    feedbackReturn: patientFeedbackReturn.value,
+    type: type.value,
+    answers: answers.value.map((answer: IQuestion) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { required, ...rest } = answer;
+
+      if (!rest.observation || rest.observation.trim() === '') {
+        delete rest.observation;
+      }
+
+      return rest;
+    }),
+
+    userInfo: getUserInfo(),
+  };
+
+  console.log('payload', payload);
+
+  const { error } = await saveGeneralAnswer(payload);
   loadingSubmit.value = false;
 
   console.log('error', error);
@@ -274,6 +369,7 @@ async function submitAnswers() {
   loadingSubmit.value = true;
 
   const payload = {
+    origin: type.value,
     answers: answers.value,
     patientInfo: {
       patientName: patientName.value,
