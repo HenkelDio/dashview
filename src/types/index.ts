@@ -199,6 +199,7 @@ export interface IAnswer {
     answer: string;
     score: string;
   };
+  date?: string;
 }
 
 export interface IRequestAnswered {

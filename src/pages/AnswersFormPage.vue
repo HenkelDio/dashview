@@ -204,7 +204,7 @@
                     <q-item-section>
                       <q-item-label>Data</q-item-label>
                       <q-item-label caption lines="2">{{
-                        formatDate(answer.dateOfAdmission)
+                        answer.date
                       }}</q-item-label>
                     </q-item-section>
 
