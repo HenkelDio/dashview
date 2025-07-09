@@ -17,6 +17,7 @@
           :link="item.link"
           :icon="item.icon"
           :permission="item.permission"
+          :new="item.new"
         />
       </div>
     </div>
@@ -62,6 +63,14 @@ const modules = ref([
     link: '/departments',
     icon: 'apartment',
     permission: 'viewAndEditDepartments',
+  },
+  {
+    title: 'Classificações',
+    description: 'Classificações de respostas de pacientes.',
+    link: '/classification',
+    icon: 'new_label',
+    permission: 'viewAndEditDepartments',
+    new: true,
   },
 ]);
 </script>

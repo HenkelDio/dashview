@@ -1,5 +1,14 @@
 <template>
-  <q-page class="q-pa-md q-pt-xl">
+  <q-page class="q-pa-md">
+    <q-btn
+      dense
+      icon="chevron_left"
+      flat
+      class="q-mb-lg"
+      @click="$router.back()"
+      >Voltar</q-btn
+    >
+
     <div class="text-h5 page-title q-mb-xl">Respostas</div>
 
     <q-card flat class="q-mt-sm">
@@ -122,6 +131,29 @@
               <q-td
                 style="width: 20%"
                 class="my-special-class"
+                key="classification"
+                :props="props"
+              >
+                <div
+                  v-if="props.row.classification"
+                  :style="{
+                    backgroundColor: props.row.classification.color,
+                    color: 'white',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    display: 'inline-block',
+                    fontSize: '0.75rem',
+                    fontWeight: '500',
+                  }"
+                >
+                  {{ props.row.classification.description }}
+                </div>
+
+                <div v-if="!props.row.classification">-</div>
+              </q-td>
+              <q-td
+                style="width: 20%"
+                class="my-special-class"
                 key="description"
                 :props="props"
                 >{{ formatDescription(props.row.description) }}</q-td
@@ -191,6 +223,7 @@
               <q-card style="min-width: 600px">
                 <q-card-section>
                   <div class="text-h6">Respostas</div>
+
                   <q-item clickable v-ripple>
                     <q-item-section>
                       <q-item-label>Nome do paciente</q-item-label>
@@ -255,6 +288,25 @@
                         }}
                       </q-item-label>
                     </q-item-section>
+
+                    <q-item-section v-if="answer.classification?.id">
+                      <q-item-label>Classificação</q-item-label>
+                      <q-item-label caption lines="2">
+                        <div
+                          :style="{
+                            backgroundColor: answer.classification.color,
+                            color: 'white',
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            display: 'inline-block',
+                            fontSize: '0.75rem',
+                            fontWeight: '500',
+                          }"
+                        >
+                          {{ answer.classification.description }}
+                        </div>
+                      </q-item-label>
+                    </q-item-section>
                   </q-item>
 
                   <q-list bordered separator>
@@ -276,6 +328,44 @@
                     </q-item>
                   </q-list>
                 </q-card-section>
+                <q-card-actions align="right" style="padding: 15px">
+                  <q-btn
+                    @click="
+                      showClassification = true;
+                      getClassifications();
+                    "
+                    unelevated
+                    color="secondary"
+                    >Classificar resposta</q-btn
+                  >
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
+
+            <q-dialog v-model="showClassification">
+              <q-card style="min-width: 600px">
+                <q-card-section>
+                  <div class="text-h6">Classificar resposta</div>
+                  <q-select
+                    :loading="loadingClassifications"
+                    :options="classifications"
+                    v-model="classification"
+                    label="Classificação"
+                    outlined
+                    emit-value
+                    map-options
+                  />
+                </q-card-section>
+                <q-card-actions align="right">
+                  <q-btn flat @click="showClassification = false">Fechar</q-btn>
+                  <q-btn
+                    unelevated
+                    color="primary"
+                    :disable="!classification"
+                    @click="saveClassification"
+                    >Salvar</q-btn
+                  >
+                </q-card-actions>
               </q-card>
             </q-dialog>
 
@@ -288,7 +378,7 @@
                       <q-item-section>
                         <q-item-label>Nome</q-item-label>
                         <q-item-label caption lines="2">{{
-                          patientInfo.patient
+                          patientInfo.patientName
                         }}</q-item-label>
                       </q-item-section>
                     </q-item>
@@ -349,7 +439,13 @@
 </template>
 
 <script lang="ts" setup>
-import { Column, IAnswer, IQuestion, IRequestAnswered } from 'src/types';
+import {
+  Column,
+  IAnswer,
+  IClassification,
+  IQuestion,
+  IRequestAnswered,
+} from 'src/types';
 import { onMounted, ref, watch } from 'vue';
 import { Notify } from 'quasar';
 import { getAnswers, setRequestAnswered } from 'src/services/NPSService';
@@ -359,6 +455,10 @@ import DateRangeInput from 'src/components/DateRangeInput.vue';
 import { useRoute } from 'vue-router';
 import notFound from '../assets/notfound.json';
 import { Vue3Lottie } from 'vue3-lottie';
+import {
+  getAllClassification,
+  saveAnswerClassification,
+} from 'src/services/classificationService';
 
 interface IAnswerTable {
   id: string;
@@ -369,6 +469,7 @@ interface IAnswerTable {
   questions: IQuestion[];
   actions: string;
   requestAnswered?: IRequestAnswered;
+  classification: IClassification | undefined;
 }
 
 const route = useRoute();
@@ -384,12 +485,17 @@ const answer = ref({} as IAnswer);
 const startDate = ref(0);
 const endDate = ref(0);
 const patientInfo = ref(
-  {} as { patient: string; patientEmail: string; patientPhone: string }
+  {} as { patientName: string; patientEmail: string; patientPhone: string }
 );
 const showPatientInfoDialog = ref(false);
 const showConfirm = ref(false);
 const loadingAnswered = ref(false);
 const answerId = ref('');
+const classification = ref<string | null>(null);
+
+const showClassification = ref(false);
+const classifications = ref([] as { value: string; label: string }[]);
+const loadingClassifications = ref(false);
 
 const columns = ref<Column[]>([
   {
@@ -416,6 +522,14 @@ const columns = ref<Column[]>([
     align: 'left',
   },
   {
+    name: 'classification',
+    required: true,
+    field: 'classification',
+    label: 'CLASSIFICAÇÃO',
+    sortable: false,
+    align: 'left',
+  },
+  {
     name: 'description',
     required: true,
     field: 'description',
@@ -433,6 +547,65 @@ watch(sortBy, () => {
 interface IResponse {
   data: IAnswer[] | null;
   error: unknown | null;
+}
+
+interface IResponseClassification {
+  data: IClassification[] | null;
+  error: unknown | null;
+}
+
+async function getClassifications() {
+  loadingClassifications.value = true;
+  const { data, error }: IResponseClassification = await getAllClassification(
+    'ACTIVE'
+  );
+  loadingClassifications.value = false;
+
+  if (error) {
+    Notify.create({
+      caption: 'Erro ao carregar departamentos',
+      group: true,
+      color: 'red',
+    });
+    return;
+  }
+
+  if (data) {
+    classifications.value = data.map((item) => {
+      return {
+        label: item.description,
+        value: item.id,
+      };
+    });
+  }
+}
+
+async function saveClassification() {
+  const payload = {
+    answerId: answer.value.id,
+    classificationId: classification.value,
+  };
+  const { error } = await saveAnswerClassification(payload);
+
+  if (error) {
+    Notify.create({
+      caption: 'Erro ao classificar resposta',
+      group: true,
+      color: 'red',
+    });
+    return;
+  }
+
+  Notify.create({
+    caption: 'Resposta classificada com sucesso',
+    group: true,
+    color: 'green',
+  });
+
+  showClassification.value = false;
+  show.value = false;
+
+  loadAnswers();
 }
 
 function getLabelNPS(score: string) {
@@ -521,6 +694,7 @@ function formatRows(data: IAnswer[]) {
       answerType: item.answerType,
       origin: item.origin,
       actions: '',
+      classification: item.classification,
     };
   });
 }

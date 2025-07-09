@@ -376,6 +376,25 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/classification',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/ClassificationPage.vue'),
+      },
+    ],
+  },
+
+  {
     path: '/not-allowed',
     beforeEnter: (_to, _from, next) => {
       const store = useUserStore();

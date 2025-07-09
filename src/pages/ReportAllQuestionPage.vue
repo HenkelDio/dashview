@@ -8,7 +8,6 @@
       @click="$router.back()"
       >Voltar</q-btn
     >
-
     <div class="text-h5 page-title q-mb-xl">Relatório por pergunta</div>
     <q-card flat class="q-mt-sm">
       <q-card-section>
@@ -53,6 +52,14 @@
       </div>
       <div v-if="itemManifest.title">
         <ReportManifestChart :details="itemManifest" />
+      </div>
+      <div
+        v-if="
+          itemClassification !== undefined &&
+          Object.keys(itemClassification).length
+        "
+      >
+        <ReportClassificationChart :classifications="itemClassification" />
       </div>
       <div v-if="reviews.length > 0">
         <q-card flat class="q-mt-sm">
@@ -105,6 +112,26 @@
                     />
                   </q-item-label>
                 </q-item-section>
+
+                <q-item-section v-if="answer.classification">
+                  <q-item-label>Classificação</q-item-label>
+                  <q-item-label caption lines="2"
+                    ><div
+                      v-if="answer.classification"
+                      :style="{
+                        backgroundColor: answer.classification.color,
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        display: 'inline-block',
+                        fontSize: '0.75rem',
+                        fontWeight: '500',
+                      }"
+                    >
+                      {{ answer.classification.description }}
+                    </div>
+                  </q-item-label>
+                </q-item-section>
               </q-item>
 
               <q-item clickable v-ripple>
@@ -154,7 +181,45 @@
                 </q-item>
               </q-list>
             </q-card-section>
+            <q-card-actions align="right" style="padding: 15px">
+              <q-btn
+                @click="
+                  showClassification = true;
+                  getClassifications();
+                "
+                unelevated
+                color="secondary"
+                >Classificar resposta</q-btn
+              >
+            </q-card-actions>
           </q-card>
+
+          <q-dialog v-model="showClassification">
+            <q-card style="min-width: 600px">
+              <q-card-section>
+                <div class="text-h6">Classificar resposta</div>
+                <q-select
+                  :loading="loadingClassifications"
+                  :options="classifications"
+                  v-model="classification"
+                  label="Classificação"
+                  outlined
+                  emit-value
+                  map-options
+                />
+              </q-card-section>
+              <q-card-actions align="right">
+                <q-btn flat @click="showClassification = false">Fechar</q-btn>
+                <q-btn
+                  unelevated
+                  color="primary"
+                  :disable="!classification"
+                  @click="saveClassification"
+                  >Salvar</q-btn
+                >
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
         </q-dialog>
       </div>
     </div>
@@ -167,14 +232,23 @@ import DateRangeInput from 'src/components/DateRangeInput.vue';
 import ReportChart from 'src/components/ReportChart.vue';
 import ReportManifestChart from 'src/components/ReportManifestChart.vue';
 import { getAnswerById, reportByQuestion } from 'src/services/NPSService';
-import { IAnswer } from 'src/types';
+import { IAnswer, IClassification } from 'src/types';
 import { ref } from 'vue';
 import moment from 'moment';
 import 'moment/dist/locale/pt-br';
+import ReportClassificationChart from 'src/components/ReportClassificationChart .vue';
+import {
+  getAllClassification,
+  saveAnswerClassification,
+} from 'src/services/classificationService';
 
 const show = ref(false);
 const answer = ref({} as IAnswer);
 const loadingAnswer = ref(false);
+const showClassification = ref(false);
+const loadingClassifications = ref(false);
+const classifications = ref([] as { value: string; label: string }[]);
+const classification = ref<string | null>(null);
 
 const startDate = ref(0);
 const endDate = ref(0);
@@ -196,6 +270,8 @@ const itemManifest = ref(
     suggestions: number;
   }
 );
+const itemClassification = ref<{ [key: string]: number }>({});
+
 const reviews = ref([] as { _id: string; answer: string }[]);
 
 function formatDate(timestamp: number): string {
@@ -213,6 +289,63 @@ function getLabelNPS(score: string) {
   }
 
   return 'Promotor';
+}
+
+interface IResponseClassification {
+  data: IClassification[] | null;
+  error: unknown | null;
+}
+
+async function getClassifications() {
+  loadingClassifications.value = true;
+  const { data, error }: IResponseClassification = await getAllClassification(
+    'ACTIVE'
+  );
+  loadingClassifications.value = false;
+
+  if (error) {
+    Notify.create({
+      caption: 'Erro ao carregar departamentos',
+      group: true,
+      color: 'red',
+    });
+    return;
+  }
+
+  if (data) {
+    classifications.value = data.map((item) => {
+      return {
+        label: item.description,
+        value: item.id,
+      };
+    });
+  }
+}
+
+async function saveClassification() {
+  const payload = {
+    answerId: answer.value.id,
+    classificationId: classification.value,
+  };
+  const { error } = await saveAnswerClassification(payload);
+
+  if (error) {
+    Notify.create({
+      caption: 'Erro ao classificar resposta',
+      group: true,
+      color: 'red',
+    });
+    return;
+  }
+
+  Notify.create({
+    caption: 'Resposta classificada com sucesso',
+    group: true,
+    color: 'green',
+  });
+
+  showClassification.value = false;
+  show.value = false;
 }
 
 function getBadgeType(type: string): string {
@@ -277,5 +410,6 @@ async function getReportByQuestion() {
   answers.value = data.department;
   itemManifest.value = data.manifest;
   reviews.value = data.reviews;
+  itemClassification.value = data.classifications;
 }
 </script>

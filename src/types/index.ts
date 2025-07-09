@@ -52,6 +52,14 @@ export interface IDepartment {
   emailManager: string;
 }
 
+export interface IClassification {
+  id: string;
+  description: string;
+  department: IDepartment;
+  status: STATUS;
+  color: string;
+}
+
 export interface IDepartmentCreate {
   id?: string;
   label: string;
@@ -200,6 +208,7 @@ export interface IAnswer {
     score: string;
   };
   date?: string;
+  classification?: IClassification;
 }
 
 export interface IRequestAnswered {
