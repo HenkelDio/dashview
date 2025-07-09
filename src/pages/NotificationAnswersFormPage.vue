@@ -274,10 +274,10 @@ function formatRows(data: IAnswerGeneral[]) {
   return data.map((item: IAnswerGeneral) => {
     return {
       answers: item.answers,
-      patient: item.userInfo.name,
+      patient: item.userInfo ? item.userInfo.name : '-',
       date: formatDate(item.timestamp),
-      email: item.userInfo.email,
-      phone: item.userInfo.phone,
+      email: item.userInfo ? item.userInfo.email : '-',
+      phone: item.userInfo ? item.userInfo.phone : '-',
       feedbackReturn: item.feedbackReturn,
     };
   });
