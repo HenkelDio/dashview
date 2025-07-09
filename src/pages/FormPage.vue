@@ -275,15 +275,15 @@ async function handleSubmit() {
 
   if (type.value === 'employeeChannel') {
     await submitRhAnswers();
+    return;
   }
 
   if (type.value === 'notification' || type.value === 'prospecting') {
     await submitGeneralAnswers();
+    return;
   }
 
-  if (type.value === 'general' || type.value === 'onlyNew') {
-    await submitAnswers();
-  }
+  await submitAnswers();
 }
 
 async function submitGeneralAnswers() {
