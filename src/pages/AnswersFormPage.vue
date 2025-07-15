@@ -284,7 +284,7 @@
                         {{
                           answer.origin === 'onlyNew'
                             ? 'Formulário Recepção'
-                            : 'FOrmulário NPS'
+                            : 'Formulário NPS (Geral)'
                         }}
                       </q-item-label>
                     </q-item-section>
@@ -305,6 +305,19 @@
                         >
                           {{ answer.classification.description }}
                         </div>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+
+                  <q-item clickable v-ripple v-if="answer.feedbackType">
+                    <q-item-section>
+                      <q-item-label>Tipo de retorno desejado</q-item-label>
+                      <q-item-label caption lines="2">
+                        {{
+                          answer.feedbackType === 'whatsapp'
+                            ? 'WhatsApp'
+                            : 'E-mail'
+                        }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>
@@ -695,6 +708,7 @@ function formatRows(data: IAnswer[]) {
       origin: item.origin,
       actions: '',
       classification: item.classification,
+      feedbackType: item.feedbackType,
     };
   });
 }

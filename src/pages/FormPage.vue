@@ -90,6 +90,7 @@
               @patientEmail="patientEmail = $event"
               @patientFeedbackReturn="patientFeedbackReturn = $event"
               @fieldError="fieldError = $event"
+              @feedbackType="feedbackType = $event"
               :disabled="loadingSubmit"
             />
 
@@ -150,6 +151,7 @@ const patientEmail = ref('');
 const fieldError = ref(false);
 const employeeName = ref(false);
 const nameEmployee = ref('');
+const feedbackType = ref();
 
 const route = useRoute();
 
@@ -289,8 +291,8 @@ async function handleSubmit() {
 async function submitGeneralAnswers() {
   loadingSubmit.value = true;
   const payload = {
-    feedbackReturn: patientFeedbackReturn.value,
     type: type.value,
+    feedbackType: feedbackType.value,
     answers: answers.value.map((answer: IQuestion) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { required, ...rest } = answer;
@@ -371,6 +373,7 @@ async function submitAnswers() {
   const payload = {
     origin: type.value,
     answers: answers.value,
+    feedbackType: feedbackType.value ? feedbackType.value.value : null,
     patientInfo: {
       patientName: patientName.value,
       patientPhone: patientPhone.value.replace(/\D/g, ''),

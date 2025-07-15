@@ -18,6 +18,19 @@
       :disable="disabled"
       @update:model-value="resetField"
     />
+
+    <q-select
+      v-if="patientFeedbackReturn"
+      ref="feedbackTypeRef"
+      class="q-mt-md"
+      outlined
+      v-model="feedbackType"
+      label="Como você gostaria do retorno? (Obrigatório)"
+      :options="[
+        { value: 'whatsapp', label: 'Whatsapp' },
+        { value: 'email', label: 'E-mail' },
+      ]"
+    />
   </q-card>
 
   <q-card bordered flat class="q-mt-xl">
@@ -153,6 +166,7 @@ const emit = defineEmits([
   'patientEmail',
   'patientFeedbackReturn',
   'fieldError',
+  'feedbackType',
 ]);
 
 const props = defineProps<IProps>();
@@ -161,15 +175,18 @@ const patientName = ref('');
 const patientPhone = ref('');
 const patientEmail = ref('');
 const patientFeedbackReturn = ref(false);
+const feedbackType = ref('');
 
 const patientNameRef = ref();
 const patientPhoneRef = ref();
 const patientEmailRef = ref();
+const feedbackTypeRef = ref();
 
 function resetField() {
   patientNameRef.value?.resetValidation();
   patientPhoneRef.value?.resetValidation();
   patientEmailRef.value?.resetValidation();
+  feedbackTypeRef.value?.resetValidation();
 }
 
 async function validateAndEmit(
@@ -180,6 +197,7 @@ async function validateAndEmit(
     | 'setPatientPhone'
     | 'patientEmail'
     | 'patientFeedbackReturn'
+    | 'feedbackType'
 ) {
   await nextTick();
   if (fieldRef.value) {
@@ -207,5 +225,9 @@ watch(patientEmail, async (newVal) => {
 
 watch(patientFeedbackReturn, (newVal) => {
   emit('patientFeedbackReturn', newVal);
+});
+
+watch(feedbackType, (newVal) => {
+  emit('feedbackType', newVal);
 });
 </script>

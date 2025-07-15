@@ -209,6 +209,7 @@ export interface IAnswer {
   };
   date?: string;
   classification?: IClassification;
+  feedbackType?: string;
 }
 
 export interface IRequestAnswered {
