@@ -70,7 +70,7 @@
           </div>
         </q-list>
         <div class="text-center text-caption inter-medium absolute-bottom">
-          Versão 1.6.6
+          Versão 1.6.7
         </div>
       </div>
     </q-drawer>
