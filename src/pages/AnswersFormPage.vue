@@ -30,6 +30,14 @@
             ]"
           />
           <div class="flex q-gutter-x-md">
+            <q-select
+              v-model="filter"
+              :options="filterOptions"
+              dense
+              outlined
+              @update:model-value="loadAnswers"
+            />
+
             <DateRangeInput
               @from="startDate = $event"
               @to="endDate = $event"
@@ -510,6 +518,29 @@ const showClassification = ref(false);
 const classifications = ref([] as { value: string; label: string }[]);
 const loadingClassifications = ref(false);
 
+const filter = ref({
+  label: 'Ver todos',
+  value: 'all',
+});
+const filterOptions = ref([
+  {
+    label: 'Apenas detratores',
+    value: 'detractor',
+  },
+  {
+    label: 'Apenas promotores',
+    value: 'promoter',
+  },
+  {
+    label: 'Apenas neutros',
+    value: 'neutral',
+  },
+  {
+    label: 'Ver todos',
+    value: 'all',
+  },
+]);
+
 const columns = ref<Column[]>([
   {
     name: 'patient',
@@ -669,7 +700,8 @@ async function loadAnswers() {
     sortBy.value?.toString(),
     npsId.value?.toString(),
     startDate.value,
-    endDate.value
+    endDate.value,
+    filter.value.value
   );
 
   loading.value = false;

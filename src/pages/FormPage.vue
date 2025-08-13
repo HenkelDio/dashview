@@ -27,8 +27,13 @@
           </div>
 
           <div v-if="!submitted">
-            <div class="text-h5 q-mt-xl">
-              Pesquisa de satisfação | Clínica Los Angeles
+            <div class="text-h5 q-mt-xl" v-if="type === 'prospecting'">
+              Pesquisa de Expectativas e Necessidades / Hospital Clínica Los
+              Angeles
+            </div>
+
+            <div class="text-h5 q-mt-xl" v-else>
+              Pesquisa de satisfação | Hospital Clínica Los Angeles
             </div>
 
             <q-separator class="q-mt-md" />
@@ -83,7 +88,7 @@
             </div>
 
             <PatientInputForm
-              v-if="feedbackRequest"
+              v-if="feedbackRequest && answerType === 'Reclamação'"
               title="Gostaria de um retorno de nossa equipe para esclarecimentos sobre seus relatos?"
               @setPatientName="patientName = $event"
               @setPatientPhone="patientPhone = $event"
@@ -307,8 +312,6 @@ async function submitGeneralAnswers() {
     userInfo: getUserInfo(),
   };
 
-  console.log('payload', payload);
-
   const { error } = await saveGeneralAnswer(payload);
   loadingSubmit.value = false;
 
@@ -328,6 +331,13 @@ async function submitGeneralAnswers() {
     color: 'green',
   });
 }
+
+const answerType = computed(() => {
+  const type = answers.value.filter(
+    (item: { index: string }) => item.index === '16'
+  )[0].answer;
+  return type;
+});
 
 function getAnswerType() {
   const type = answers.value.filter(
