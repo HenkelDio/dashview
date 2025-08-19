@@ -1,5 +1,6 @@
 <template>
   <q-card
+    v-if="answerType === 'Reclamação'"
     style="padding: 20px; text-align: start"
     bordered
     flat
@@ -158,6 +159,7 @@ import { ref, watch, nextTick } from 'vue';
 interface IProps {
   title: string;
   disabled: boolean;
+  answerType: string;
 }
 
 const emit = defineEmits([

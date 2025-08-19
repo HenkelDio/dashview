@@ -88,7 +88,7 @@
             </div>
 
             <PatientInputForm
-              v-if="feedbackRequest && answerType === 'Reclamação'"
+              v-if="feedbackRequest"
               title="Gostaria de um retorno de nossa equipe para esclarecimentos sobre seus relatos?"
               @setPatientName="patientName = $event"
               @setPatientPhone="patientPhone = $event"
@@ -97,6 +97,7 @@
               @fieldError="fieldError = $event"
               @feedbackType="feedbackType = $event"
               :disabled="loadingSubmit"
+              :answerType="answerType"
             />
 
             <EmployeeInputForm
