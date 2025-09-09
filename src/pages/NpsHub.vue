@@ -66,11 +66,11 @@ const modules = ref([
   },
   {
     title: 'Classificações',
-    description: 'Classificações de respostas de pacientes.',
+    description: 'Classificações de respostas de pacientes NPS.',
     link: '/classification',
     icon: 'new_label',
     permission: 'viewAndEditDepartments',
-    new: true,
+    new: false,
   },
 ]);
 </script>

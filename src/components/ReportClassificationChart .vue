@@ -22,7 +22,7 @@
     </q-card-section>
 
     <q-card-section>
-      <div style="height: 250px; max-height: 250px" v-if="chartData">
+      <div style="height: 350px; max-height: 350px" v-if="chartData">
         <Bar ref="barChartRef" :data="chartData" :options="chartOptions" />
       </div>
     </q-card-section>
