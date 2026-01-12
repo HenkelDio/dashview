@@ -35,7 +35,7 @@
               :options="filterOptions"
               dense
               outlined
-              @update:model-value="loadAnswers"
+              @update:model-value="reloadTable"
             />
 
             <DateRangeInput
@@ -53,7 +53,7 @@
               unelevated
               no-caps
               icon="search"
-              @click="loadAnswers"
+              @click="reloadTable"
             />
           </div>
         </div>
@@ -80,15 +80,17 @@
           class="my-sticky-header-table"
           style="height: 400px"
           :rows="rows"
-          virtual-scroll
           flat
           :columns="columns"
-          row-key="name"
+          row-key="id"
           table-header-class="inter-bold text-dark"
           rows-per-page-label="Resultados por página"
           loading-label="Carregando..."
           :loading="loading"
           no-data-label="Sem dados disponíveis"
+          v-model:pagination="pagination"
+          @request="loadAnswers"
+          :rows-per-page-options="[5, 10, 20]"
         >
           <template v-slot:body="props">
             <q-tr :props="props">
@@ -518,6 +520,12 @@ const showClassification = ref(false);
 const classifications = ref([] as { value: string; label: string }[]);
 const loadingClassifications = ref(false);
 
+const pagination = ref({
+  page: 1,
+  rowsPerPage: 5,
+  rowsNumber: 0,
+});
+
 const filter = ref({
   label: 'Ver todos',
   value: 'all',
@@ -584,12 +592,23 @@ const columns = ref<Column[]>([
   { name: 'actions', align: 'right', field: 'actions', label: '' },
 ]);
 
+function reloadTable() {
+  pagination.value.page = 1;
+  loadAnswers({ pagination: pagination.value });
+}
+
 watch(sortBy, () => {
-  loadAnswers();
+  reloadTable();
 });
 
 interface IResponse {
-  data: IAnswer[] | null;
+  data: {
+    content: IAnswer[];
+    page: number;
+    size: number;
+    totalElements: number;
+    totalPages: number;
+  } | null;
   error: unknown | null;
 }
 
@@ -649,7 +668,7 @@ async function saveClassification() {
   showClassification.value = false;
   show.value = false;
 
-  loadAnswers();
+  reloadTable();
 }
 
 function getLabelNPS(score: string) {
@@ -693,15 +712,26 @@ function formatDescription(text?: string): string {
   return text.length > 50 ? text.slice(0, 50) + '...' : text;
 }
 
-async function loadAnswers() {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function loadAnswers(props?: any) {
   loading.value = true;
+
+  if (props?.pagination) {
+    console.log('props.pagination', props);
+    pagination.value.page = props.pagination.page;
+    pagination.value.rowsPerPage = props.pagination.rowsPerPage;
+  }
+
+  const { page, rowsPerPage } = pagination.value;
 
   const { data, error }: IResponse = await getAnswers(
     sortBy.value?.toString(),
     npsId.value?.toString(),
     startDate.value,
     endDate.value,
-    filter.value.value
+    filter.value.value,
+    page - 1, // backend começa em 0
+    rowsPerPage
   );
 
   loading.value = false;
@@ -715,7 +745,8 @@ async function loadAnswers() {
   }
 
   if (data) {
-    rows.value = formatRows(data);
+    rows.value = formatRows(data.content);
+    pagination.value.rowsNumber = data.totalElements;
   }
 }
 
@@ -774,7 +805,7 @@ async function setAnswered() {
 }
 
 onMounted(() => {
-  loadAnswers();
+  loadAnswers({ pagination: pagination.value });
 });
 </script>
 

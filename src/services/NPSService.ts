@@ -111,7 +111,9 @@ export const getAnswers = async (
   npsId: string,
   startDate: number,
   endDate: number,
-  type: string
+  type: string,
+  page: number,
+  size: number
 ) => {
   const headers = {
     startDate,
@@ -120,9 +122,10 @@ export const getAnswers = async (
 
   try {
     const response = await api.get(
-      `/nps/get-answers?sortBy=${sortBy}&npsId=${npsId}&type=${type}`,
+      `/nps/get-answers?sortBy=${sortBy}&npsId=${npsId}&type=${type}&page=${page}&size=${size}`,
       { headers }
     );
+
     return { data: response.data, error: null };
   } catch (e) {
     return { data: null, error: e };
