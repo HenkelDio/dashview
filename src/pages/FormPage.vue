@@ -33,7 +33,7 @@
             </div>
 
             <div class="text-h5 q-mt-xl" v-else>
-              Pesquisa de satisfação | Hospital Clínica Los Angeles
+              {{ getFormTitle() }}
             </div>
 
             <q-separator class="q-mt-md" />
@@ -84,6 +84,14 @@
                   :disabled="loadingSubmit"
                   :required="question.required"
                 />
+
+                <NumberInputForm
+                  v-if="question.inputType === 'number'"
+                  :title="question.title"
+                  @updateAnswer="updateAnswer(index, $event)"
+                  :disabled="loadingSubmit"
+                  :required="question.required"
+                />
               </div>
             </div>
 
@@ -126,6 +134,7 @@
 <script lang="ts" setup>
 import { Notify, useMeta } from 'quasar';
 import DateInputForm from 'src/components/form/DateInputForm.vue';
+import NumberInputForm from 'src/components/form/NumberInputForm.vue';
 import PatientInputForm from 'src/components/form/PatientInputForm.vue';
 import RadioInputForm from 'src/components/form/RadioInputForm.vue';
 import TextInputForm from 'src/components/form/TextInputForm.vue';
@@ -169,6 +178,14 @@ useMeta(() => ({
   title: 'Formulário | Clínica Los Angeles',
 }));
 
+function getFormTitle() {
+  if (type.value === 'interview') {
+    return 'Entrevista com paciente internado';
+  }
+
+  return 'Pesquisa de satisfação | Hospital Clínica Los Angeles';
+}
+
 async function loadForm() {
   loading.value = true;
   const { data, error } = await getForm(type.value?.toString());
@@ -183,8 +200,8 @@ async function loadForm() {
   }
 
   form.value = data;
-  feedbackRequest.value = form.value.parameters.feedbackRequest;
-  employeeName.value = form.value.parameters.employeeName;
+  feedbackRequest.value = Boolean(form.value.parameters?.feedbackRequest);
+  employeeName.value = Boolean(form.value.parameters?.employeeName);
 
   answers.value = form.value.questions.map((question) => ({
     index: question.index,
@@ -286,7 +303,11 @@ async function handleSubmit() {
     return;
   }
 
-  if (type.value === 'notification' || type.value === 'prospecting') {
+  if (
+    type.value === 'notification' ||
+    type.value === 'prospecting' ||
+    type.value === 'interview'
+  ) {
     await submitGeneralAnswers();
     return;
   }
@@ -298,6 +319,7 @@ async function submitGeneralAnswers() {
   loadingSubmit.value = true;
   const payload = {
     type: type.value,
+    feedbackReturn: patientFeedbackReturn.value,
     feedbackType: feedbackType.value,
     answers: answers.value.map((answer: IQuestion) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

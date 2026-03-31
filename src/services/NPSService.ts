@@ -182,6 +182,25 @@ export const loadDashboardGeneral = async (
   }
 };
 
+export const loadGeneralDashboardAnalytics = async (
+  startDate: number,
+  endDate: number,
+  type: string
+) => {
+  const headers = {
+    startDate,
+    endDate,
+    type,
+  };
+
+  try {
+    const response = await api.get('/nps/general-dashboard', { headers });
+    return { data: response.data, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
+};
+
 export const getAllAnswers = async (
   startDate: number,
   endDate: number,

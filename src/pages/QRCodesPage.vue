@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-md q-pt-xl">
-    <div class="text-h5 page-title q-mb-xl">QR Code (5 Formulários)</div>
+    <div class="text-h5 page-title q-mb-xl">QR Code (6 Formulários)</div>
 
     <q-card flat class="q-mt-sm row">
       <q-card-section
@@ -83,6 +83,21 @@
         >
       </q-card-section>
     </q-card>
+
+    <q-card flat class="q-mt-sm row">
+      <q-card-section
+        class="flex flex-center row justify-between"
+        style="width: 100%"
+      >
+        <div class="flex flex-center row">
+          <canvas ref="qrCanvasInterview"></canvas>
+          <div class="text-h6 inter-medium">FORMULÁRIO PACIENTE INTERNADO</div>
+        </div>
+        <q-btn color="primary" @click="downloadQRInterview" :unelevated="true"
+          >Baixar QR Code</q-btn
+        >
+      </q-card-section>
+    </q-card>
   </q-page>
 </template>
 
@@ -106,6 +121,9 @@ const qrLinkProspecting =
 const qrCanvasNotification = ref<HTMLCanvasElement | null>(null);
 const qrLinkNotification =
   'https://dashview-iota.vercel.app/form?type=notification';
+
+const qrCanvasInterview = ref<HTMLCanvasElement | null>(null);
+const qrLinkInterview = 'https://dashview-iota.vercel.app/form?type=interview';
 
 onMounted(() => {
   if (qrCanvas.value) {
@@ -146,6 +164,17 @@ onMounted(() => {
     QRCode.toCanvas(
       qrCanvasReception.value,
       qrLinkReception,
+      { width: 100 },
+      (error) => {
+        if (error) console.error(error);
+      }
+    );
+  }
+
+  if (qrCanvasInterview.value) {
+    QRCode.toCanvas(
+      qrCanvasInterview.value,
+      qrLinkInterview,
       { width: 100 },
       (error) => {
         if (error) console.error(error);
@@ -194,6 +223,15 @@ const downloadQRNotification = () => {
   if (qrCanvasNotification.value) {
     const link = document.createElement('a');
     link.href = qrCanvasNotification.value.toDataURL('image/png');
+    link.download = 'qrcode.png';
+    link.click();
+  }
+};
+
+const downloadQRInterview = () => {
+  if (qrCanvasInterview.value) {
+    const link = document.createElement('a');
+    link.href = qrCanvasInterview.value.toDataURL('image/png');
     link.download = 'qrcode.png';
     link.click();
   }

@@ -257,6 +257,60 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/internal-patient-hub',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/InternalPatientHub.vue') },
+    ],
+  },
+
+  {
+    path: '/internal-patient-dashboard',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/InternalPatientDashboard.vue'),
+      },
+    ],
+  },
+
+  {
+    path: '/internal-patient-answers',
+    beforeEnter: (_to, _from, next) => {
+      const store = useUserStore();
+      if (store.$state.isAuthenticated) {
+        next();
+      } else {
+        next({ path: '/' });
+      }
+    },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/InternalPatientAnswersPage.vue'),
+      },
+    ],
+  },
+
+  {
     path: '/surveys',
     beforeEnter: (_to, _from, next) => {
       const store = useUserStore();

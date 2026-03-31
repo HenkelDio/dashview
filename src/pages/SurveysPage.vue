@@ -49,5 +49,13 @@ const modules = ref([
     icon: 'badge',
     permission: 'moduleNotification',
   },
+  {
+    title: 'Entrevista com paciente',
+    description:
+      'Gerencie os dados dos pacientes internados.',
+    link: '/internal-patient-hub',
+    icon: 'assignment_returned',
+    permission: 'moduleInternalPatient',
+  },
 ]);
 </script>

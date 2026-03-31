@@ -33,6 +33,7 @@ export interface IPermissions {
   viewAndEditDepartments?: boolean;
   moduleNps?: boolean;
   moduleRh?: boolean;
+  moduleInternalPatient?: boolean;
 }
 
 export interface IUserTable {
@@ -176,8 +177,8 @@ export interface IForm {
 }
 
 export interface IFormParameters {
-  feedbackRequest: boolean;
-  employeeName: boolean;
+  feedbackRequest?: boolean;
+  employeeName?: boolean;
 }
 
 export interface IQuestion {
