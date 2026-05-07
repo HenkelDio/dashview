@@ -122,7 +122,7 @@
               </q-item-section>
 
               <q-item-section>
-                <q-item-label>Prontuário</q-item-label>
+                <q-item-label>CIRURGIA</q-item-label>
                 <q-item-label caption lines="2">
                   {{ selectedAnswer.medicalRecord }}
                 </q-item-label>
@@ -213,7 +213,7 @@ const columns = computed<Column[]>(() => [
   {
     name: 'medicalRecord',
     field: 'medicalRecord',
-    label: 'PRONTUÁRIO',
+    label: 'CIRURGIA',
     sortable: true,
     align: 'left',
   },
