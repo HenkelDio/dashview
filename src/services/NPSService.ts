@@ -267,3 +267,16 @@ export const getAnswerById = async (id: string) => {
     return { data: null, error: e };
   }
 };
+
+export const getGeneralAnswerById = async (id: string) => {
+  const headers = {
+    id,
+  };
+
+  try {
+    const response = await api.get('/nps/get-general-answer-by-id', { headers });
+    return { data: response.data, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
+};

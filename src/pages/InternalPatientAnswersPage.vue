@@ -104,53 +104,10 @@
       </q-card-section>
     </q-card>
 
-    <q-dialog v-model="showAnswerDialog">
-      <q-card style="width: 900px; max-width: 95vw">
-        <q-card-section class="row items-center justify-between">
-          <div class="text-h6">Detalhes da entrevista</div>
-          <q-btn flat round dense icon="close" v-close-popup />
-        </q-card-section>
-
-        <q-card-section v-if="selectedAnswer">
-          <q-list bordered separator>
-            <q-item>
-              <q-item-section>
-                <q-item-label>Paciente</q-item-label>
-                <q-item-label caption lines="2">
-                  {{ selectedAnswer.patient }}
-                </q-item-label>
-              </q-item-section>
-
-              <q-item-section>
-                <q-item-label>CIRURGIA</q-item-label>
-                <q-item-label caption lines="2">
-                  {{ selectedAnswer.medicalRecord }}
-                </q-item-label>
-              </q-item-section>
-
-              <q-item-section>
-                <q-item-label>Data da entrevista</q-item-label>
-                <q-item-label caption lines="2">
-                  {{ selectedAnswer.date }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-item
-              v-for="item in selectedAnswer.answers"
-              :key="`${selectedAnswer.id}-${item.index}`"
-            >
-              <q-item-section>
-                <q-item-label>{{ item.title }}</q-item-label>
-                <q-item-label caption lines="100">
-                  {{ formatAnswerValue(item.answer) }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
+    <InternalPatientInterviewDialog
+      v-model="showAnswerDialog"
+      :answer="selectedAnswer"
+    />
   </q-page>
 </template>
 
@@ -162,24 +119,18 @@ import 'moment/dist/locale/pt-br';
 import { Vue3Lottie } from 'vue3-lottie';
 
 import DateRangeInput from 'src/components/DateRangeInput.vue';
+import InternalPatientInterviewDialog from 'src/components/InternalPatientInterviewDialog.vue';
 import notFound from '../assets/notfound.json';
 import { loadDashboardGeneral } from 'src/services/NPSService';
 import type { Column, IAnswerGeneral } from 'src/types';
+import type {
+  InterviewAnswerDialogData,
+  InterviewAnswerItem,
+} from 'src/types/internalPatientInterview';
 
-interface InterviewAnswerItem {
-  index: string;
-  title: string;
-  answer: string;
-}
-
-interface InterviewAnswerRow {
-  id: string;
-  patient: string;
-  medicalRecord: string;
-  date: string;
+interface InterviewAnswerRow extends InterviewAnswerDialogData {
   score: string;
   timestamp: number;
-  answers: InterviewAnswerItem[];
 }
 
 interface IResponse {
@@ -295,14 +246,6 @@ function formatInterviewDate(answerDate: string, fallbackTimestamp: number) {
   }
 
   return moment(fallbackTimestamp).format('DD/MM/YYYY');
-}
-
-function formatAnswerValue(value: string) {
-  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    return moment(value).format('DD/MM/YYYY');
-  }
-
-  return value || 'Não informado';
 }
 
 function openAnswerDialog(row: InterviewAnswerRow) {

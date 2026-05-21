@@ -98,32 +98,81 @@
       </q-card-section>
     </q-card>
 
-    <div
-      v-for="section in questionSections"
-      v-else
-      :key="section.id"
-      class="q-mb-xl"
-    >
-      <div class="row items-end justify-between q-mb-md section-header">
-        <div>
-          <div class="text-overline text-primary">{{ section.title }}</div>
-          <div class="text-subtitle1 text-weight-medium text-grey-10">
-            {{ section.subtitle }}
+    <template v-else>
+      <div
+        v-for="section in questionSections"
+        :key="section.id"
+        class="q-mb-xl"
+      >
+        <div class="row items-end justify-between q-mb-md section-header">
+          <div>
+            <div class="text-overline text-primary">{{ section.title }}</div>
+            <div class="text-subtitle1 text-weight-medium text-grey-10">
+              {{ section.subtitle }}
+            </div>
           </div>
+        </div>
+
+        <div class="question-grid">
+          <InternalPatientQuestionChart
+            v-for="question in section.questions"
+            :key="question.id"
+            :section="section.shortTitle"
+            :question="question.title"
+            :description="question.description"
+            :options="question.options"
+          />
         </div>
       </div>
 
-      <div class="question-grid">
-        <InternalPatientQuestionChart
-          v-for="question in section.questions"
-          :key="question.id"
-          :section="section.shortTitle"
-          :question="question.title"
-          :description="question.description"
-          :options="question.options"
-        />
+      <div class="q-mb-xl">
+        <div class="row items-end justify-between q-mb-md section-header">
+          <div>
+            <div class="text-overline text-primary">Observações do período</div>
+            <div class="text-subtitle1 text-weight-medium text-grey-10">
+              {{ observationsSubtitle }}
+            </div>
+          </div>
+        </div>
+
+        <q-card flat bordered class="observations-card">
+          <q-card-section
+            v-if="!periodObservations.length"
+            class="text-body2 text-grey-7"
+          >
+            Nenhuma observação registrada para o período selecionado.
+          </q-card-section>
+
+          <q-list v-else separator>
+            <q-item
+              v-for="observation in periodObservations"
+              :key="observation.id"
+              class="q-py-md"
+            >
+              <q-item-section>
+                <q-item-label lines="4">{{ observation.value }}</q-item-label>
+              </q-item-section>
+
+              <q-item-section side>
+                <q-btn
+                  outline
+                  color="primary"
+                  no-caps
+                  label="Ver mais"
+                  :loading="loadingObservationId === observation.id"
+                  @click="openObservationDetails(observation)"
+                />
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-card>
       </div>
-    </div>
+    </template>
+
+    <InternalPatientInterviewDialog
+      v-model="showAnswerDialog"
+      :answer="selectedAnswer"
+    />
   </q-page>
 </template>
 
@@ -144,8 +193,17 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Notify } from 'quasar';
 
 import DateRangeInput from 'src/components/DateRangeInput.vue';
+import InternalPatientInterviewDialog from 'src/components/InternalPatientInterviewDialog.vue';
 import InternalPatientQuestionChart from 'src/components/InternalPatientQuestionChart.vue';
-import { loadGeneralDashboardAnalytics } from 'src/services/NPSService';
+import {
+  getGeneralAnswerById,
+  loadGeneralDashboardAnalytics,
+} from 'src/services/NPSService';
+import type { IAnswer, IAnswerGeneral, IQuestion } from 'src/types';
+import type {
+  InterviewAnswerDialogData,
+  InterviewAnswerItem,
+} from 'src/types/internalPatientInterview';
 
 ChartJS.register(
   Title,
@@ -198,6 +256,11 @@ type ApiDashboardSection = {
   questions: ApiDashboardQuestion[];
 };
 
+type ApiDashboardObservation = {
+  id: string;
+  value: string;
+};
+
 type ApiDashboardResponse = {
   type: string;
   startDate: number;
@@ -208,6 +271,7 @@ type ApiDashboardResponse = {
     averageScore: number;
   };
   sections: ApiDashboardSection[];
+  observations: ApiDashboardObservation[];
 };
 
 const palette = {
@@ -226,6 +290,9 @@ const startDate = ref(moment().subtract(6, 'days').startOf('day').valueOf());
 const endDate = ref(moment().endOf('day').valueOf());
 const loadingDashboard = ref(false);
 const dashboardData = ref<ApiDashboardResponse | null>(null);
+const showAnswerDialog = ref(false);
+const selectedAnswer = ref<InterviewAnswerDialogData | null>(null);
+const loadingObservationId = ref<string | null>(null);
 let loadDashboardTimeout: ReturnType<typeof setTimeout> | null = null;
 
 const dateLabel = computed(() => {
@@ -256,6 +323,20 @@ const questionSections = computed<DashboardSection[]>(() => {
       options: mapQuestionOptions(question),
     })),
   }));
+});
+
+const periodObservations = computed<ApiDashboardObservation[]>(() => {
+  return dashboardData.value?.observations ?? [];
+});
+
+const observationsSubtitle = computed(() => {
+  const total = periodObservations.value.length;
+
+  if (!total) {
+    return 'Sem observações registradas';
+  }
+
+  return total === 1 ? '1 observação registrada' : `${total} observações registradas`;
 });
 
 function buildQuestionDescription(question: ApiDashboardQuestion) {
@@ -330,6 +411,86 @@ function buildSectionSubtitle(questions: ApiDashboardQuestion[]) {
   return totalQuestions === 1
     ? '1 pergunta analisada'
     : `${totalQuestions} perguntas analisadas`;
+}
+
+function getQuestionAnswer(questions: InterviewAnswerItem[], index: string) {
+  return (
+    questions.find((item) => item.index === index)?.answer || 'Não informado'
+  );
+}
+
+function normalizeAnswerValue(value: unknown) {
+  if (value === null || value === undefined || value === '') {
+    return 'Não informado';
+  }
+
+  return String(value);
+}
+
+function formatInterviewDate(answerDate: string, fallbackTimestamp: number) {
+  if (answerDate && /^\d{4}-\d{2}-\d{2}$/.test(answerDate)) {
+    return moment(answerDate).format('DD/MM/YYYY');
+  }
+
+  if (answerDate && /^\d{2}\/\d{2}\/\d{4}$/.test(answerDate)) {
+    return answerDate;
+  }
+
+  if (fallbackTimestamp) {
+    return moment(fallbackTimestamp).format('DD/MM/YYYY');
+  }
+
+  return 'Não informado';
+}
+
+function mapAnswerToDialogData(id: string, answerData: IAnswer | IAnswerGeneral) {
+  const answersFromGeneral = (answerData as IAnswerGeneral).answers ?? [];
+  const questionsFromNps = (answerData as IAnswer).questions ?? [];
+
+  const questions =
+    answersFromGeneral.length > 0
+      ? answersFromGeneral.map((item) => ({
+          index: String(item.index),
+          title: item.title,
+          answer: normalizeAnswerValue(item.answer),
+        }))
+      : (questionsFromNps as IQuestion[]).map((question) => ({
+          index: question.index,
+          title: question.title,
+          answer: question.answer || 'Não informado',
+        }));
+
+  return {
+    id,
+    patient: (answerData as IAnswer).patientName || getQuestionAnswer(questions, '0'),
+    medicalRecord: getQuestionAnswer(questions, '2'),
+    date: formatInterviewDate(
+      getQuestionAnswer(questions, '3'),
+      (answerData as IAnswerGeneral).timestamp || (answerData as IAnswer).timestamp
+    ),
+    answers: questions,
+  };
+}
+
+async function openObservationDetails(observation: ApiDashboardObservation) {
+  loadingObservationId.value = observation.id;
+
+  const { data, error } = await getGeneralAnswerById(observation.id);
+  loadingObservationId.value = null;
+
+  if (error || !data) {
+    Notify.create({
+      message: 'Erro ao carregar detalhes da observação.',
+      type: 'negative',
+    });
+    return;
+  }
+
+  selectedAnswer.value = mapAnswerToDialogData(
+    observation.id,
+    data as IAnswer | IAnswerGeneral
+  );
+  showAnswerDialog.value = true;
 }
 
 async function loadDashboard() {
@@ -433,6 +594,11 @@ watch(
 }
 
 .empty-state-card {
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.observations-card {
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.92);
 }
