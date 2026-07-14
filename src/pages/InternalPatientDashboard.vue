@@ -119,6 +119,7 @@
             :key="question.id"
             :section="section.shortTitle"
             :question="question.title"
+            :status="question.status"
             :description="question.description"
             :options="question.options"
           />
@@ -226,6 +227,7 @@ type DashboardQuestion = {
   title: string;
   description?: string;
   options: QuestionOption[];
+  status: string;
 };
 
 type DashboardSection = {
@@ -248,6 +250,7 @@ type ApiDashboardQuestion = {
   totalResponses: number;
   average?: number;
   options: ApiDashboardOption[];
+  status?: string;
 };
 
 type ApiDashboardSection = {
@@ -321,6 +324,7 @@ const questionSections = computed<DashboardSection[]>(() => {
       title: question.title,
       description: buildQuestionDescription(question),
       options: mapQuestionOptions(question),
+      status: question.status ? question.status : 'ACTIVE',
     })),
   }));
 });

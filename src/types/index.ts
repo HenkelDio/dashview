@@ -190,6 +190,7 @@ export interface IQuestion {
   observation?: string;
   showObservation: boolean;
   required: boolean;
+  status: string;
 }
 
 export interface IAnswer {

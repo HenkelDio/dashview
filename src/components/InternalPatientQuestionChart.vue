@@ -3,7 +3,7 @@
     <q-card-section class="q-pb-sm">
       <div class="text-overline text-primary">{{ section }}</div>
       <div class="text-subtitle1 text-weight-medium text-grey-10">
-        {{ question }}
+        {{ question }} <b>{{ status == 'INACTIVE' ? '(Inativa desde 13/07/2026)' : '' }}</b>
       </div>
       <div v-if="description" class="text-caption text-grey-7 q-mt-xs">
         {{ description }}
@@ -34,6 +34,7 @@ interface Props {
   question: string;
   description?: string;
   options: QuestionOption[];
+  status: string;
 }
 
 const props = defineProps<Props>();

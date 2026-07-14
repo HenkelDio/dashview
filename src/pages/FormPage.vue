@@ -47,7 +47,7 @@
             <div v-for="(question, index) in form.questions" :key="index">
               <div class="q-mt-xl q-gutter-y-md">
                 <RadioInputForm
-                  v-if="question.inputType === 'radio'"
+                  v-if="question.inputType === 'radio' && question.status !== 'INACTIVE'"
                   :title="question.title"
                   :index="question.index"
                   :options="question.options"
@@ -209,6 +209,7 @@ async function loadForm() {
     answer: '',
     observation: '',
     required: question.required,
+    status: question.status ? question.status : 'ACTIVE',
   }));
 }
 
